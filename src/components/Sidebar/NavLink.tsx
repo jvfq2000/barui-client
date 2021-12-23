@@ -1,0 +1,39 @@
+import { ElementType } from "react";
+
+import {
+  Link as ChakraLink,
+  Text,
+  Icon,
+  LinkProps as ChakraLinkProps,
+} from "@chakra-ui/react";
+
+import { ActiveLink } from "../links/ActiveLink";
+
+interface INavLinkProps extends ChakraLinkProps {
+  disableActiveLink?: boolean;
+  icon: ElementType;
+  href: string;
+  children: string;
+  iconPositionRight?: boolean;
+}
+
+function NavLink({
+  disableActiveLink = false,
+  icon,
+  children,
+  href,
+  iconPositionRight = false,
+  ...rest
+}: INavLinkProps): JSX.Element {
+  return (
+    <ActiveLink href={href} passHref disableActiveLink={disableActiveLink}>
+      <ChakraLink display="flex" align="center" {...rest}>
+        {!iconPositionRight && <Icon as={icon} mr="4" fontSize="20"></Icon>}
+        <Text fontWeight="medium">{children}</Text>
+        {iconPositionRight && <Icon as={icon} ml="4" fontSize="20"></Icon>}
+      </ChakraLink>
+    </ActiveLink>
+  );
+}
+
+export { NavLink };

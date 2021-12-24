@@ -4,7 +4,7 @@ import { IShowToast } from "./iShowToast";
 
 interface IUploadFileParams {
   url: string;
-  file: string;
+  file: File;
   nameFileRequest: string;
   titleToast: string;
   descriptionToast: string;

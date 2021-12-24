@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { destroyCookie } from "nookies";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
@@ -13,7 +12,6 @@ import {
   Divider,
   VStack,
   SimpleGrid,
-  useToast,
   Avatar,
   Spinner,
   Text,
@@ -51,10 +49,9 @@ const profileUserFormSchema = yup.object().shape({
 });
 
 export default function ProfileUser(): JSX.Element {
-  const toast = useToast();
   const [avatar, setAvatar] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [avatarUpload, setAvatarUpload] = useState("");
+  const [avatarUpload, setAvatarUpload] = useState<File>(null);
   const [isLoadingUploadAvatar, setIsLoadingUploadAvatar] = useState(false);
   const [fileSelected, setFileSelected] = useState(false);
 
@@ -148,7 +145,7 @@ export default function ProfileUser(): JSX.Element {
                   <Box position="relative" top="30%">
                     <InputFile
                       name="avatar"
-                      label={avatarUpload.name || "Alterar avatar"}
+                      label={avatarUpload?.name || "Alterar avatar"}
                       pt="1"
                       error={errors.avatar}
                       {...register("avatar")}

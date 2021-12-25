@@ -9,6 +9,7 @@ import { useMutation } from "react-query";
 import {
   Avatar,
   Button,
+  Divider,
   HStack,
   Icon,
   Modal,
@@ -108,8 +109,8 @@ function UserOptionsModal({
     <>
       <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
         <ModalOverlay />
-        <ModalContent bg="gray.800">
-          <ModalHeader mb="6" bg="gray.700">
+        <ModalContent mx="2" bg="gray.800">
+          <ModalHeader>
             <HStack spacing={6}>
               <Avatar size="md" name={name} src={avatar && avatarUrl} />
               <Text fontSize="2xl" fontWeight="bold">
@@ -117,12 +118,14 @@ function UserOptionsModal({
               </Text>
             </HStack>
           </ModalHeader>
+
           <ModalCloseButton />
 
-          <ModalBody>
+          <ModalBody px={["2", "3"]}>
+            <Divider mb="4" borderColor="gray.700" />
             <SimpleGrid
               flex="1"
-              gap="2"
+              gap="1"
               minChildWidth="200px"
               aling="flex-start"
             >
@@ -163,7 +166,7 @@ function UserOptionsModal({
             </SimpleGrid>
           </ModalBody>
 
-          <ModalFooter mt="2" justifyContent="space-between">
+          <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
             <Button
               onClick={() => {
                 onClose();

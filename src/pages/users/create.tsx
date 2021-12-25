@@ -105,7 +105,7 @@ export default function CreateUser(): JSX.Element {
   return (
     <Box>
       <Header />
-      <Flex w="100%" my="6" maxW={1480} mx="auto" px="6">
+      <Flex w="100%" my="6" maxW={1480} mx="auto" px={[4, 6]}>
         <Sidebar />
 
         <Box
@@ -186,15 +186,15 @@ export default function CreateUser(): JSX.Element {
               />
             </SimpleGrid>
           </VStack>
-
-          <Flex mt="8">
+          <Divider my="6" borderColor="gray.700" />
+          <Flex>
             <HStack w="100%" justify="space-between">
               <Link href="/users" passHref>
                 <Button colorScheme="whiteAlpha"> Cancelar </Button>
               </Link>
               <Button
                 type="submit"
-                colorScheme="pink"
+                colorScheme="green"
                 isLoading={formState.isSubmitting}
               >
                 Cadastrar

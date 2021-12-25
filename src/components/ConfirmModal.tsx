@@ -2,6 +2,7 @@ import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
 
 import {
   Button,
+  Divider,
   Icon,
   Modal,
   ModalBody,
@@ -29,19 +30,20 @@ function ConfirmModal({
   return (
     <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
       <ModalOverlay />
-      <ModalContent bg="gray.800">
-        <ModalHeader mb="6" bg="gray.700">
+      <ModalContent mx="2" bg="gray.800">
+        <ModalHeader>
           <Text fontSize="xl" fontWeight="bold">
             Atenção!
           </Text>
         </ModalHeader>
         <ModalCloseButton />
 
-        <ModalBody>
+        <ModalBody px={["2", "6"]}>
+          <Divider mb="4" borderColor="gray.700" />
           <Text fontSize="lg">{message}</Text>
         </ModalBody>
 
-        <ModalFooter mt="2" justifyContent="space-between">
+        <ModalFooter px={["2", "6"]} mt="2" justifyContent="space-between">
           <Button
             onClick={onClose}
             colorScheme="whiteAlpha"

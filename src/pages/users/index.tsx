@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { RiAddLine } from "react-icons/ri";
+import { RiAddLine, RiUserAddFill } from "react-icons/ri";
 
 import {
   Box,
@@ -49,7 +49,7 @@ export default function UserList(): JSX.Element {
   return (
     <Box>
       <Header />
-      <Flex w="100%" my="6" maxW={1480} mx="auto" px="6">
+      <Flex w="100%" my="6" maxW={1480} mx="auto" px={[4, 6]}>
         <Sidebar />
         <Box flex="1" borderRadius={8}>
           <Flex mb="6" justify="space-between" align="center">
@@ -72,8 +72,8 @@ export default function UserList(): JSX.Element {
                 as="a"
                 size="sm"
                 fontSize="sm"
-                colorScheme="pink"
-                leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                colorScheme="green"
+                leftIcon={<Icon as={RiUserAddFill} fontSize="20" />}
               >
                 Criar novo
               </Button>
@@ -81,12 +81,12 @@ export default function UserList(): JSX.Element {
           </Flex>
 
           {!isWideVersion && (
-            <Flex mb="6" justify="space-between" align="center">
+            <Box mb="6" align="center">
               <Search
                 placeholder="Filtrar usuários"
                 handleOnClick={setFilter}
               />
-            </Flex>
+            </Box>
           )}
 
           {
@@ -104,7 +104,7 @@ export default function UserList(): JSX.Element {
                 <SimpleGrid
                   flex="1"
                   gap="4"
-                  minChildWidth="320px"
+                  minChildWidth={[280, 320]}
                   aling="flex-start"
                 >
                   {data.users.map(user => {

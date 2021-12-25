@@ -65,7 +65,7 @@ const InputFileBase: ForwardRefRenderFunction<
           name={name}
           id={name}
           type="file"
-          focusBorderColor="pink.500"
+          focusBorderColor="green.500"
           bg="gray.900"
           variant="filled"
           _hover={{
@@ -81,7 +81,7 @@ const InputFileBase: ForwardRefRenderFunction<
       {showButtonUpload && (
         <Button
           display={fileSelected ? "block" : "none"}
-          colorScheme="pink"
+          colorScheme="green"
           onClick={handleButtonUpload}
           isLoading={isLoadingButton}
         >

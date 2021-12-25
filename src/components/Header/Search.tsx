@@ -20,7 +20,7 @@ function Search({
       flex="1"
       py="1"
       px="2"
-      ml="6"
+      mx={[2, 6]}
       maxW={400}
       alignSelf="center"
       color="gray.200"

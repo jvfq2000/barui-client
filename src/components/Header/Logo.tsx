@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/react";
+import { Link, Text } from "@chakra-ui/react";
 
 function Logo(): JSX.Element {
   return (
@@ -8,10 +8,12 @@ function Logo(): JSX.Element {
       letterSpacing="tight"
       w="64"
     >
-      BaseCliente
-      <Text as="span" color="pink.500" ml="1">
-        .
-      </Text>
+      <Link href="/">
+        Baru
+        <Text as="span" color="green.500">
+          í
+        </Text>
+      </Link>
     </Text>
   );
 }

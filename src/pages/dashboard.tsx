@@ -70,7 +70,7 @@ export default function Dashboard(): JSX.Element {
       <Flex w="100%" my="6" maxW={1460} mx="auto" px="6">
         <Sidebar />
 
-        <Box w="100%" p={4} color="white">
+        <Box w="100%" color="white">
           <Stack
             direction={["column", "row"]}
             spacing={["2", "8"]}
@@ -83,8 +83,13 @@ export default function Dashboard(): JSX.Element {
             <Text color="gray.100">Que bom te encontrar aqui!</Text>
           </Stack>
 
-          <SimpleGrid flex="1" gap="4" minChildWidth="320px" aling="flex-start">
-            <Box p={["6", "8"]} bg="gray.800" borderRadius={8} pb="4">
+          <SimpleGrid
+            flex="1"
+            gap="4"
+            minChildWidth={[280, 320]}
+            aling="flex-start"
+          >
+            <Box p={["4", "8"]} bg="gray.800" borderRadius={8} pb="4">
               <Text fontSize="lg" mb="4">
                 Inscritos da semana
               </Text>

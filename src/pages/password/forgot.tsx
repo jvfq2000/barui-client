@@ -60,7 +60,7 @@ export default function ForgotPassword(): JSX.Element {
       <Flex
         as="form"
         w="100%"
-        maxW={[360, 400]}
+        maxW={[308, 400]}
         bg="gray.800"
         p="8"
         borderRadius={8}
@@ -83,7 +83,7 @@ export default function ForgotPassword(): JSX.Element {
           <Button
             type="submit"
             mt="6"
-            colorScheme="pink"
+            colorScheme="green"
             size="lg"
             w="100%"
             isLoading={formState.isSubmitting}
@@ -94,7 +94,7 @@ export default function ForgotPassword(): JSX.Element {
           <Divider mt="8" />
 
           <Flex mt="6" justify="center">
-            <Link color="pink.400" href="/password/reset">
+            <Link color="green.500" href="/password/reset">
               Já tenho o token
             </Link>
           </Flex>

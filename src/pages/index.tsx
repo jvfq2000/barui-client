@@ -58,7 +58,7 @@ export default function SignIn(): JSX.Element {
       <Flex
         as="form"
         w="100%"
-        maxW={[360, 400]}
+        maxW={[308, 400]}
         bg="gray.800"
         p="8"
         borderRadius={8}
@@ -88,7 +88,7 @@ export default function SignIn(): JSX.Element {
           <Button
             type="submit"
             mt="6"
-            colorScheme="pink"
+            colorScheme="green"
             size="lg"
             w="100%"
             isLoading={formState.isSubmitting}

@@ -54,9 +54,8 @@ function Pagination({
           spacing="6"
           mt="8"
           justify="space-between"
-          aling="center"
         >
-          <Box>
+          <Box alignSelf="center">
             <strong>{(currentPage - 1) * registersPerPage + 1}</strong> -{" "}
             <strong>
               {lastItemOfPage < totalCountOfRegisters
@@ -65,7 +64,7 @@ function Pagination({
             </strong>{" "}
             de <strong>{totalCountOfRegisters}</strong>
           </Box>
-          <HStack spacing="2">
+          <HStack spacing="2" justify="center">
             {currentPage > 1 + siblingsCount && (
               <>
                 <PaginationItem onPageChange={onPageChange} number={1} />

@@ -4,7 +4,6 @@ import { Flex, useBreakpointValue, IconButton, Icon } from "@chakra-ui/react";
 
 import { useSidebarDrawer } from "../../contexts/SidebarDrawerContext";
 import { Logo } from "./Logo";
-import { Notifications } from "./Notifications";
 import { Profile } from "./Profile";
 
 function Header(): JSX.Element {
@@ -35,10 +34,10 @@ function Header(): JSX.Element {
           mr="2"
         ></IconButton>
       )}
+
       <Logo />
 
       <Flex align="center" ml="auto">
-        <Notifications />
         <Profile showProfileData={isWideVersion} />
       </Flex>
     </Flex>

@@ -97,8 +97,8 @@ export default function ProfileUser(): JSX.Element {
       url: "users/avatar",
       file: avatarUpload,
       nameFileRequest: "avatar",
-      titleToast: "Alterar avatar",
-      descriptionToast: "Avatar alterado com sucesso!",
+      titleToast: "Tudo certo!",
+      descriptionToast: "Avatar alterado com sucesso.",
       showToast,
       updateData: refetch,
     });

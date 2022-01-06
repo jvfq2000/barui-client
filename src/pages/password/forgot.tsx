@@ -33,8 +33,8 @@ export default function ForgotPassword(): JSX.Element {
       .post("password/forgot", data)
       .then(() => {
         toast({
-          title: "Token enviado",
-          description: "Verifique seu e-mail, lá tem um segredinho só nosso!",
+          title: "Tudo certo!",
+          description: "Verifique seu e-mail, lá tem um segredinho só nosso.",
           status: "success",
           position: "top",
           duration: 8000,

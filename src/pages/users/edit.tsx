@@ -51,8 +51,8 @@ export default function EditUser(): JSX.Element {
         .put(`users?userId=${id}`, user)
         .then(response => {
           toast({
-            title: "Edição de usuário",
-            description: "Usuário editado com sucesso!",
+            title: "Tudo certo!",
+            description: "Usuário editado com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,

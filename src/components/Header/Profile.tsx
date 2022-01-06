@@ -85,7 +85,7 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
               mb="2"
               _hover={{ color: "gray.800", bg: "gray.100" }}
             >
-              Meu perfil
+              Perfil
             </Button>
           </Link>
           <Button
@@ -98,7 +98,7 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
             onClick={signOut}
             _hover={{ color: "gray.800", bg: "gray.100" }}
           >
-            Sair do sistema
+            Sair
           </Button>
         </PopoverBody>
       </PopoverContent>

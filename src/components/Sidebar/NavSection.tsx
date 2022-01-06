@@ -13,7 +13,7 @@ function NavSection({ title, children }: INavSectionProps): JSX.Element {
       <Text fontWeight="bould" color="gray.400" fontSize="small">
         {title}
       </Text>
-      <VStack spacing="4" mt="8" align="stretch">
+      <VStack spacing="2" mt="4" align="stretch">
         {children}
       </VStack>
     </Box>

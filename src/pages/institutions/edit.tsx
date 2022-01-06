@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Router from "next/router";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import * as yup from "yup";
@@ -18,7 +19,6 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 import { Input } from "../../components/form/Input";
-import { InputMask } from "../../components/form/InputMask";
 import { Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
@@ -27,52 +27,40 @@ import { queryClient } from "../../services/queryClient";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-interface ICreateUserFormData {
+interface IEditInstitutionFormData {
   name: string;
   email: string;
   accessLevel: string;
   identifier: string;
-  password: string;
-  passwordConfirmation: string;
 }
 
-const createUserFormSchema = yup.object().shape({
+const editInstitutionFormSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
   lastName: yup.string().required("Sobrenome obrigatório"),
   accessLevel: yup.string().required("Nível de acesso obrigatório"),
-  identifier: yup
-    .string()
-    .required("CPF obrigatório")
-    .min(14, "CPF incompleto"),
   email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
-  password: yup
-    .string()
-    .required("Senha obrigatória")
-    .min(6, "No mínimo 6 caracteres"),
-  passwordConfirmation: yup
-    .string()
-    .oneOf([null, yup.ref("password")], "As senhas precisam ser iguais"),
 });
 
-export default function CreateUser(): JSX.Element {
+export default function EditInstitution(): JSX.Element {
+  const { id } = Router.query;
   const toast = useToast();
 
-  const createUser = useMutation(
-    async (user: ICreateUserFormData) => {
+  const editInstitution = useMutation(
+    async (institution: IEditInstitutionFormData) => {
       api
-        .post("users", user)
+        .put(`institutions?institutionId=${id}`, institution)
         .then(response => {
           toast({
             title: "Tudo certo!",
-            description: "Usuário cadastrado com sucesso.",
+            description: "Usuário editado com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
             isClosable: true,
           });
 
-          Router.push("/users");
-          return response.data.user;
+          Router.push("/institutions");
+          return response.data.institution;
         })
         .catch(error => {
           toast({
@@ -87,19 +75,43 @@ export default function CreateUser(): JSX.Element {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("users");
+        queryClient.invalidateQueries("institutions");
       },
     },
   );
 
-  const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(createUserFormSchema),
+  const { register, handleSubmit, formState, setValue } = useForm({
+    resolver: yupResolver(editInstitutionFormSchema),
   });
-
   const { errors } = formState;
 
-  const handleCreateUser: SubmitHandler<ICreateUserFormData> = async data => {
-    await createUser.mutateAsync(data);
+  useEffect(() => {
+    api
+      .get(`users/by-id?userId=${id}`)
+      .then(response => {
+        const { name, lastName, email, accessLevel } = response.data;
+
+        setValue("name", name);
+        setValue("lastName", lastName);
+        setValue("email", email);
+        setValue("accessLevel", accessLevel);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      });
+  }, []);
+
+  const handleEditInstitution: SubmitHandler<
+    IEditInstitutionFormData
+  > = async data => {
+    await editInstitution.mutateAsync(data);
   };
 
   return (
@@ -114,10 +126,10 @@ export default function CreateUser(): JSX.Element {
           borderRadius={8}
           bg="gray.800"
           p={["6", "8"]}
-          onSubmit={handleSubmit(handleCreateUser)}
+          onSubmit={handleSubmit(handleEditInstitution)}
         >
           <Heading size="lg" fontWeight="normal">
-            Cadastar usuário
+            Alterar usuário
           </Heading>
 
           <Divider my="6" borderColor="gray.700" />
@@ -146,17 +158,6 @@ export default function CreateUser(): JSX.Element {
                 error={errors.email}
                 {...register("email")}
               />
-              <InputMask
-                mask="***.***.***-**"
-                maskChar="_"
-                name="identifier"
-                label="CPF"
-                error={errors.identifier}
-                {...register("identifier")}
-              />
-            </SimpleGrid>
-
-            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Select
                 name="accessLevel"
                 placeholder="Selecione"
@@ -170,26 +171,14 @@ export default function CreateUser(): JSX.Element {
                 error={errors.accessLevel}
                 {...register("accessLevel")}
               />
-              <Input
-                name="password"
-                type="password"
-                label="Senha"
-                error={errors.password}
-                {...register("password")}
-              />
-              <Input
-                name="passwordConfirmation"
-                type="password"
-                label="Confirmação da senha"
-                error={errors.passwordConfirmation}
-                {...register("passwordConfirmation")}
-              />
             </SimpleGrid>
           </VStack>
+
           <Divider my="6" borderColor="gray.700" />
+
           <Flex>
             <HStack w="100%" justify="space-between">
-              <Link href="/users" passHref>
+              <Link href="/institutions" passHref>
                 <Button colorScheme="whiteAlpha"> Cancelar </Button>
               </Link>
               <Button
@@ -197,7 +186,7 @@ export default function CreateUser(): JSX.Element {
                 colorScheme="green"
                 isLoading={formState.isSubmitting}
               >
-                Cadastrar
+                Alterar
               </Button>
             </HStack>
           </Flex>
@@ -211,6 +200,6 @@ const getServerSideProps = withSSRAuth(async ctx => {
   return {
     props: {},
   };
-}, accessLevel[3]);
+}, accessLevel[4]);
 
 export { getServerSideProps };

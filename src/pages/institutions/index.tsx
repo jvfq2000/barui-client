@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { RiUserAddLine } from "react-icons/ri";
+import { RiAddCircleLine } from "react-icons/ri";
 
 import {
   Box,
@@ -17,19 +17,24 @@ import {
 
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
+import { CardInstitution } from "../../components/institutions/CardInstitution";
+import { InstitutionOptionsModal } from "../../components/institutions/InstitutionOptionsModal";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import { CardUser } from "../../components/users/CardUser";
-import { UserOptionsModal } from "../../components/users/UserOptionsModal";
-import { IUser, useUsers } from "../../services/hooks/useUsers";
+import {
+  IInstitution,
+  useInstitutions,
+} from "../../services/hooks/useInstitutions";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-export default function UserList(): JSX.Element {
-  const [userSelected, setUserSelected] = useState<IUser>({} as IUser);
+export default function institutionList(): JSX.Element {
+  const [institutionSelected, setInstitutionSelected] = useState<IInstitution>(
+    {} as IInstitution,
+  );
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
-  const { data, isLoading, isFetching, error } = useUsers({
+  const { data, isLoading, isFetching, error } = useInstitutions({
     page,
     filter,
   });
@@ -41,8 +46,8 @@ export default function UserList(): JSX.Element {
     lg: true,
   });
 
-  function onOpenModal(user: IUser) {
-    setUserSelected(user);
+  function onOpenModal(institution: IInstitution) {
+    setInstitutionSelected(institution);
     onOpen();
   }
 
@@ -54,26 +59,23 @@ export default function UserList(): JSX.Element {
         <Box flex="1" borderRadius={8}>
           <Flex mb="6" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
-              Usuários
+              Campus
               {!isLoading && isFetching && (
                 <Spinner size="sm" color="gray.500" ml="4" />
               )}
             </Heading>
 
             {isWideVersion && (
-              <Search
-                placeholder="Filtrar usuários"
-                handleOnClick={setFilter}
-              />
+              <Search placeholder="Filtrar campus" handleOnClick={setFilter} />
             )}
 
-            <Link href="/users/create" passHref>
+            <Link href="/institutions/create" passHref>
               <Button
                 as="a"
                 size="sm"
                 fontSize="sm"
                 colorScheme="green"
-                leftIcon={<Icon as={RiUserAddLine} fontSize="20" />}
+                leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
               >
                 Criar novo
               </Button>
@@ -82,10 +84,7 @@ export default function UserList(): JSX.Element {
 
           {!isWideVersion && (
             <Box mb="6" align="center">
-              <Search
-                placeholder="Filtrar usuários"
-                handleOnClick={setFilter}
-              />
+              <Search placeholder="Filtrar campus" handleOnClick={setFilter} />
             </Box>
           )}
 
@@ -97,7 +96,7 @@ export default function UserList(): JSX.Element {
               </Flex>
             ) : error ? (
               <Flex>
-                <Text>Falha ao obter dados dos usuários.</Text>
+                <Text>Falha ao obter dados dos campus.</Text>
               </Flex>
             ) : (
               <>
@@ -107,23 +106,19 @@ export default function UserList(): JSX.Element {
                   minChildWidth={[280, 320]}
                   aling="flex-start"
                 >
-                  {data.users.map(user => {
+                  {data.institutions.map(institution => {
                     return (
                       <Box
                         onClick={() => {
-                          onOpenModal(user);
+                          onOpenModal(institution);
                         }}
                       >
-                        <CardUser
-                          key={user.id}
-                          name={user.name}
-                          lastName={user.lastName}
-                          email={user.email}
-                          accessLevel={user.accessLevel}
-                          avatar={user.avatar}
-                          avatarUrl={user.avatarUrl}
-                          isActive={user.isActive}
-                          createdAt={user.createdAt}
+                        <CardInstitution
+                          key={institution.id}
+                          name={institution.name}
+                          cityName={institution.city.name}
+                          isActive={institution.isActive}
+                          createdAt={institution.createdAt}
                         />
                       </Box>
                     );
@@ -140,11 +135,11 @@ export default function UserList(): JSX.Element {
           }
         </Box>
       </Flex>
-      <UserOptionsModal
-        user={userSelected}
+      <InstitutionOptionsModal
+        institution={institutionSelected}
         isOpen={isOpen}
         onClose={onClose}
-      ></UserOptionsModal>
+      ></InstitutionOptionsModal>
     </Box>
   );
 }
@@ -153,6 +148,6 @@ const getServerSideProps = withSSRAuth(async ctx => {
   return {
     props: {},
   };
-}, accessLevel[3]);
+}, accessLevel[4]);
 
 export { getServerSideProps };

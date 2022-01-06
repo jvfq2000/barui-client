@@ -1,6 +1,7 @@
 export enum accessLevel {
-  "cliente",
-  "profissional",
-  "representante",
-  "administrador",
+  "aluno",
+  "coordenador de atividades",
+  "coordenador de curso",
+  "administrador do campus",
+  "administrador geral",
 }

@@ -26,33 +26,22 @@ import {
 } from "@chakra-ui/react";
 
 import { api } from "../../services/apiClient";
-import { IUser } from "../../services/hooks/useUsers";
+import { IInstitution } from "../../services/hooks/useInstitutions";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
 
-interface IUserOptionsModalProps {
+interface IInstitutionOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: IUser;
+  institution: IInstitution;
 }
 
-function UserOptionsModal({
+function InstitutionOptionsModal({
   isOpen,
   onClose,
-  user,
-}: IUserOptionsModalProps): JSX.Element {
-  const {
-    id,
-    name,
-    lastName,
-    email,
-    accessLevel,
-    avatar,
-    avatarUrl,
-    createdAt,
-    identifier,
-    isActive,
-  } = user;
+  institution,
+}: IInstitutionOptionsModalProps): JSX.Element {
+  const { id, name, city, isActive, createdAt } = institution;
 
   const {
     isOpen: isOpenConfirmModal,
@@ -60,28 +49,28 @@ function UserOptionsModal({
     onClose: onCloseConfirmModal,
   } = useDisclosure();
 
-  const msgActivateUser =
-    "O usuário poderá acessar o sistema normalmente, deseja prosseguir com a alteração?";
-  const msgInactivateUser =
-    "O usuário não poderá mais acessar o sistema, deseja prosseguir com a alteração?";
+  const msgActivateInstitution =
+    "O campus e tudo relacionado a ele poderá ser utilizado, até os usuários cadastrados com esse campus voltarão a ter acesso ao sistema, deseja prosseguir com a alteração?";
+  const msgInactivateInstitution =
+    "O campus e tudo relacionado a ele não poderá mais ser utilizado ou acessado, até os usuários cadastrados com esse campus perderão acesso ao sistema, deseja prosseguir com a alteração?";
 
   const toast = useToast();
 
   const changeIsActive = useMutation(
     async () => {
       api
-        .patch(`users/is-active?userId=${id}`)
+        .patch(`institutions/is-active?institutionId=${id}`)
         .then(() => {
           toast({
             title: "Tudo certo!",
-            description: "Status do usuário alterado com sucesso.",
+            description: "Status do campus alterado com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
             isClosable: true,
           });
 
-          queryClient.invalidateQueries("users");
+          queryClient.invalidateQueries("institutions");
         })
         .catch(error => {
           toast({
@@ -111,12 +100,9 @@ function UserOptionsModal({
         <ModalOverlay />
         <ModalContent mx="2" bg="gray.800">
           <ModalHeader>
-            <HStack spacing={6}>
-              <Avatar size="md" name={name} src={avatar && avatarUrl} />
-              <Text fontSize="2xl" fontWeight="bold">
-                {`${name} ${lastName}`}
-              </Text>
-            </HStack>
+            <Text fontSize="2xl" fontWeight="bold">
+              {name}
+            </Text>
           </ModalHeader>
 
           <ModalCloseButton />
@@ -130,23 +116,16 @@ function UserOptionsModal({
               aling="flex-start"
             >
               <HStack>
-                <Text fontSize="lg">CPF:</Text>
+                <Text fontSize="lg">Estado:</Text>
                 <Text fontSize="lg" color="gray.300">
-                  {identifier}
+                  {city?.state?.name}
                 </Text>
               </HStack>
 
               <HStack>
-                <Text fontSize="lg">E-mail:</Text>
+                <Text fontSize="lg">Cidade:</Text>
                 <Text fontSize="lg" color="gray.300">
-                  {email}
-                </Text>
-              </HStack>
-
-              <HStack>
-                <Text fontSize="lg">Nível de acesso:</Text>
-                <Text fontSize="lg" color="gray.300">
-                  {accessLevel}
+                  {city?.name}
                 </Text>
               </HStack>
 
@@ -185,7 +164,7 @@ function UserOptionsModal({
 
             <Link
               href={{
-                pathname: "/users/edit",
+                pathname: "/institutions/edit",
                 query: { id },
               }}
             >
@@ -205,10 +184,10 @@ function UserOptionsModal({
         handleConfirm={handleChangeIsActive}
         isOpen={isOpenConfirmModal}
         onClose={onCloseConfirmModal}
-        message={isActive ? msgInactivateUser : msgActivateUser}
+        message={isActive ? msgInactivateInstitution : msgActivateInstitution}
       ></ConfirmModal>
     </>
   );
 }
 
-export { UserOptionsModal };
+export { InstitutionOptionsModal };

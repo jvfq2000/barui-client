@@ -21,8 +21,17 @@ function CardUser({
   createdAt,
   isActive,
 }: ICardUserProps): JSX.Element {
-  const accessLevelFormat =
-    accessLevel === "administrador" ? "admin" : accessLevel;
+  let accessLevelFormat = accessLevel;
+
+  if (accessLevel === "administrador geral") {
+    accessLevelFormat = "admin. geral";
+  } else if (accessLevel === "administrador do campus") {
+    accessLevelFormat = "admin.";
+  } else if (accessLevel === "coordenador de curso") {
+    accessLevelFormat = "coor. curso";
+  } else if (accessLevel === "coordenador de atividades") {
+    accessLevelFormat = "coor. ativ.";
+  }
 
   return (
     <Box

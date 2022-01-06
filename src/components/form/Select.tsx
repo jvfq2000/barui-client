@@ -9,7 +9,7 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 
-interface ISelectOption {
+export interface ISelectOption {
   value: string;
   label: string;
 }

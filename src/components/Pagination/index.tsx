@@ -117,7 +117,7 @@ function Pagination({
           </HStack>
         </Stack>
       ) : (
-        <Text mt="8">Nenhum usuário encontrado</Text>
+        <Text mt="8">Nenhum registro encontrado</Text>
       )}
     </>
   );

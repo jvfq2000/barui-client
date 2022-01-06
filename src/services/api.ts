@@ -11,7 +11,7 @@ function setupAPIClient(ctx = undefined) {
   let cookies = parseCookies(ctx);
 
   const api = axios.create({
-    baseURL: "https://api.barui.ji.dev.br",
+    baseURL: "http://localhost:3333",
     headers: {
       Authorization: `Bearer ${cookies["baseApp.token"]}`,
     },

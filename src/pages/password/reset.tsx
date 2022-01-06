@@ -53,8 +53,8 @@ export default function ResetPassword(): JSX.Element {
       })
       .then(() => {
         toast({
-          title: "Muito bem",
-          description: "Senha alterada com sucesso!",
+          title: "Tudo certo!",
+          description: "Senha alterada com sucesso.",
           status: "success",
           position: "top",
           duration: 8000,

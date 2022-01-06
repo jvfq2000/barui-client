@@ -1,8 +1,7 @@
 import {
+  RiBuilding2Line,
   RiContactsLine,
   RiDashboardLine,
-  RiGitMergeLine,
-  RiInputMethodLine,
 } from "react-icons/ri";
 
 import { VStack } from "@chakra-ui/react";
@@ -19,20 +18,19 @@ function SidebarNav(): JSX.Element {
         <NavLink icon={RiDashboardLine} href="/dashboard">
           Dashboard
         </NavLink>
+      </NavSection>
+
+      <NavSection title="ADMINISTRAÇÃO">
+        <Can accessLevel={accessLevel[3]}>
+          <NavLink icon={RiBuilding2Line} href="/institutions">
+            Campus
+          </NavLink>
+        </Can>
         <Can accessLevel={accessLevel[3]}>
           <NavLink icon={RiContactsLine} href="/users">
             Usuários
           </NavLink>
         </Can>
-      </NavSection>
-
-      <NavSection title="AUTOMAÇÃO">
-        <NavLink icon={RiInputMethodLine} href="/forms">
-          Formulários
-        </NavLink>
-        <NavLink icon={RiGitMergeLine} href="/automation">
-          Automação
-        </NavLink>
       </NavSection>
     </VStack>
   );

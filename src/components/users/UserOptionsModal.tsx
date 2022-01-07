@@ -1,9 +1,5 @@
 import Link from "next/link";
-import {
-  RiPencilLine,
-  RiUserFollowLine,
-  RiUserUnfollowLine,
-} from "react-icons/ri";
+import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
@@ -73,7 +69,6 @@ function UserOptionsModal({
         .patch(`users/is-active?userId=${id}`)
         .then(() => {
           toast({
-            title: "Tudo certo!",
             description: "Status do usuário alterado com sucesso.",
             status: "success",
             position: "top",
@@ -85,7 +80,6 @@ function UserOptionsModal({
         })
         .catch(error => {
           toast({
-            title: "Ops!",
             description: error.response.data.message,
             status: "error",
             position: "top",
@@ -127,7 +121,7 @@ function UserOptionsModal({
               flex="1"
               gap="1"
               minChildWidth="200px"
-              aling="flex-start"
+              align="flex-start"
             >
               <HStack>
                 <Text fontSize="lg">CPF:</Text>
@@ -151,7 +145,7 @@ function UserOptionsModal({
               </HStack>
 
               <HStack>
-                <Text fontSize="lg">Data de cadastro:</Text>
+                <Text fontSize="lg">Cadastrado em:</Text>
                 <Text fontSize="lg" color="gray.300">
                   {createdAt}
                 </Text>
@@ -175,7 +169,7 @@ function UserOptionsModal({
               colorScheme={isActive ? "red" : "green"}
               leftIcon={
                 <Icon
-                  as={isActive ? RiUserUnfollowLine : RiUserFollowLine}
+                  as={isActive ? RiLockLine : RiLockUnlockLine}
                   fontSize="20"
                 />
               }
@@ -183,20 +177,22 @@ function UserOptionsModal({
               {isActive ? "Inativar" : "Ativar"}
             </Button>
 
-            <Link
-              href={{
-                pathname: "/users/edit",
-                query: { id },
-              }}
-            >
-              <Button
-                onClick={onClose}
-                colorScheme="blue"
-                leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+            {isActive && (
+              <Link
+                href={{
+                  pathname: "/users/edit",
+                  query: { id },
+                }}
               >
-                Alterar
-              </Button>
-            </Link>
+                <Button
+                  onClick={onClose}
+                  colorScheme="blue"
+                  leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                >
+                  Alterar
+                </Button>
+              </Link>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>

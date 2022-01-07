@@ -1,13 +1,5 @@
 import { useContext, useRef } from "react";
-import {
-  RiGitMergeLine,
-  RiInputMethodLine,
-  RiLogoutBoxLine,
-  RiLogoutBoxRFill,
-  RiLogoutBoxRLine,
-  RiProfileFill,
-  RiProfileLine,
-} from "react-icons/ri";
+import { RiLogoutBoxLine, RiProfileLine } from "react-icons/ri";
 
 import {
   Flex,
@@ -27,7 +19,6 @@ import {
 } from "@chakra-ui/react";
 
 import { AuthContext, signOut } from "../../contexts/AuthContext";
-import { NavLink } from "../Sidebar/NavLink";
 
 interface IProfileProps {
   showProfileData: boolean;

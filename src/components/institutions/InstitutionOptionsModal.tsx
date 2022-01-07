@@ -1,13 +1,8 @@
 import Link from "next/link";
-import {
-  RiPencilLine,
-  RiUserFollowLine,
-  RiUserUnfollowLine,
-} from "react-icons/ri";
+import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
-  Avatar,
   Button,
   Divider,
   HStack,
@@ -41,7 +36,15 @@ function InstitutionOptionsModal({
   onClose,
   institution,
 }: IInstitutionOptionsModalProps): JSX.Element {
-  const { id, name, city, isActive, createdAt } = institution;
+  const {
+    id,
+    name,
+    isActive,
+    createdAt,
+
+    cityName,
+    stateName,
+  } = institution;
 
   const {
     isOpen: isOpenConfirmModal,
@@ -62,7 +65,6 @@ function InstitutionOptionsModal({
         .patch(`institutions/is-active?institutionId=${id}`)
         .then(() => {
           toast({
-            title: "Tudo certo!",
             description: "Status do campus alterado com sucesso.",
             status: "success",
             position: "top",
@@ -74,7 +76,6 @@ function InstitutionOptionsModal({
         })
         .catch(error => {
           toast({
-            title: "Ops!",
             description: error.response.data.message,
             status: "error",
             position: "top",
@@ -107,30 +108,30 @@ function InstitutionOptionsModal({
 
           <ModalCloseButton />
 
-          <ModalBody px={["2", "3"]}>
+          <ModalBody px={["2", "3"]} justify="center">
             <Divider mb="4" borderColor="gray.700" />
             <SimpleGrid
               flex="1"
               gap="1"
               minChildWidth="200px"
-              aling="flex-start"
+              align="flex-start"
             >
               <HStack>
                 <Text fontSize="lg">Estado:</Text>
                 <Text fontSize="lg" color="gray.300">
-                  {city?.state?.name}
+                  {stateName}
                 </Text>
               </HStack>
 
               <HStack>
                 <Text fontSize="lg">Cidade:</Text>
                 <Text fontSize="lg" color="gray.300">
-                  {city?.name}
+                  {cityName}
                 </Text>
               </HStack>
 
               <HStack>
-                <Text fontSize="lg">Data de cadastro:</Text>
+                <Text fontSize="lg">Cadastrado em:</Text>
                 <Text fontSize="lg" color="gray.300">
                   {createdAt}
                 </Text>
@@ -145,7 +146,11 @@ function InstitutionOptionsModal({
             </SimpleGrid>
           </ModalBody>
 
-          <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
+          <ModalFooter
+            px={["2", "3"]}
+            mt="2"
+            justifyContent={isActive ? "space-between" : "space-between"}
+          >
             <Button
               onClick={() => {
                 onClose();
@@ -154,7 +159,7 @@ function InstitutionOptionsModal({
               colorScheme={isActive ? "red" : "green"}
               leftIcon={
                 <Icon
-                  as={isActive ? RiUserUnfollowLine : RiUserFollowLine}
+                  as={isActive ? RiLockLine : RiLockUnlockLine}
                   fontSize="20"
                 />
               }
@@ -162,20 +167,22 @@ function InstitutionOptionsModal({
               {isActive ? "Inativar" : "Ativar"}
             </Button>
 
-            <Link
-              href={{
-                pathname: "/institutions/edit",
-                query: { id },
-              }}
-            >
-              <Button
-                onClick={onClose}
-                colorScheme="blue"
-                leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+            {isActive && (
+              <Link
+                href={{
+                  pathname: "/institutions/edit",
+                  query: { id },
+                }}
               >
-                Alterar
-              </Button>
-            </Link>
+                <Button
+                  onClick={onClose}
+                  colorScheme="blue"
+                  leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                >
+                  Alterar
+                </Button>
+              </Link>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>

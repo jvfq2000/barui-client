@@ -135,7 +135,6 @@ function AuthProvider({ children }: IAuthProviderProps) {
       Router.push("/dashboard");
     } catch (error) {
       showToast({
-        title: "Ops!",
         description: error.response.data.message,
         status: "error",
       });

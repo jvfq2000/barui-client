@@ -1,4 +1,5 @@
 import {
+  RiBookMarkLine,
   RiBuilding2Line,
   RiContactsLine,
   RiDashboardLine,
@@ -21,9 +22,14 @@ function SidebarNav(): JSX.Element {
       </NavSection>
 
       <NavSection title="ADMINISTRAÇÃO">
-        <Can accessLevel={accessLevel[3]}>
+        <Can accessLevel={accessLevel[4]}>
           <NavLink icon={RiBuilding2Line} href="/institutions">
             Campus
+          </NavLink>
+        </Can>
+        <Can accessLevel={accessLevel[3]}>
+          <NavLink icon={RiBookMarkLine} href="/courses">
+            Cursos
           </NavLink>
         </Can>
         <Can accessLevel={accessLevel[3]}>

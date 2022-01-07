@@ -23,17 +23,20 @@ interface IGetUsersResponse {
 interface IGetUsersRequest {
   page: number;
   filter: string;
+  isActive: boolean;
 }
 
 async function getUsers({
   page,
   filter,
+  isActive,
 }: IGetUsersRequest): Promise<IGetUsersResponse> {
   const { data } = await api.get("users", {
     params: {
       page,
       registersPerPage: 12,
       filter,
+      isActive,
     },
   });
 
@@ -61,10 +64,14 @@ async function getUsers({
   return { users, totalCount };
 }
 
-function useUsers({ page, filter }: IGetUsersRequest) {
-  return useQuery(["users", page, filter], () => getUsers({ page, filter }), {
-    staleTime: 1000 * 60 * 10,
-  });
+function useUsers({ page, filter, isActive }: IGetUsersRequest) {
+  return useQuery(
+    ["users", page, filter],
+    () => getUsers({ page, filter, isActive }),
+    {
+      staleTime: 1000 * 60 * 10,
+    },
+  );
 }
 
 export { useUsers, getUsers };

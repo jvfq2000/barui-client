@@ -81,7 +81,7 @@ export default function ProfileUser(): JSX.Element {
     setAvatarUrl(data?.avatarUrl);
   }, [data]);
 
-  function showToast({ title, description, status }: IShowToast) {
+  function showToast({ description, status }: IShowToast) {
     window.location.reload();
   }
 
@@ -97,7 +97,6 @@ export default function ProfileUser(): JSX.Element {
       url: "users/avatar",
       file: avatarUpload,
       nameFileRequest: "avatar",
-      titleToast: "Tudo certo!",
       descriptionToast: "Avatar alterado com sucesso.",
       showToast,
       updateData: refetch,

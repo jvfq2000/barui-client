@@ -33,7 +33,6 @@ export default function ForgotPassword(): JSX.Element {
       .post("password/forgot", data)
       .then(() => {
         toast({
-          title: "Tudo certo!",
           description: "Verifique seu e-mail, lá tem um segredinho só nosso.",
           status: "success",
           position: "top",
@@ -45,7 +44,6 @@ export default function ForgotPassword(): JSX.Element {
       })
       .catch(error => {
         toast({
-          title: "Ops!",
           description: error.response.data.message,
           status: "error",
           position: "top",

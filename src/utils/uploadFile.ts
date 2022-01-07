@@ -6,7 +6,6 @@ interface IUploadFileParams {
   url: string;
   file: File;
   nameFileRequest: string;
-  titleToast: string;
   descriptionToast: string;
   showToast: (infoToast: IShowToast) => void;
   updateData?: () => void;
@@ -17,7 +16,6 @@ function uploadFile({
   file,
   nameFileRequest,
   showToast,
-  titleToast,
   descriptionToast,
   updateData = () => {},
 }: IUploadFileParams): void {
@@ -28,7 +26,6 @@ function uploadFile({
     .patch(url, formData)
     .then(() => {
       showToast({
-        title: titleToast,
         description: descriptionToast,
         status: "success",
       });
@@ -37,7 +34,6 @@ function uploadFile({
     })
     .catch(error => {
       showToast({
-        title: "Ops!",
         description: error.response.data.message,
         status: "error",
       });

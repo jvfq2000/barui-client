@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Router from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 import * as yup from "yup";
 
@@ -14,6 +15,7 @@ import {
   SimpleGrid,
   HStack,
   useToast,
+  Icon,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
@@ -63,7 +65,6 @@ export default function CreateUser(): JSX.Element {
         .post("users", user)
         .then(response => {
           toast({
-            title: "Tudo certo!",
             description: "Usuário cadastrado com sucesso.",
             status: "success",
             position: "top",
@@ -76,7 +77,6 @@ export default function CreateUser(): JSX.Element {
         })
         .catch(error => {
           toast({
-            title: "Ops!",
             description: error.response.data.message,
             status: "error",
             position: "top",
@@ -190,12 +190,18 @@ export default function CreateUser(): JSX.Element {
           <Flex>
             <HStack w="100%" justify="space-between">
               <Link href="/users" passHref>
-                <Button colorScheme="whiteAlpha"> Cancelar </Button>
+                <Button
+                  colorScheme="whiteAlpha"
+                  leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
+                >
+                  Cancelar
+                </Button>
               </Link>
               <Button
                 type="submit"
                 colorScheme="green"
                 isLoading={formState.isSubmitting}
+                leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
               >
                 Cadastrar
               </Button>

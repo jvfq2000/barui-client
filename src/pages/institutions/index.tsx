@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { RiAddCircleLine } from "react-icons/ri";
+import { RiAddCircleLine, RiBuilding2Line } from "react-icons/ri";
 
 import {
   Box,
@@ -13,6 +13,7 @@ import {
   Spinner,
   SimpleGrid,
   useDisclosure,
+  Switch,
 } from "@chakra-ui/react";
 
 import { Header } from "../../components/Header";
@@ -34,9 +35,11 @@ export default function institutionList(): JSX.Element {
   );
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
+  const [isActive, setIsActive] = useState(true);
   const { data, isLoading, isFetching, error } = useInstitutions({
     page,
     filter,
+    isActive,
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -66,7 +69,23 @@ export default function institutionList(): JSX.Element {
             </Heading>
 
             {isWideVersion && (
-              <Search placeholder="Filtrar campus" handleOnClick={setFilter} />
+              <>
+                <Text>
+                  Status:
+                  <Switch
+                    ml="2"
+                    colorScheme="green"
+                    isChecked={isActive}
+                    onChange={() => {
+                      setIsActive(!isActive);
+                    }}
+                  ></Switch>
+                </Text>
+                <Search
+                  placeholder="Filtrar campus"
+                  handleOnClick={setFilter}
+                />
+              </>
             )}
 
             <Link href="/institutions/create" passHref>
@@ -83,9 +102,20 @@ export default function institutionList(): JSX.Element {
           </Flex>
 
           {!isWideVersion && (
-            <Box mb="6" align="center">
+            <Flex mb="6" align="center" justify="center">
+              <Text>
+                Status
+                <Switch
+                  ml="1"
+                  colorScheme="green"
+                  isChecked={isActive}
+                  onChange={() => {
+                    setIsActive(!isActive);
+                  }}
+                ></Switch>
+              </Text>
               <Search placeholder="Filtrar campus" handleOnClick={setFilter} />
-            </Box>
+            </Flex>
           )}
 
           {
@@ -104,7 +134,7 @@ export default function institutionList(): JSX.Element {
                   flex="1"
                   gap="4"
                   minChildWidth={[280, 320]}
-                  aling="flex-start"
+                  align="flex-start"
                 >
                   {data.institutions.map(institution => {
                     return (
@@ -116,7 +146,7 @@ export default function institutionList(): JSX.Element {
                         <CardInstitution
                           key={institution.id}
                           name={institution.name}
-                          cityName={institution.city.name}
+                          cityName={institution.cityName}
                           isActive={institution.isActive}
                           createdAt={institution.createdAt}
                         />

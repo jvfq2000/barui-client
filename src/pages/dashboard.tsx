@@ -87,7 +87,7 @@ export default function Dashboard(): JSX.Element {
             flex="1"
             gap="4"
             minChildWidth={[280, 320]}
-            aling="flex-start"
+            align="flex-start"
           >
             <Box p={["4", "8"]} bg="gray.800" borderRadius={8} pb="4">
               <Text fontSize="lg" mb="4">

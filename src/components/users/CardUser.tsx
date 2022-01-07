@@ -64,7 +64,7 @@ function CardUser({
       </HStack>
 
       <HStack>
-        <Text fontSize="sm">Data de cadastro:</Text>
+        <Text fontSize="sm">Cadastrado em:</Text>
         <Text fontSize="sm" color="gray.300">
           {createdAt}
         </Text>

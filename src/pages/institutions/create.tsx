@@ -2,6 +2,7 @@ import Link from "next/link";
 import Router from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
 import { useMutation, useQuery } from "react-query";
 import * as yup from "yup";
 
@@ -15,11 +16,11 @@ import {
   SimpleGrid,
   HStack,
   useToast,
+  Icon,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 import { Input } from "../../components/form/Input";
-import { InputMask } from "../../components/form/InputMask";
 import { ISelectOption, Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
@@ -97,7 +98,6 @@ export default function CreateInstitution(): JSX.Element {
         .post("institutions", institution)
         .then(response => {
           toast({
-            title: "Tudo certo!",
             description: "Campus cadastrado com sucesso.",
             status: "success",
             position: "top",
@@ -110,7 +110,6 @@ export default function CreateInstitution(): JSX.Element {
         })
         .catch(error => {
           toast({
-            title: "Ops!",
             description: error.response.data.message,
             status: "error",
             position: "top",
@@ -211,7 +210,7 @@ export default function CreateInstitution(): JSX.Element {
 
               <Select
                 name="cities"
-                placeholder={isLoading ? "Aguarde ..." : "Selecione"}
+                placeholder={isLoading ? "Buscando cidades ..." : "Selecione"}
                 options={generateOptionsCities()}
                 label="Cidade"
                 error={errors.cityId}
@@ -224,12 +223,19 @@ export default function CreateInstitution(): JSX.Element {
           <Flex>
             <HStack w="100%" justify="space-between">
               <Link href="/institutions" passHref>
-                <Button colorScheme="whiteAlpha"> Cancelar </Button>
+                <Button
+                  colorScheme="whiteAlpha"
+                  leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
+                >
+                  {" "}
+                  Cancelar{" "}
+                </Button>
               </Link>
               <Button
                 type="submit"
                 colorScheme="green"
                 isLoading={formState.isSubmitting}
+                leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
               >
                 Cadastrar
               </Button>

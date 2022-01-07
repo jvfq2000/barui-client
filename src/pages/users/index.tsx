@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { RiUserAddLine } from "react-icons/ri";
+import { RiAddCircleLine } from "react-icons/ri";
 
 import {
   Box,
@@ -13,6 +13,7 @@ import {
   Spinner,
   SimpleGrid,
   useDisclosure,
+  Switch,
 } from "@chakra-ui/react";
 
 import { Header } from "../../components/Header";
@@ -29,9 +30,11 @@ export default function UserList(): JSX.Element {
   const [userSelected, setUserSelected] = useState<IUser>({} as IUser);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
+  const [isActive, setIsActive] = useState(true);
   const { data, isLoading, isFetching, error } = useUsers({
     page,
     filter,
+    isActive,
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -61,10 +64,23 @@ export default function UserList(): JSX.Element {
             </Heading>
 
             {isWideVersion && (
-              <Search
-                placeholder="Filtrar usuários"
-                handleOnClick={setFilter}
-              />
+              <>
+                <Text>
+                  Status:
+                  <Switch
+                    ml="2"
+                    colorScheme="green"
+                    isChecked={isActive}
+                    onChange={() => {
+                      setIsActive(!isActive);
+                    }}
+                  ></Switch>
+                </Text>
+                <Search
+                  placeholder="Filtrar usuários"
+                  handleOnClick={setFilter}
+                />
+              </>
             )}
 
             <Link href="/users/create" passHref>
@@ -73,7 +89,7 @@ export default function UserList(): JSX.Element {
                 size="sm"
                 fontSize="sm"
                 colorScheme="green"
-                leftIcon={<Icon as={RiUserAddLine} fontSize="20" />}
+                leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
               >
                 Criar novo
               </Button>
@@ -81,12 +97,23 @@ export default function UserList(): JSX.Element {
           </Flex>
 
           {!isWideVersion && (
-            <Box mb="6" align="center">
+            <Flex mb="6" align="center" justify="center">
+              <Text>
+                Status
+                <Switch
+                  ml="1"
+                  colorScheme="green"
+                  isChecked={isActive}
+                  onChange={() => {
+                    setIsActive(!isActive);
+                  }}
+                ></Switch>
+              </Text>
               <Search
                 placeholder="Filtrar usuários"
                 handleOnClick={setFilter}
               />
-            </Box>
+            </Flex>
           )}
 
           {
@@ -105,7 +132,7 @@ export default function UserList(): JSX.Element {
                   flex="1"
                   gap="4"
                   minChildWidth={[280, 320]}
-                  aling="flex-start"
+                  align="flex-start"
                 >
                   {data.users.map(user => {
                     return (

@@ -14,7 +14,7 @@ import { NavSection } from "./NavSection";
 
 function SidebarNav(): JSX.Element {
   return (
-    <VStack spacing="12" align="flex-start">
+    <VStack spacing="12" align="flex-start" borderColor="gray.300">
       <NavSection title="GERAL">
         <NavLink icon={RiDashboardLine} href="/dashboard">
           Dashboard

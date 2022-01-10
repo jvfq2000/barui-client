@@ -16,22 +16,22 @@ import {
   Switch,
 } from "@chakra-ui/react";
 
+import { CardCourse } from "../../components/courses/CardCourse";
+import { CourseOptionsModal } from "../../components/courses/CourseOptionsModal";
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import { CardUser } from "../../components/users/CardUser";
-import { UserOptionsModal } from "../../components/users/UserOptionsModal";
-import { IUser, useUsers } from "../../services/hooks/useUsers";
+import { ICourse, useCourses } from "../../services/hooks/useCourses";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-export default function UserList(): JSX.Element {
-  const [userSelected, setUserSelected] = useState<IUser>({} as IUser);
+export default function courseList(): JSX.Element {
+  const [courseSelected, setCourseSelected] = useState<ICourse>({} as ICourse);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
-  const { data, isLoading, isFetching, error } = useUsers({
+  const { data, isLoading, isFetching, error } = useCourses({
     page,
     filter,
     isActive,
@@ -44,8 +44,8 @@ export default function UserList(): JSX.Element {
     lg: true,
   });
 
-  function onOpenModal(user: IUser) {
-    setUserSelected(user);
+  function onOpenModal(course: ICourse) {
+    setCourseSelected(course);
     onOpen();
   }
 
@@ -57,7 +57,7 @@ export default function UserList(): JSX.Element {
         <Box flex="1" borderRadius={8}>
           <Flex mb="6" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
-              Usuários
+              Cursos
               {!isLoading && isFetching && (
                 <Spinner size="sm" color="gray.500" ml="4" />
               )}
@@ -77,13 +77,13 @@ export default function UserList(): JSX.Element {
                   ></Switch>
                 </Text>
                 <Search
-                  placeholder="Filtrar usuários"
+                  placeholder="Filtrar cursos"
                   handleOnClick={setFilter}
                 />
               </>
             )}
 
-            <Link href="/users/create" passHref>
+            <Link href="/courses/create" passHref>
               <Button
                 as="a"
                 size="sm"
@@ -109,10 +109,7 @@ export default function UserList(): JSX.Element {
                   }}
                 ></Switch>
               </Text>
-              <Search
-                placeholder="Filtrar usuários"
-                handleOnClick={setFilter}
-              />
+              <Search placeholder="Filtrar cursos" handleOnClick={setFilter} />
             </Flex>
           )}
 
@@ -124,7 +121,7 @@ export default function UserList(): JSX.Element {
               </Flex>
             ) : error ? (
               <Flex>
-                <Text>Falha ao obter usuários.</Text>
+                <Text>Falha ao obter cursos.</Text>
               </Flex>
             ) : (
               <>
@@ -134,25 +131,19 @@ export default function UserList(): JSX.Element {
                   minChildWidth={[280, 340]}
                   align="flex-start"
                 >
-                  {data.users.map(user => {
+                  {data.courses.map(course => {
                     return (
                       <Box
                         onClick={() => {
-                          onOpenModal(user);
+                          onOpenModal(course);
                         }}
                       >
-                        <CardUser
-                          key={user.id}
-                          identifier={user.identifier}
-                          name={user.name}
-                          lastName={user.lastName}
-                          email={user.email}
-                          courseName={user.courseName}
-                          avatar={user.avatar}
-                          avatarUrl={user.avatarUrl}
-                          accessLevel={user.accessLevel}
-                          isActive={user.isActive}
-                          createdAt={user.createdAt}
+                        <CardCourse
+                          key={course.id}
+                          name={course.name}
+                          numberPeriods={course.numberPeriods}
+                          isActive={course.isActive}
+                          createdAt={course.createdAt}
                         />
                       </Box>
                     );
@@ -169,7 +160,11 @@ export default function UserList(): JSX.Element {
           }
         </Box>
       </Flex>
-      <UserOptionsModal user={userSelected} isOpen={isOpen} onClose={onClose} />
+      <CourseOptionsModal
+        course={courseSelected}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
     </Box>
   );
 }

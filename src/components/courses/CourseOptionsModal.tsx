@@ -3,10 +3,8 @@ import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
-  Avatar,
   Button,
   Divider,
-  HStack,
   Icon,
   Modal,
   ModalBody,
@@ -21,42 +19,24 @@ import {
 } from "@chakra-ui/react";
 
 import { api } from "../../services/apiClient";
-import { IUser } from "../../services/hooks/useUsers";
+import { ICourse } from "../../services/hooks/useCourses";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
 import { ItemOptionsModal } from "../ItemOptionsModal";
 
-interface IUserOptionsModalProps {
+interface ICourseOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: IUser;
+  course: ICourse;
 }
 
-function UserOptionsModal({
+function CourseOptionsModal({
   isOpen,
   onClose,
-  user,
-}: IUserOptionsModalProps): JSX.Element {
-  const {
-    id,
-    name,
-    lastName,
-    email,
-    identifier,
-    telephone,
-    initialSemester,
-    registration,
-    avatar,
-    avatarUrl,
-    accessLevel,
-    isActive,
-    createdAt,
-
-    courseName,
-    courseNumberPeriods,
-
-    institutionName,
-  } = user;
+  course,
+}: ICourseOptionsModalProps): JSX.Element {
+  const { id, name, numberPeriods, institutionName, isActive, createdAt } =
+    course;
 
   const {
     isOpen: isOpenConfirmModal,
@@ -64,27 +44,27 @@ function UserOptionsModal({
     onClose: onCloseConfirmModal,
   } = useDisclosure();
 
-  const msgActivateUser =
-    "O usuário poderá acessar o sistema normalmente, deseja prosseguir com a alteração?";
-  const msgInactivateUser =
-    "O usuário não poderá mais acessar o sistema, deseja prosseguir com a alteração?";
+  const msgActivateCourse =
+    "O curso e tudo relacionado a ele poderá ser utilizado, até os usuários cadastrados com esse campus voltarão a ter acesso ao sistema, deseja prosseguir com a alteração?";
+  const msgInactivateCourse =
+    "O curso e tudo relacionado a ele não poderá mais ser utilizado ou acessado, até os usuários cadastrados com esse campus perderão acesso ao sistema, deseja prosseguir com a alteração?";
 
   const toast = useToast();
 
   const changeIsActive = useMutation(
     async () => {
       api
-        .patch(`users/is-active?userId=${id}`)
+        .patch(`courses/is-active?courseId=${id}`)
         .then(() => {
           toast({
-            description: "Status do usuário alterado com sucesso.",
+            description: "Status do curso alterado com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
             isClosable: true,
           });
 
-          queryClient.invalidateQueries("users");
+          queryClient.invalidateQueries("courses");
         })
         .catch(error => {
           toast({
@@ -113,44 +93,35 @@ function UserOptionsModal({
         <ModalOverlay />
         <ModalContent mx="2" bg="gray.800">
           <ModalHeader>
-            <HStack spacing={6}>
-              <Avatar size="md" name={name} src={avatar && avatarUrl} />
-              <Text fontSize="xl" fontWeight="normal">
-                {`${name} ${lastName}`}
-              </Text>
-            </HStack>
+            <Text fontSize="2xl" fontWeight="bold">
+              {name}
+            </Text>
           </ModalHeader>
 
           <ModalCloseButton />
 
-          <ModalBody px={["2", "3"]}>
+          <ModalBody px={["2", "3"]} justify="center">
             <Divider mb="4" borderColor="gray.700" />
 
-            <ItemOptionsModal label="CPF" value={identifier} />
-            <ItemOptionsModal label="E-mail" value={email} />
-            <ItemOptionsModal label="Telefone" value={telephone} />
-            <ItemOptionsModal label="Acesso" value={accessLevel} />
+            <ItemOptionsModal label="Campus" value={institutionName} />
+            <ItemOptionsModal
+              label="Duração"
+              value={`${numberPeriods} períodos`}
+            />
+            <ItemOptionsModal label="Cadastrado em" value={createdAt} />
             <ItemOptionsModal
               label="Status"
               value={isActive ? "Ativo" : "Inativo"}
             />
-            <ItemOptionsModal label="Cadastrado em" value={createdAt} />
-
-            <br />
-
-            <ItemOptionsModal label="Campus" value={institutionName} />
-            <ItemOptionsModal label="Matrícula" value={registration} />
-
-            <br />
-
-            <ItemOptionsModal label="Curso" value={courseName} />
-            <ItemOptionsModal label="Início" value={initialSemester} />
-            <ItemOptionsModal label="Duração" value={courseNumberPeriods} />
 
             <Divider mt="4" borderColor="gray.700" />
           </ModalBody>
 
-          <ModalFooter px={["2", "3"]} justifyContent="space-between">
+          <ModalFooter
+            px={["2", "3"]}
+            mt="2"
+            justifyContent={isActive ? "space-between" : "space-between"}
+          >
             <Button
               onClick={() => {
                 onClose();
@@ -170,7 +141,7 @@ function UserOptionsModal({
             {isActive && (
               <Link
                 href={{
-                  pathname: "/users/edit",
+                  pathname: "/courses/edit",
                   query: { id },
                 }}
               >
@@ -191,10 +162,10 @@ function UserOptionsModal({
         handleConfirm={handleChangeIsActive}
         isOpen={isOpenConfirmModal}
         onClose={onCloseConfirmModal}
-        message={isActive ? msgInactivateUser : msgActivateUser}
+        message={isActive ? msgInactivateCourse : msgActivateCourse}
       ></ConfirmModal>
     </>
   );
 }
 
-export { UserOptionsModal };
+export { CourseOptionsModal };

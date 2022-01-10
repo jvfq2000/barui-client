@@ -21,7 +21,6 @@ function uploadFile({
 }: IUploadFileParams): void {
   const formData = new FormData();
   formData.append(nameFileRequest, file);
-  console.log(`file: ${file}`);
   api
     .patch(url, formData)
     .then(() => {

@@ -6,7 +6,7 @@ interface IInstitution {
   id: string;
   name: string;
   isActive: boolean;
-  createdAt: string;
+  createdAt: Date;
 
   cityId: string;
   cityName: string;
@@ -24,6 +24,7 @@ interface IGetInstitutionsResponse {
 interface IGetInstitutionsRequest {
   page: number;
   filter: string;
+  registersPerPage?: number;
   isActive: boolean;
 }
 
@@ -31,12 +32,12 @@ async function getInstitutions({
   page,
   filter,
   isActive,
+  registersPerPage = 12,
 }: IGetInstitutionsRequest): Promise<IGetInstitutionsResponse> {
-  console.log(isActive);
   const { data } = await api.get("institutions", {
     params: {
       page,
-      registersPerPage: 12,
+      registersPerPage,
       filter,
       isActive,
     },
@@ -78,4 +79,4 @@ function useInstitutions({ page, filter, isActive }: IGetInstitutionsRequest) {
 }
 
 export { useInstitutions, getInstitutions };
-export type { IInstitution };
+export type { IInstitution, IGetInstitutionsResponse };

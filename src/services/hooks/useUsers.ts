@@ -8,11 +8,21 @@ interface IUser {
   lastName: string;
   email: string;
   identifier: string;
-  accessLevel: string;
+  telephone: string;
+  initialSemester: string;
+  registration: string;
   avatar: string;
   avatarUrl: string;
-  createdAt: string;
+  accessLevel: string;
   isActive: boolean;
+  createdAt: Date;
+
+  courseId: string;
+  courseName: string;
+  courseNumberPeriods: number;
+
+  institutionId: string;
+  institutionName: string;
 }
 
 interface IGetUsersResponse {
@@ -48,16 +58,26 @@ async function getUsers({
       name: user.name,
       lastName: user.lastName,
       email: user.email,
-      accessLevel: user.accessLevel,
+      identifier: user.identifier,
+      telephone: user.telephone,
+      initialSemester: user.initialSemester,
+      registration: user.registration,
       avatar: user.avatar,
       avatarUrl: user.avatarUrl,
+      accessLevel: user.accessLevel,
       isActive: user.isActive,
-      identifier: user.identifier,
       createdAt: new Date(user.createdAt).toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
       }),
+
+      courseId: user.courseId,
+      courseName: user.courseName,
+      courseNumberPeriods: user.courseNumberPeriods,
+
+      institutionId: user.institutionId,
+      institutionName: user.institutionName,
     };
   });
 
@@ -66,7 +86,7 @@ async function getUsers({
 
 function useUsers({ page, filter, isActive }: IGetUsersRequest) {
   return useQuery(
-    ["users", page, filter],
+    ["users", page, filter, isActive],
     () => getUsers({ page, filter, isActive }),
     {
       staleTime: 1000 * 60 * 10,

@@ -127,7 +127,7 @@ export default function ProfileUser(): JSX.Element {
               </Flex>
             ) : error ? (
               <Flex>
-                <Text>Falha ao obter dados dos usuários.</Text>
+                <Text>Falha ao obter perfil.</Text>
               </Flex>
             ) : (
               <VStack spacing="8">

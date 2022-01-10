@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { RiAddCircleLine, RiBuilding2Line } from "react-icons/ri";
+import { RiAddCircleLine } from "react-icons/ri";
 
 import {
   Box,
@@ -126,14 +126,14 @@ export default function institutionList(): JSX.Element {
               </Flex>
             ) : error ? (
               <Flex>
-                <Text>Falha ao obter dados dos campus.</Text>
+                <Text>Falha ao obter campus.</Text>
               </Flex>
             ) : (
               <>
                 <SimpleGrid
                   flex="1"
                   gap="4"
-                  minChildWidth={[280, 320]}
+                  minChildWidth={[280, 340]}
                   align="flex-start"
                 >
                   {data.institutions.map(institution => {
@@ -169,7 +169,7 @@ export default function institutionList(): JSX.Element {
         institution={institutionSelected}
         isOpen={isOpen}
         onClose={onClose}
-      ></InstitutionOptionsModal>
+      />
     </Box>
   );
 }

@@ -21,6 +21,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 import { Input } from "../../components/form/Input";
+import { InputMask } from "../../components/form/InputMask";
 import { Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
@@ -31,16 +32,31 @@ import { accessLevel } from "../../utils/permitions";
 
 interface IEditUserFormData {
   name: string;
+  lastName: string;
   email: string;
-  accessLevel: string;
   identifier: string;
+  telephone: string;
+  initialSemester: string;
+  registration: string;
+  accessLevel: string;
+  courseId: string;
+  institutionId: string;
 }
 
 const editUserFormSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
   lastName: yup.string().required("Sobrenome obrigatório"),
-  accessLevel: yup.string().required("Nível de acesso obrigatório"),
   email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
+  identifier: yup
+    .string()
+    .required("CPF obrigatório")
+    .min(14, "CPF incompleto"),
+  telephone: yup.string(),
+  initialSemester: yup.string().required("Semestre início curso obrigatório"),
+  registration: yup.string().required("Matrícula obrigatório"),
+  accessLevel: yup.string().required("Nível de acesso obrigatório"),
+  institutionId: yup.string().required("Campus obrigatório"),
+  courseId: yup.string().required("Curso obrigatório"),
 });
 
 export default function EditUser(): JSX.Element {
@@ -89,12 +105,27 @@ export default function EditUser(): JSX.Element {
     api
       .get(`users/by-id?userId=${id}`)
       .then(response => {
-        const { name, lastName, email, accessLevel } = response.data;
+        const {
+          name,
+          lastName,
+          email,
+          identifier,
+          telephone,
+          initialSemester,
+          registration,
+          accessLevel,
+          courseId,
+        } = response.data;
 
         setValue("name", name);
         setValue("lastName", lastName);
         setValue("email", email);
+        setValue("identifier", identifier);
+        setValue("telephone", telephone);
+        setValue("initialSemester", initialSemester);
+        setValue("registration", registration);
         setValue("accessLevel", accessLevel);
+        setValue("courseId", courseId);
       })
       .catch(error => {
         toast({
@@ -134,6 +165,20 @@ export default function EditUser(): JSX.Element {
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Select
+                name="accessLevel"
+                placeholder="Selecione"
+                options={[
+                  { value: accessLevel[0], label: "Aluno" },
+                  { value: accessLevel[1], label: "Coordenador de Atividades" },
+                  { value: accessLevel[2], label: "Coordenador de curso" },
+                  { value: accessLevel[3], label: "Administrador do campus" },
+                  { value: accessLevel[4], label: "Administrador geral" },
+                ]}
+                label="Nível de acesso"
+                error={errors.accessLevel}
+                {...register("accessLevel")}
+              />
               <Input
                 name="name"
                 label="Nome"
@@ -149,6 +194,15 @@ export default function EditUser(): JSX.Element {
             </SimpleGrid>
 
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <InputMask
+                mask="***.***.***-**"
+                placeholder="999.999.999-99"
+                maskChar="_"
+                name="identifier"
+                label="CPF"
+                error={errors.identifier}
+                {...register("identifier")}
+              />
               <Input
                 name="email"
                 type="email"
@@ -156,18 +210,57 @@ export default function EditUser(): JSX.Element {
                 error={errors.email}
                 {...register("email")}
               />
+              <InputMask
+                mask="(**) * **** - ****"
+                placeholder="(38) 9 9999 - 9999"
+                maskChar="_"
+                name="telephone"
+                label="Telefone"
+                error={errors.telephone}
+                {...register("telephone")}
+              />
+            </SimpleGrid>
+
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Select
-                name="accessLevel"
+                name="institution"
                 placeholder="Selecione"
                 options={[
-                  { value: "cliente", label: "Cliente" },
-                  { value: "profissional", label: "Profissional" },
-                  { value: "representante", label: "Representante" },
-                  { value: "administrador", label: "Administrador" },
+                  { value: "asdfasfasfsdf", label: "Campus 1" },
+                  { value: "asdfasdfasdfsf", label: "Campus 2" },
                 ]}
-                label="Nível de acesso"
-                error={errors.accessLevel}
-                {...register("accessLevel")}
+                label="Campus"
+                error={errors.institutionId}
+                {...register("institutionId")}
+              />
+              <Select
+                name="course"
+                placeholder="Selecione"
+                options={[
+                  { value: "asdfasfasfsdf", label: "Curso 1" },
+                  { value: "asdfasdfasdfsf", label: "Curso 2" },
+                ]}
+                label="Curso"
+                error={errors.courseId}
+                {...register("courseId")}
+              />
+            </SimpleGrid>
+
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Input
+                name="registration"
+                label="Matrícula"
+                error={errors.registration}
+                {...register("registration")}
+              />
+              <InputMask
+                mask="**/****"
+                placeholder="01/2022"
+                maskChar="_"
+                name="initialSemester"
+                label="Primeiro semestre"
+                error={errors.initialSemester}
+                {...register("initialSemester")}
               />
             </SimpleGrid>
           </VStack>

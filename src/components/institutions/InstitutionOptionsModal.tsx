@@ -5,7 +5,6 @@ import { useMutation } from "react-query";
 import {
   Button,
   Divider,
-  HStack,
   Icon,
   Modal,
   ModalBody,
@@ -14,7 +13,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  SimpleGrid,
   Text,
   useDisclosure,
   useToast,
@@ -24,6 +22,7 @@ import { api } from "../../services/apiClient";
 import { IInstitution } from "../../services/hooks/useInstitutions";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
+import { ItemOptionsModal } from "../ItemOptionsModal";
 
 interface IInstitutionOptionsModalProps {
   isOpen: boolean;
@@ -97,11 +96,11 @@ function InstitutionOptionsModal({
 
   return (
     <>
-      <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
+      <Modal onClose={onClose} isOpen={isOpen} size="sm" isCentered>
         <ModalOverlay />
         <ModalContent mx="2" bg="gray.800">
-          <ModalHeader>
-            <Text fontSize="2xl" fontWeight="bold">
+          <ModalHeader textAlign="center">
+            <Text fontSize="xl" fontWeight="normal">
               {name}
             </Text>
           </ModalHeader>
@@ -110,40 +109,16 @@ function InstitutionOptionsModal({
 
           <ModalBody px={["2", "3"]} justify="center">
             <Divider mb="4" borderColor="gray.700" />
-            <SimpleGrid
-              flex="1"
-              gap="1"
-              minChildWidth="200px"
-              align="flex-start"
-            >
-              <HStack>
-                <Text fontSize="lg">Estado:</Text>
-                <Text fontSize="lg" color="gray.300">
-                  {stateName}
-                </Text>
-              </HStack>
 
-              <HStack>
-                <Text fontSize="lg">Cidade:</Text>
-                <Text fontSize="lg" color="gray.300">
-                  {cityName}
-                </Text>
-              </HStack>
+            <ItemOptionsModal label="Estado" value={stateName} />
+            <ItemOptionsModal label="Cidade" value={cityName} />
+            <ItemOptionsModal
+              label="Status"
+              value={isActive ? "Ativo" : "Inativo"}
+            />
+            <ItemOptionsModal label="Cadastrado em" value={createdAt} />
 
-              <HStack>
-                <Text fontSize="lg">Cadastrado em:</Text>
-                <Text fontSize="lg" color="gray.300">
-                  {createdAt}
-                </Text>
-              </HStack>
-
-              <HStack>
-                <Text fontSize="lg">Status:</Text>
-                <Text fontSize="lg" color="gray.300">
-                  {isActive ? "Ativo" : "Inativo"}
-                </Text>
-              </HStack>
-            </SimpleGrid>
+            <Divider mt="4" borderColor="gray.700" />
           </ModalBody>
 
           <ModalFooter

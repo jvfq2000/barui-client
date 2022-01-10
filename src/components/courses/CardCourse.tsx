@@ -2,19 +2,19 @@ import { Box, Text } from "@chakra-ui/react";
 
 import { ItemCard } from "../ItemCard";
 
-interface ICardInstitutionProps {
+interface ICardCourseProps {
   name: string;
-  cityName: string;
+  numberPeriods: number;
   isActive: boolean;
   createdAt: Date;
 }
 
-function CardInstitution({
+function CardCourse({
   name,
-  cityName,
+  numberPeriods,
   isActive,
   createdAt,
-}: ICardInstitutionProps): JSX.Element {
+}: ICardCourseProps): JSX.Element {
   return (
     <Box
       p={["6", "8"]}
@@ -27,11 +27,11 @@ function CardInstitution({
         {name}
       </Text>
 
-      <ItemCard label="Cidade" value={cityName} />
+      <ItemCard label="Duração" value={`${numberPeriods} períodos`} />
       <ItemCard label="Cadastrado em" value={createdAt} />
       <ItemCard label="Status" value={isActive ? "Ativo" : "Inativo"} />
     </Box>
   );
 }
 
-export { CardInstitution };
+export { CardCourse };

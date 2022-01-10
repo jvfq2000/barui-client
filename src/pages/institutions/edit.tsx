@@ -137,8 +137,6 @@ export default function EditInstitution(): JSX.Element {
       .then(response => {
         const { name, cityId, stateId } = response.data;
 
-        console.log(response.data);
-
         setValue("name", name);
         setStateId(stateId);
         setValue("cityId", cityId);

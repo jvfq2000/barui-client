@@ -62,7 +62,6 @@ export default function CreateInstitution(): JSX.Element {
       .get(`states`)
       .then(response => {
         const states = response.data;
-
         setStates(states);
       })
       .catch(error => {
@@ -140,14 +139,12 @@ export default function CreateInstitution(): JSX.Element {
   function generateOptionsStates(): ISelectOption[] {
     const options: ISelectOption[] = [];
 
-    if (states) {
-      states.forEach(state => {
-        options.push({
-          value: state.id,
-          label: `${state.name} - ${state.acronym}`,
-        });
+    states?.forEach(state => {
+      options.push({
+        value: state.id,
+        label: `${state.name} - ${state.acronym}`,
       });
-    }
+    });
 
     return options;
   }
@@ -155,14 +152,12 @@ export default function CreateInstitution(): JSX.Element {
   function generateOptionsCities(): ISelectOption[] {
     const options: ISelectOption[] = [];
 
-    if (cities) {
-      cities.forEach(citie => {
-        options.push({
-          value: citie.id,
-          label: citie.name,
-        });
+    cities?.forEach(citie => {
+      options.push({
+        value: citie.id,
+        label: citie.name,
       });
-    }
+    });
 
     return options;
   }

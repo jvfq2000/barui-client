@@ -40,7 +40,7 @@ function Sidebar(): JSX.Element {
   }
 
   return (
-    <Box as="aside" w="64">
+    <Box as="aside" w="48">
       <SidebarNav />
     </Box>
   );

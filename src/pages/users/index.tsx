@@ -137,12 +137,12 @@ export default function UserList(): JSX.Element {
                   {data.users.map(user => {
                     return (
                       <Box
+                        key={user.id}
                         onClick={() => {
                           onOpenModal(user);
                         }}
                       >
                         <CardUser
-                          key={user.id}
                           identifier={user.identifier}
                           name={user.name}
                           lastName={user.lastName}

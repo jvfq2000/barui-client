@@ -62,7 +62,15 @@ interface IInstitution {
 
 export default function CreateUser(): JSX.Element {
   const { user } = useContext(AuthContext);
+  const toast = useToast();
 
+  const [stateId, setStateId] = useState("");
+  const [cityId, setCityId] = useState("");
+
+  const [cities, setCities] = useState<ICity[]>();
+  const [states, setStates] = useState<IState[]>();
+  const [institutions, setInstitutions] = useState<IInstitution[]>();
+  const [courses, setCourses] = useState<IState[]>();
   const [accessLevelForm, setAccessLevelForm] = useState("");
 
   const createUserFormSchema = yup.object().shape({
@@ -74,49 +82,38 @@ export default function CreateUser(): JSX.Element {
       .required("CPF obrigatório")
       .min(14, "CPF incompleto"),
     telephone: yup.string(),
+    accessLevel: yup.string().required("Nível de acesso obrigatório"),
+    institutionId: yup
+      .string()
+      .test("institutionIdTest", "Campus obrigatório", value => {
+        if (user.accessLevel !== accessLevel[4]) {
+          return true;
+        }
+        return !!value;
+      }),
     initialSemester: yup
       .string()
-      .test(
-        "initialSemesterTest",
-        "Semestre início curso obrigatório",
-        value => {
-          if (accessLevel[accessLevelForm] > accessLevel.aluno) {
-            return true;
-          }
-
-          return !!value;
-        },
-      ),
+      .test("initialSemesterTest", "Primeiro semestre obrigatório", value => {
+        if (accessLevel[accessLevelForm] > accessLevel.aluno) {
+          return true;
+        }
+        return !!value;
+      }),
     registration: yup
       .string()
       .test("registrationTest", "Matrícula obrigatório", value => {
         if (accessLevel[accessLevelForm] > accessLevel.aluno) {
           return true;
         }
-
         return !!value;
       }),
-    accessLevel: yup.string().required("Nível de acesso obrigatório"),
-    institutionId: yup.string().required("Campus obrigatório"),
-    courseId: yup
-      .string()
-      .test("courseIdTest", "Curso é obrigatório", value => {
-        if (user.accessLevel === accessLevel[4]) {
-          return true;
-        }
-
-        return !!value;
-      }),
+    courseId: yup.string().test("courseIdTest", "Curso obrigatório", value => {
+      if (user.accessLevel === accessLevel[4]) {
+        return true;
+      }
+      return !!value;
+    }),
   });
-
-  const toast = useToast();
-
-  const [stateId, setStateId] = useState("");
-  const [cityId, setCityId] = useState("");
-
-  const [cities, setCities] = useState<ICity[]>();
-  const [states, setStates] = useState<IState[]>();
-  const [institutions, setInstitutions] = useState<IInstitution[]>();
 
   useEffect(() => {
     api
@@ -241,6 +238,27 @@ export default function CreateUser(): JSX.Element {
     }
   }, [cityId]);
 
+  if (user.accessLevel === accessLevel[3]) {
+    useEffect(() => {
+      api
+        .get(`courses/by-institution-id`)
+        .then(response => {
+          const courses = response.data;
+          setCourses(courses);
+        })
+        .catch(error => {
+          toast({
+            title: "Ops!",
+            description: error.response.data.message,
+            status: "error",
+            position: "top",
+            duration: 8000,
+            isClosable: true,
+          });
+        });
+    }, []);
+  }
+
   function generateOptionsStates(): ISelectOption[] {
     const options: ISelectOption[] = [];
 
@@ -274,6 +292,19 @@ export default function CreateUser(): JSX.Element {
       options.push({
         value: institution.id,
         label: institution.name,
+      });
+    });
+
+    return options;
+  }
+
+  function generateOptionsCourses(): ISelectOption[] {
+    const options: ISelectOption[] = [];
+
+    courses?.forEach(course => {
+      options.push({
+        value: course.id,
+        label: course.name,
       });
     });
 
@@ -395,10 +426,7 @@ export default function CreateUser(): JSX.Element {
                 <Select
                   name="course"
                   placeholder="Selecione"
-                  options={[
-                    { value: "asdfasfasfsdf", label: "Curso 1" },
-                    { value: "asdfasdfasdfsf", label: "Curso 2" },
-                  ]}
+                  options={generateOptionsCourses()}
                   label="Curso"
                   error={errors.courseId}
                   {...register("courseId")}

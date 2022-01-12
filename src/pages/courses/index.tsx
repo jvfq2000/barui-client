@@ -134,12 +134,12 @@ export default function courseList(): JSX.Element {
                   {data.courses.map(course => {
                     return (
                       <Box
+                        key={course.id}
                         onClick={() => {
                           onOpenModal(course);
                         }}
                       >
                         <CardCourse
-                          key={course.id}
                           name={course.name}
                           numberPeriods={course.numberPeriods}
                           isActive={course.isActive}

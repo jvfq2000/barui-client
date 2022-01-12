@@ -109,7 +109,7 @@ function UserOptionsModal({
 
   return (
     <>
-      <Modal onClose={onClose} isOpen={isOpen} size="sm" isCentered>
+      <Modal onClose={onClose} isOpen={isOpen} size="md" isCentered>
         <ModalOverlay />
         <ModalContent mx="2" bg="gray.800">
           <ModalHeader>

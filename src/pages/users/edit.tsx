@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Router from "next/router";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import * as yup from "yup";
 
 import {
@@ -22,9 +22,10 @@ import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 import { Input } from "../../components/form/Input";
 import { InputMask } from "../../components/form/InputMask";
-import { Select } from "../../components/form/Select";
+import { ISelectOption, Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
+import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/apiClient";
 import { queryClient } from "../../services/queryClient";
 import { withSSRAuth } from "../../shared/withSSRAuth";
@@ -43,25 +44,96 @@ interface IEditUserFormData {
   institutionId: string;
 }
 
-const editUserFormSchema = yup.object().shape({
-  name: yup.string().required("Nome obrigatório"),
-  lastName: yup.string().required("Sobrenome obrigatório"),
-  email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
-  identifier: yup
-    .string()
-    .required("CPF obrigatório")
-    .min(14, "CPF incompleto"),
-  telephone: yup.string(),
-  initialSemester: yup.string().required("Semestre início curso obrigatório"),
-  registration: yup.string().required("Matrícula obrigatório"),
-  accessLevel: yup.string().required("Nível de acesso obrigatório"),
-  institutionId: yup.string().required("Campus obrigatório"),
-  courseId: yup.string().required("Curso obrigatório"),
-});
+interface IState {
+  id: string;
+  name: string;
+  acronym: string;
+}
+
+interface ICity {
+  id: string;
+  name: string;
+}
+
+interface IInstitution {
+  id: string;
+  name: string;
+}
 
 export default function EditUser(): JSX.Element {
   const { id } = Router.query;
+  const { user } = useContext(AuthContext);
   const toast = useToast();
+
+  const [stateId, setStateId] = useState("");
+  const [cityId, setCityId] = useState("");
+
+  const [cities, setCities] = useState<ICity[]>();
+  const [states, setStates] = useState<IState[]>();
+  const [institutions, setInstitutions] = useState<IInstitution[]>();
+  const [courses, setCourses] = useState<IState[]>();
+  const [accessLevelForm, setAccessLevelForm] = useState("");
+
+  const editUserFormSchema = yup.object().shape({
+    name: yup.string().required("Nome obrigatório"),
+    lastName: yup.string().required("Sobrenome obrigatório"),
+    email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
+    identifier: yup
+      .string()
+      .required("CPF obrigatório")
+      .min(14, "CPF incompleto"),
+    telephone: yup.string(),
+    accessLevel: yup.string().required("Nível de acesso obrigatório"),
+    institutionId: yup
+      .string()
+      .test("institutionIdTest", "Campus obrigatório", value => {
+        if (user.accessLevel !== accessLevel[4]) {
+          return true;
+        }
+        return !!value;
+      }),
+    initialSemester: yup
+      .string()
+      .test("initialSemesterTest", "Primeiro semestre obrigatório", value => {
+        if (accessLevel[accessLevelForm] > accessLevel.aluno) {
+          return true;
+        }
+        return !!value;
+      }),
+    registration: yup
+      .string()
+      .test("registrationTest", "Matrícula obrigatório", value => {
+        if (accessLevel[accessLevelForm] > accessLevel.aluno) {
+          return true;
+        }
+        return !!value;
+      }),
+    courseId: yup.string().test("courseIdTest", "Curso obrigatório", value => {
+      if (user.accessLevel === accessLevel[4]) {
+        return true;
+      }
+      return !!value;
+    }),
+  });
+
+  useEffect(() => {
+    api
+      .get(`states`)
+      .then(response => {
+        const states = response.data;
+        setStates(states);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      });
+  }, []);
 
   const editUser = useMutation(
     async (user: IEditUserFormData) => {
@@ -101,6 +173,142 @@ export default function EditUser(): JSX.Element {
   });
   const { errors } = formState;
 
+  function generateAccessLevelOptions(): ISelectOption[] {
+    let options: ISelectOption[];
+
+    if (user?.accessLevel === accessLevel[3]) {
+      options = [
+        {
+          value: accessLevel[0],
+          label: "Aluno",
+        },
+        { value: accessLevel[1], label: "Coordenador de atividades" },
+        { value: accessLevel[2], label: "Coordenador de curso" },
+      ];
+    } else {
+      options = [
+        { value: accessLevel[3], label: "Administrador do campus" },
+        { value: accessLevel[4], label: "Administrador geral" },
+      ];
+    }
+
+    return options;
+  }
+
+  const { data, isLoading } = useQuery(
+    ["cities", stateId],
+    async (): Promise<ICity[]> => {
+      const { data } = stateId
+        ? await api.get(`cities?stateId=${stateId}`)
+        : { data: [] };
+
+      return data;
+    },
+    {
+      staleTime: 1000 * 60 * 60,
+    },
+  );
+
+  useEffect(() => {
+    setCities(data);
+  }, [data]);
+
+  if (user.accessLevel === accessLevel[4]) {
+    useEffect(() => {
+      if (cityId) {
+        api
+          .get(`institutions/by-city-id?cityId=${cityId}`)
+          .then(response => {
+            const institutions = response.data;
+            setInstitutions(institutions);
+          })
+          .catch(error => {
+            toast({
+              title: "Ops!",
+              description: error.response.data.message,
+              status: "error",
+              position: "top",
+              duration: 8000,
+              isClosable: true,
+            });
+          });
+      }
+    }, [cityId]);
+  }
+
+  if (user.accessLevel === accessLevel[3]) {
+    useEffect(() => {
+      api
+        .get(`courses/by-institution-id`)
+        .then(response => {
+          const courses = response.data;
+          setCourses(courses);
+        })
+        .catch(error => {
+          toast({
+            title: "Ops!",
+            description: error.response.data.message,
+            status: "error",
+            position: "top",
+            duration: 8000,
+            isClosable: true,
+          });
+        });
+    }, []);
+  }
+
+  function generateOptionsStates(): ISelectOption[] {
+    const options: ISelectOption[] = [];
+
+    states?.forEach(state => {
+      options.push({
+        value: state.id,
+        label: `${state.name} - ${state.acronym}`,
+      });
+    });
+
+    return options;
+  }
+
+  function generateOptionsCities(): ISelectOption[] {
+    const options: ISelectOption[] = [];
+
+    cities?.forEach(citie => {
+      options.push({
+        value: citie.id,
+        label: citie.name,
+      });
+    });
+
+    return options;
+  }
+
+  function generateOptionsInstitutions(): ISelectOption[] {
+    const options: ISelectOption[] = [];
+
+    institutions?.forEach(institution => {
+      options.push({
+        value: institution.id,
+        label: institution.name,
+      });
+    });
+
+    return options;
+  }
+
+  function generateOptionsCourses(): ISelectOption[] {
+    const options: ISelectOption[] = [];
+
+    courses?.forEach(course => {
+      options.push({
+        value: course.id,
+        label: course.name,
+      });
+    });
+
+    return options;
+  }
+
   useEffect(() => {
     api
       .get(`users/by-id?userId=${id}`)
@@ -113,7 +321,11 @@ export default function EditUser(): JSX.Element {
           telephone,
           initialSemester,
           registration,
-          accessLevel,
+          accessLevel: accessLevelResponse,
+
+          stateId,
+          cityId,
+          institutionId,
           courseId,
         } = response.data;
 
@@ -122,10 +334,30 @@ export default function EditUser(): JSX.Element {
         setValue("email", email);
         setValue("identifier", identifier);
         setValue("telephone", telephone);
-        setValue("initialSemester", initialSemester);
-        setValue("registration", registration);
-        setValue("accessLevel", accessLevel);
-        setValue("courseId", courseId);
+        setValue("accessLevel", accessLevelResponse);
+
+        setAccessLevelForm(accessLevelResponse);
+
+        if (
+          accessLevel[String(accessLevelResponse)] <
+          accessLevel["administrador do campus"]
+        ) {
+          setValue("courseId", courseId);
+        }
+
+        if (accessLevel[String(accessLevelResponse)] === accessLevel.aluno) {
+          setValue("initialSemester", initialSemester);
+          setValue("registration", registration);
+        }
+
+        if (
+          accessLevel[String(accessLevelResponse)] >=
+          accessLevel["administrador do campus"]
+        ) {
+          setStateId(stateId);
+          setCityId(cityId);
+          setValue("institutionId", institutionId);
+        }
       })
       .catch(error => {
         toast({
@@ -137,7 +369,7 @@ export default function EditUser(): JSX.Element {
           isClosable: true,
         });
       });
-  }, []);
+  }, [institutions]);
 
   const handleEditUser: SubmitHandler<IEditUserFormData> = async data => {
     await editUser.mutateAsync(data);
@@ -158,7 +390,7 @@ export default function EditUser(): JSX.Element {
           onSubmit={handleSubmit(handleEditUser)}
         >
           <Heading size="lg" fontWeight="normal">
-            Alterar usuário
+            Cadastar usuário
           </Heading>
 
           <Divider my="6" borderColor="gray.700" />
@@ -168,16 +400,13 @@ export default function EditUser(): JSX.Element {
               <Select
                 name="accessLevel"
                 placeholder="Selecione"
-                options={[
-                  { value: accessLevel[0], label: "Aluno" },
-                  { value: accessLevel[1], label: "Coordenador de Atividades" },
-                  { value: accessLevel[2], label: "Coordenador de curso" },
-                  { value: accessLevel[3], label: "Administrador do campus" },
-                  { value: accessLevel[4], label: "Administrador geral" },
-                ]}
+                options={generateAccessLevelOptions()}
                 label="Nível de acesso"
                 error={errors.accessLevel}
                 {...register("accessLevel")}
+                onChange={event => {
+                  setAccessLevelForm(event.target.value);
+                }}
               />
               <Input
                 name="name"
@@ -221,52 +450,77 @@ export default function EditUser(): JSX.Element {
               />
             </SimpleGrid>
 
-            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Select
-                name="institution"
-                placeholder="Selecione"
-                options={[
-                  { value: "asdfasfasfsdf", label: "Campus 1" },
-                  { value: "asdfasdfasdfsf", label: "Campus 2" },
-                ]}
-                label="Campus"
-                error={errors.institutionId}
-                {...register("institutionId")}
-              />
-              <Select
-                name="course"
-                placeholder="Selecione"
-                options={[
-                  { value: "asdfasfasfsdf", label: "Curso 1" },
-                  { value: "asdfasdfasdfsf", label: "Curso 2" },
-                ]}
-                label="Curso"
-                error={errors.courseId}
-                {...register("courseId")}
-              />
-            </SimpleGrid>
+            {accessLevel[accessLevelForm] >=
+              accessLevel["administrador do campus"] && (
+              <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+                <Select
+                  name="states"
+                  placeholder="Selecione"
+                  options={generateOptionsStates()}
+                  label="Estado"
+                  value={stateId}
+                  onChange={event => {
+                    setStateId(event.target.value);
+                  }}
+                />
+                <Select
+                  name="cities"
+                  placeholder={isLoading ? "Buscando cidades ..." : "Selecione"}
+                  options={generateOptionsCities()}
+                  label="Cidade"
+                  value={cityId}
+                  onChange={event => {
+                    setCityId(event.target.value);
+                  }}
+                  isDisabled={isLoading}
+                />
+                <Select
+                  name="institutions"
+                  placeholder={isLoading ? "Buscando campus ..." : "Selecione"}
+                  options={generateOptionsInstitutions()}
+                  label="Campus"
+                  error={errors.institutionId}
+                  {...register("institutionId")}
+                  isDisabled={isLoading}
+                />
+              </SimpleGrid>
+            )}
 
-            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Input
-                name="registration"
-                label="Matrícula"
-                error={errors.registration}
-                {...register("registration")}
-              />
-              <InputMask
-                mask="**/****"
-                placeholder="01/2022"
-                maskChar="_"
-                name="initialSemester"
-                label="Primeiro semestre"
-                error={errors.initialSemester}
-                {...register("initialSemester")}
-              />
-            </SimpleGrid>
+            {accessLevel[accessLevelForm] <
+              accessLevel["administrador do campus"] && (
+              <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+                <Select
+                  name="course"
+                  placeholder="Selecione"
+                  options={generateOptionsCourses()}
+                  label="Curso"
+                  error={errors.courseId}
+                  {...register("courseId")}
+                />
+              </SimpleGrid>
+            )}
+
+            {accessLevel[accessLevelForm] === accessLevel.aluno && (
+              <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+                <Input
+                  name="registration"
+                  label="Matrícula"
+                  error={errors.registration}
+                  {...register("registration")}
+                />
+                <InputMask
+                  mask="**/****"
+                  placeholder="01/2022"
+                  maskChar="_"
+                  name="initialSemester"
+                  label="Primeiro semestre"
+                  error={errors.initialSemester}
+                  {...register("initialSemester")}
+                />
+              </SimpleGrid>
+            )}
           </VStack>
-
           <Divider my="6" borderColor="gray.700" />
-
           <Flex>
             <HStack w="100%" justify="space-between">
               <Link href="/users" passHref>

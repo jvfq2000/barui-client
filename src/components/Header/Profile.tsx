@@ -29,7 +29,11 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
   const initialFocusRef = useRef();
 
   return (
-    <Popover initialFocusRef={initialFocusRef} placement="bottom-end">
+    <Popover
+      id="propoverProfile"
+      initialFocusRef={initialFocusRef}
+      placement="bottom-end"
+    >
       <PopoverTrigger>
         <Flex align="center" cursor="pointer">
           {showProfileData && (
@@ -74,7 +78,7 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
               w="100%"
               h="7"
               mb="2"
-              _hover={{ color: "gray.800", bg: "gray.100" }}
+              _hover={{ bg: "gray.600" }}
             >
               Perfil
             </Button>
@@ -87,7 +91,7 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
             w="100%"
             h="7"
             onClick={signOut}
-            _hover={{ color: "gray.800", bg: "gray.100" }}
+            _hover={{ bg: "gray.600" }}
           >
             Sair
           </Button>

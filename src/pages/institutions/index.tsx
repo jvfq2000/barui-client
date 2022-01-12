@@ -139,12 +139,12 @@ export default function institutionList(): JSX.Element {
                   {data.institutions.map(institution => {
                     return (
                       <Box
+                        key={institution.id}
                         onClick={() => {
                           onOpenModal(institution);
                         }}
                       >
                         <CardInstitution
-                          key={institution.id}
                           name={institution.name}
                           cityName={institution.cityName}
                           isActive={institution.isActive}

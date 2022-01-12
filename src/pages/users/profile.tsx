@@ -15,6 +15,7 @@ import {
   Avatar,
   Spinner,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
@@ -38,17 +39,20 @@ interface IEditProfileFormData {
 }
 
 const profileUserFormSchema = yup.object().shape({
-  name: yup.string().required("Nome obrigatório"),
-  lastName: yup.string().required("Sobrenome obrigatório"),
-  email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
-  identifier: yup
-    .string()
-    .required("CPF obrigatório")
-    .min(14, "CPF incompleto"),
-  accessLevel: yup.string().required("Nível de acesso obrigatório"),
+  name: yup.string(),
+  lastName: yup.string(),
+  email: yup.string(),
+  identifier: yup.string(),
+  telephone: yup.string(),
+  accessLevel: yup.string(),
+  institution: yup.string(),
+  course: yup.string(),
+  initialSemester: yup.string(),
+  registration: yup.string(),
 });
 
 export default function ProfileUser(): JSX.Element {
+  const toast = useToast();
   const [avatar, setAvatar] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarUpload, setAvatarUpload] = useState<File>(null);
@@ -60,26 +64,48 @@ export default function ProfileUser(): JSX.Element {
   });
   const { errors } = formState;
 
-  const { data, isLoading, isFetching, error, refetch } = useQuery(
-    "profile",
-    async (): Promise<IUser> => {
-      const { data } = await api.get("users/profile");
-      return data;
-    },
-    {
-      staleTime: 1000 * 60 * 5,
-    },
-  );
-
   useEffect(() => {
-    setValue("name", data?.name);
-    setValue("lastName", data?.lastName);
-    setValue("email", data?.email);
-    setValue("identifier", data?.identifier);
-    setValue("accessLevel", data?.accessLevel);
-    setAvatar(data?.avatar);
-    setAvatarUrl(data?.avatarUrl);
-  }, [data]);
+    api
+      .get("users/profile")
+      .then(response => {
+        const {
+          avatar,
+          avatarUrl,
+          name,
+          lastName,
+          email,
+          identifier,
+          telephone,
+          accessLevel,
+          institutionName,
+          courseName,
+          initialSemester,
+          registration,
+        } = response.data;
+
+        setValue("name", name);
+        setValue("lastName", lastName);
+        setValue("email", email);
+        setValue("identifier", identifier);
+        setValue("telephone", telephone);
+        setValue("accessLevel", accessLevel);
+        setValue("institution", institutionName);
+        setValue("course", courseName);
+        setValue("initialSemester", initialSemester);
+        setValue("registration", registration);
+        setAvatar(avatar);
+        setAvatarUrl(avatarUrl);
+      })
+      .catch(error => {
+        toast({
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      });
+  }, []);
 
   function showToast({ description, status }: IShowToast) {
     window.location.reload();
@@ -99,7 +125,9 @@ export default function ProfileUser(): JSX.Element {
       nameFileRequest: "avatar",
       descriptionToast: "Avatar alterado com sucesso.",
       showToast,
-      updateData: refetch,
+      updateData: () => {
+        //
+      },
     });
   }
 
@@ -112,96 +140,121 @@ export default function ProfileUser(): JSX.Element {
         <Box flex="1" borderRadius={8} bg="gray.800" p={["6", "8"]}>
           <Heading size="lg" fontWeight="normal">
             Perfil
-            {!isLoading && isFetching && (
-              <Spinner size="sm" color="gray.500" ml="4" />
-            )}
           </Heading>
 
           <Divider my="6" borderColor="gray.700" />
 
-          {
-            // eslint-disable-next-line no-nested-ternary
-            isLoading ? (
-              <Flex justify="center">
-                <Spinner />
-              </Flex>
-            ) : error ? (
-              <Flex>
-                <Text>Falha ao obter perfil.</Text>
-              </Flex>
-            ) : (
-              <VStack spacing="8">
-                <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-                  <Box align="center">
-                    {" "}
-                    <Avatar
-                      mr="4"
-                      size="xl"
-                      name={getValues("name")}
-                      src={avatar && avatarUrl}
-                    />
-                  </Box>
-                  <Box position="relative" top="30%">
-                    <InputFile
-                      name="avatar"
-                      label={avatarUpload?.name || "Alterar avatar"}
-                      pt="1"
-                      error={errors.avatar}
-                      {...register("avatar")}
-                      onChange={handleChangeAvatar}
-                      showButtonUpload
-                      handleButtonUpload={handleUploadAvatar}
-                      labelBotton="Alterar"
-                      isLoadingButton={isLoadingUploadAvatar}
-                      fileSelected={fileSelected}
-                    />
-                  </Box>
-                </SimpleGrid>
+          <VStack spacing="8">
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Box align="center">
+                {" "}
+                <Avatar
+                  mr="4"
+                  size="xl"
+                  name={getValues("name")}
+                  src={avatar && avatarUrl}
+                />
+              </Box>
+              <Box position="relative" top="30%">
+                <InputFile
+                  name="avatar"
+                  label={avatarUpload?.name || "Alterar avatar"}
+                  pt="1"
+                  error={errors.avatar}
+                  {...register("avatar")}
+                  onChange={handleChangeAvatar}
+                  showButtonUpload
+                  handleButtonUpload={handleUploadAvatar}
+                  labelBotton="Alterar"
+                  isLoadingButton={isLoadingUploadAvatar}
+                  fileSelected={fileSelected}
+                />
+              </Box>
+            </SimpleGrid>
 
-                <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-                  <Input
-                    isDisabled={true}
-                    name="name"
-                    label="Nome"
-                    error={errors.name}
-                    {...register("name")}
-                  />
-                  <Input
-                    isDisabled={true}
-                    name="lastName"
-                    label="Sobrenome"
-                    error={errors.lastName}
-                    {...register("lastName")}
-                  />
-                </SimpleGrid>
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Input
+                isDisabled={true}
+                name="accessLevel"
+                label="Nível de acesso"
+                error={errors.accessLevel}
+                {...register("accessLevel")}
+              />
+              <Input
+                isDisabled={true}
+                name="name"
+                label="Nome"
+                error={errors.name}
+                {...register("name")}
+              />
+              <Input
+                isDisabled={true}
+                name="lastName"
+                label="Sobrenome"
+                error={errors.lastName}
+                {...register("lastName")}
+              />
+            </SimpleGrid>
 
-                <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-                  <Input
-                    isDisabled={true}
-                    name="email"
-                    type="email"
-                    label="E-mail"
-                    error={errors.email}
-                    {...register("email")}
-                  />
-                  <Input
-                    isDisabled={true}
-                    name="identifier"
-                    label="CPF"
-                    error={errors.identifier}
-                    {...register("identifier")}
-                  />
-                  <Input
-                    isDisabled={true}
-                    name="accessLevel"
-                    label="Nível de acesso"
-                    error={errors.accessLevel}
-                    {...register("accessLevel")}
-                  />
-                </SimpleGrid>
-              </VStack>
-            )
-          }
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Input
+                isDisabled={true}
+                name="identifier"
+                label="CPF"
+                error={errors.identifier}
+                {...register("identifier")}
+              />
+              <Input
+                isDisabled={true}
+                name="email"
+                type="email"
+                label="E-mail"
+                error={errors.email}
+                {...register("email")}
+              />
+              <Input
+                isDisabled={true}
+                name="telephone"
+                label="Telefone"
+                error={errors.telephone}
+                {...register("telephone")}
+              />
+            </SimpleGrid>
+
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Input
+                isDisabled={true}
+                name="institution"
+                label="Campus"
+                error={errors.institution}
+                {...register("institution")}
+              />
+              <Input
+                isDisabled={true}
+                name="course"
+                label="Curso"
+                error={errors.course}
+                {...register("course")}
+              />
+            </SimpleGrid>
+
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Input
+                isDisabled={true}
+                name="registration"
+                label="Matrícula"
+                error={errors.registration}
+                {...register("registration")}
+              />
+              <Input
+                isDisabled={true}
+                name="initialSemester"
+                label="Primeiro semestre"
+                error={errors.initialSemester}
+                {...register("initialSemester")}
+              />
+            </SimpleGrid>
+          </VStack>
 
           <Divider my="6" borderColor="gray.700" />
 

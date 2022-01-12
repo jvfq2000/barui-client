@@ -80,8 +80,8 @@ function Pagination({
               previousPages.map(page => {
                 return (
                   <PaginationItem
-                    onPageChange={onPageChange}
                     key={page}
+                    onPageChange={onPageChange}
                     number={page}
                   />
                 );
@@ -97,8 +97,8 @@ function Pagination({
               nextPages.map(page => {
                 return (
                   <PaginationItem
-                    onPageChange={onPageChange}
                     key={page}
+                    onPageChange={onPageChange}
                     number={page}
                   />
                 );

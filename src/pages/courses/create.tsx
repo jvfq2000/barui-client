@@ -34,7 +34,7 @@ interface ICreateCourseFormData {
 
 const createCourseFormSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
-  numberPeriods: yup.number().required("Duração obrigatória"),
+  numberPeriods: yup.string().required("Duração obrigatória"),
 });
 
 export default function CreateCourse(): JSX.Element {

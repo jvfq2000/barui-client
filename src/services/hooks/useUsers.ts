@@ -23,6 +23,11 @@ interface IUser {
 
   institutionId: string;
   institutionName: string;
+
+  cityId: string;
+  cityName: string;
+  stateId: string;
+  stateName: string;
 }
 
 interface IGetUsersResponse {
@@ -78,6 +83,11 @@ async function getUsers({
 
       institutionId: user.institutionId,
       institutionName: user.institutionName,
+
+      cityId: user.cityId,
+      cityName: user.cityName,
+      stateId: user.stateId,
+      stateName: user.stateName,
     };
   });
 

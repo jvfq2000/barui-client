@@ -38,9 +38,8 @@ export default function SignIn(): JSX.Element {
   });
   const { errors } = formState;
 
-  function showToast({ title, description, status }: IShowToast) {
+  function showToast({ description, status }: IShowToast) {
     toast({
-      title,
       description,
       status,
       position: "top",

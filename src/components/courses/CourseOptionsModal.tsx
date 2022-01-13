@@ -45,9 +45,9 @@ function CourseOptionsModal({
   } = useDisclosure();
 
   const msgActivateCourse =
-    "O curso e tudo relacionado a ele poderá ser utilizado, até os usuários cadastrados com esse campus voltarão a ter acesso ao sistema, deseja prosseguir com a alteração?";
+    "O curso voltará a poder ser utilizado em cadastros ou edições, deseja prosseguir com a alteração?";
   const msgInactivateCourse =
-    "O curso e tudo relacionado a ele não poderá mais ser utilizado ou acessado, até os usuários cadastrados com esse campus perderão acesso ao sistema, deseja prosseguir com a alteração?";
+    "O curso não poderá ser utilizado em cadastros ou edições, deseja prosseguir com a alteração?";
 
   const toast = useToast();
 

@@ -65,9 +65,9 @@ function UserOptionsModal({
   } = useDisclosure();
 
   const msgActivateUser =
-    "O usuário poderá acessar o sistema normalmente, deseja prosseguir com a alteração?";
+    "O usuário voltará a ter acesso ao sistema, deseja prosseguir com a alteração?";
   const msgInactivateUser =
-    "O usuário não poderá mais acessar o sistema, deseja prosseguir com a alteração?";
+    "O usuário perderá o acesso ao sistema, deseja prosseguir com a alteração?";
 
   const toast = useToast();
 

@@ -52,9 +52,9 @@ function InstitutionOptionsModal({
   } = useDisclosure();
 
   const msgActivateInstitution =
-    "O campus e tudo relacionado a ele poderá ser utilizado, até os usuários cadastrados com esse campus voltarão a ter acesso ao sistema, deseja prosseguir com a alteração?";
+    "O campus voltará a poder ser utilizado e todos os usuários vinculados a ele voltarão a ter acesso ao sistema, deseja prosseguir com a alteração?";
   const msgInactivateInstitution =
-    "O campus e tudo relacionado a ele não poderá mais ser utilizado ou acessado, até os usuários cadastrados com esse campus perderão acesso ao sistema, deseja prosseguir com a alteração?";
+    "O campus não poderá ser utilizado, e todos os usuários vinculados a ele não poderão acessar o sistema, deseja prosseguir com a alteração?";
 
   const toast = useToast();
 

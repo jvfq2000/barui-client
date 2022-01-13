@@ -72,7 +72,7 @@ export default function EditUser(): JSX.Element {
   const [states, setStates] = useState<IState[]>();
   const [institutions, setInstitutions] = useState<IInstitution[]>();
   const [courses, setCourses] = useState<IState[]>();
-  const [accessLevelForm, setAccessLevelForm] = useState("");
+  const [accessLevelForm, setAccessLevelForm] = useState("aluno");
 
   const editUserFormSchema = yup.object().shape({
     name: yup.string().required("Nome obrigatório"),

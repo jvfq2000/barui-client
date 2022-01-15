@@ -13,6 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Text,
   useDisclosure,
   useToast,
@@ -45,7 +46,7 @@ function CourseOptionsModal({
   } = useDisclosure();
 
   const msgActivateCourse =
-    "O curso voltará a poder ser utilizado em cadastros ou edições, deseja prosseguir com a alteração?";
+    "O curso poderá ser utilizado em cadastros ou edições, deseja prosseguir com a alteração?";
   const msgInactivateCourse =
     "O curso não poderá ser utilizado em cadastros ou edições, deseja prosseguir com a alteração?";
 
@@ -106,7 +107,7 @@ function CourseOptionsModal({
             <ItemOptionsModal label="Campus" value={institutionName} />
             <ItemOptionsModal
               label="Duração"
-              value={`${numberPeriods} períodos`}
+              value={`${numberPeriods} semestres`}
             />
             <ItemOptionsModal label="Cadastrado em" value={createdAt} />
             <ItemOptionsModal
@@ -117,43 +118,41 @@ function CourseOptionsModal({
             <Divider mt="4" borderColor="gray.700" />
           </ModalBody>
 
-          <ModalFooter
-            px={["2", "3"]}
-            mt="2"
-            justifyContent={isActive ? "space-between" : "space-between"}
-          >
-            <Button
-              onClick={() => {
-                onClose();
-                onOpenConfirmModal();
-              }}
-              colorScheme={isActive ? "red" : "green"}
-              leftIcon={
-                <Icon
-                  as={isActive ? RiLockLine : RiLockUnlockLine}
-                  fontSize="20"
-                />
-              }
-            >
-              {isActive ? "Inativar" : "Ativar"}
-            </Button>
-
-            {isActive && (
-              <Link
-                href={{
-                  pathname: "/courses/edit",
-                  query: { id },
+          <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
+            <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+              <Button
+                onClick={() => {
+                  onClose();
+                  onOpenConfirmModal();
                 }}
+                colorScheme={isActive ? "red" : "green"}
+                leftIcon={
+                  <Icon
+                    as={isActive ? RiLockLine : RiLockUnlockLine}
+                    fontSize="20"
+                  />
+                }
               >
-                <Button
-                  onClick={onClose}
-                  colorScheme="blue"
-                  leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                {isActive ? "Inativar" : "Ativar"}
+              </Button>
+
+              {isActive && (
+                <Link
+                  href={{
+                    pathname: "/courses/edit",
+                    query: { id },
+                  }}
                 >
-                  Alterar
-                </Button>
-              </Link>
-            )}
+                  <Button
+                    onClick={onClose}
+                    colorScheme="blue"
+                    leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                  >
+                    Alterar
+                  </Button>
+                </Link>
+              )}
+            </SimpleGrid>
           </ModalFooter>
         </ModalContent>
       </Modal>

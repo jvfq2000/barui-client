@@ -2,19 +2,19 @@ import { Box, Text } from "@chakra-ui/react";
 
 import { ItemCard } from "../ItemCard";
 
-interface ICardCourseProps {
+interface ICardRegulationProps {
   name: string;
-  numberPeriods: number;
+  inForceFrom: string;
   isActive: boolean;
   createdAt: Date;
 }
 
-function CardCourse({
+function CardRegulation({
   name,
-  numberPeriods,
+  inForceFrom,
   isActive,
   createdAt,
-}: ICardCourseProps): JSX.Element {
+}: ICardRegulationProps): JSX.Element {
   return (
     <Box
       p={["6", "8"]}
@@ -27,11 +27,11 @@ function CardCourse({
         {name}
       </Text>
 
-      <ItemCard label="Duração" value={`${numberPeriods} semestres`} />
+      <ItemCard label="Em vigor a partir de" value={inForceFrom} />
       <ItemCard label="Cadastrado em" value={createdAt} />
       <ItemCard label="Status" value={isActive ? "Ativo" : "Inativo"} />
     </Box>
   );
 }
 
-export { CardCourse };
+export { CardRegulation };

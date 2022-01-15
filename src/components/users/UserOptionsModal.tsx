@@ -15,6 +15,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Text,
   useDisclosure,
   useToast,
@@ -151,38 +152,40 @@ function UserOptionsModal({
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} justifyContent="space-between">
-            <Button
-              onClick={() => {
-                onClose();
-                onOpenConfirmModal();
-              }}
-              colorScheme={isActive ? "red" : "green"}
-              leftIcon={
-                <Icon
-                  as={isActive ? RiLockLine : RiLockUnlockLine}
-                  fontSize="20"
-                />
-              }
-            >
-              {isActive ? "Inativar" : "Ativar"}
-            </Button>
-
-            {isActive && (
-              <Link
-                href={{
-                  pathname: "/users/edit",
-                  query: { id },
+            <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+              <Button
+                onClick={() => {
+                  onClose();
+                  onOpenConfirmModal();
                 }}
+                colorScheme={isActive ? "red" : "green"}
+                leftIcon={
+                  <Icon
+                    as={isActive ? RiLockLine : RiLockUnlockLine}
+                    fontSize="20"
+                  />
+                }
               >
-                <Button
-                  onClick={onClose}
-                  colorScheme="blue"
-                  leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                {isActive ? "Inativar" : "Ativar"}
+              </Button>
+
+              {isActive && (
+                <Link
+                  href={{
+                    pathname: "/users/edit",
+                    query: { id },
+                  }}
                 >
-                  Alterar
-                </Button>
-              </Link>
-            )}
+                  <Button
+                    onClick={onClose}
+                    colorScheme="blue"
+                    leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                  >
+                    Alterar
+                  </Button>
+                </Link>
+              )}
+            </SimpleGrid>
           </ModalFooter>
         </ModalContent>
       </Modal>

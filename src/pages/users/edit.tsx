@@ -27,6 +27,7 @@ import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
 import { AuthContext } from "../../contexts/AuthContext";
 import { api } from "../../services/apiClient";
+import { IUser } from "../../services/hooks/useUsers";
 import { queryClient } from "../../services/queryClient";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
@@ -60,6 +61,11 @@ interface IInstitution {
   name: string;
 }
 
+interface ICourse {
+  id: string;
+  name: string;
+}
+
 export default function EditUser(): JSX.Element {
   const { id } = Router.query;
   const { user } = useContext(AuthContext);
@@ -71,7 +77,7 @@ export default function EditUser(): JSX.Element {
   const [cities, setCities] = useState<ICity[]>();
   const [states, setStates] = useState<IState[]>();
   const [institutions, setInstitutions] = useState<IInstitution[]>();
-  const [courses, setCourses] = useState<IState[]>();
+  const [courses, setCourses] = useState<ICourse[]>();
   const [accessLevelForm, setAccessLevelForm] = useState("aluno");
 
   const editUserFormSchema = yup.object().shape({
@@ -120,7 +126,7 @@ export default function EditUser(): JSX.Element {
     api
       .get(`states`)
       .then(response => {
-        const states = response.data;
+        const states = response.data as IState[];
         setStates(states);
       })
       .catch(error => {
@@ -219,7 +225,7 @@ export default function EditUser(): JSX.Element {
         api
           .get(`institutions/by-city-id?cityId=${cityId}`)
           .then(response => {
-            const institutions = response.data;
+            const institutions = response.data as IInstitution[];
             setInstitutions(institutions);
           })
           .catch(error => {
@@ -241,7 +247,7 @@ export default function EditUser(): JSX.Element {
       api
         .get(`courses/by-institution-id`)
         .then(response => {
-          const courses = response.data;
+          const courses = response.data as ICourse[];
           setCourses(courses);
         })
         .catch(error => {
@@ -327,7 +333,7 @@ export default function EditUser(): JSX.Element {
           cityId,
           institutionId,
           courseId,
-        } = response.data;
+        } = response.data as IUser;
 
         setValue("name", name);
         setValue("lastName", lastName);
@@ -525,7 +531,7 @@ export default function EditUser(): JSX.Element {
             <HStack w="100%" justify="space-between">
               <Link href="/users" passHref>
                 <Button
-                  colorScheme="whiteAlpha"
+                  colorScheme="whigreenpha"
                   leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
                 >
                   Cancelar

@@ -117,26 +117,26 @@ export default function CreateCourse(): JSX.Element {
               name="numberPeriods"
               placeholder="Selecione"
               options={[
-                { value: "1", label: "1 período" },
-                { value: "2", label: "2 períodos" },
-                { value: "3", label: "3 períodos" },
-                { value: "4", label: "4 períodos" },
-                { value: "5", label: "5 períodos" },
-                { value: "6", label: "6 períodos" },
-                { value: "7", label: "7 períodos" },
-                { value: "8", label: "8 períodos" },
-                { value: "9", label: "9 períodos" },
-                { value: "10", label: "10 períodos" },
-                { value: "11", label: "11 períodos" },
-                { value: "12", label: "12 períodos" },
-                { value: "13", label: "13 períodos" },
-                { value: "14", label: "14 períodos" },
-                { value: "15", label: "15 períodos" },
-                { value: "16", label: "16 períodos" },
-                { value: "17", label: "17 períodos" },
-                { value: "18", label: "18 períodos" },
-                { value: "19", label: "19 períodos" },
-                { value: "20", label: "20 períodos" },
+                { value: "1", label: "1 semestre" },
+                { value: "2", label: "2 semestres" },
+                { value: "3", label: "3 semestres" },
+                { value: "4", label: "4 semestres" },
+                { value: "5", label: "5 semestres" },
+                { value: "6", label: "6 semestres" },
+                { value: "7", label: "7 semestres" },
+                { value: "8", label: "8 semestres" },
+                { value: "9", label: "9 semestres" },
+                { value: "10", label: "10 semestres" },
+                { value: "11", label: "11 semestres" },
+                { value: "12", label: "12 semestres" },
+                { value: "13", label: "13 semestres" },
+                { value: "14", label: "14 semestres" },
+                { value: "15", label: "15 semestres" },
+                { value: "16", label: "16 semestres" },
+                { value: "17", label: "17 semestres" },
+                { value: "18", label: "18 semestres" },
+                { value: "19", label: "19 semestres" },
+                { value: "20", label: "20 semestres" },
               ]}
               label="Duração"
               error={errors.numberPeriods}
@@ -150,11 +150,10 @@ export default function CreateCourse(): JSX.Element {
             <HStack w="100%" justify="space-between">
               <Link href="/courses" passHref>
                 <Button
-                  colorScheme="whiteAlpha"
+                  colorScheme="whigreenpha"
                   leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
                 >
-                  {" "}
-                  Cancelar{" "}
+                  Cancelar
                 </Button>
               </Link>
               <Button

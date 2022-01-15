@@ -46,7 +46,7 @@ function ConfirmModal({
         <ModalFooter px={["2", "6"]} mt="2" justifyContent="space-between">
           <Button
             onClick={onClose}
-            colorScheme="whiteAlpha"
+            colorScheme="whigreenpha"
             leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
           >
             Cancelar

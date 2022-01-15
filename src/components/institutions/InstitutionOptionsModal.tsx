@@ -13,6 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Text,
   useDisclosure,
   useToast,
@@ -52,7 +53,7 @@ function InstitutionOptionsModal({
   } = useDisclosure();
 
   const msgActivateInstitution =
-    "O campus voltará a poder ser utilizado e todos os usuários vinculados a ele voltarão a ter acesso ao sistema, deseja prosseguir com a alteração?";
+    "O campus poderá ser utilizado e todos os usuários vinculados a ele terão acesso ao sistema, deseja prosseguir com a alteração?";
   const msgInactivateInstitution =
     "O campus não poderá ser utilizado, e todos os usuários vinculados a ele não poderão acessar o sistema, deseja prosseguir com a alteração?";
 
@@ -121,43 +122,41 @@ function InstitutionOptionsModal({
             <Divider mt="4" borderColor="gray.700" />
           </ModalBody>
 
-          <ModalFooter
-            px={["2", "3"]}
-            mt="2"
-            justifyContent={isActive ? "space-between" : "space-between"}
-          >
-            <Button
-              onClick={() => {
-                onClose();
-                onOpenConfirmModal();
-              }}
-              colorScheme={isActive ? "red" : "green"}
-              leftIcon={
-                <Icon
-                  as={isActive ? RiLockLine : RiLockUnlockLine}
-                  fontSize="20"
-                />
-              }
-            >
-              {isActive ? "Inativar" : "Ativar"}
-            </Button>
-
-            {isActive && (
-              <Link
-                href={{
-                  pathname: "/institutions/edit",
-                  query: { id },
+          <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
+            <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+              <Button
+                onClick={() => {
+                  onClose();
+                  onOpenConfirmModal();
                 }}
+                colorScheme={isActive ? "red" : "green"}
+                leftIcon={
+                  <Icon
+                    as={isActive ? RiLockLine : RiLockUnlockLine}
+                    fontSize="20"
+                  />
+                }
               >
-                <Button
-                  onClick={onClose}
-                  colorScheme="blue"
-                  leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                {isActive ? "Inativar" : "Ativar"}
+              </Button>
+
+              {isActive && (
+                <Link
+                  href={{
+                    pathname: "/institutions/edit",
+                    query: { id },
+                  }}
                 >
-                  Alterar
-                </Button>
-              </Link>
-            )}
+                  <Button
+                    onClick={onClose}
+                    colorScheme="blue"
+                    leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                  >
+                    Alterar
+                  </Button>
+                </Link>
+              )}
+            </SimpleGrid>
           </ModalFooter>
         </ModalContent>
       </Modal>

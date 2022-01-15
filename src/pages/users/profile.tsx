@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
 import * as yup from "yup";
 
 import {
@@ -13,8 +12,6 @@ import {
   VStack,
   SimpleGrid,
   Avatar,
-  Spinner,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
@@ -81,7 +78,7 @@ export default function ProfileUser(): JSX.Element {
           courseName,
           initialSemester,
           registration,
-        } = response.data;
+        } = response.data as IUser;
 
         setValue("name", name);
         setValue("lastName", lastName);
@@ -147,7 +144,6 @@ export default function ProfileUser(): JSX.Element {
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Box align="center">
-                {" "}
                 <Avatar
                   mr="4"
                   size="xl"
@@ -260,7 +256,7 @@ export default function ProfileUser(): JSX.Element {
 
           <Flex justify="right">
             <Link href="/users" passHref>
-              <Button colorScheme="whiteAlpha"> Voltar </Button>
+              <Button colorScheme="whigreenpha"> Voltar </Button>
             </Link>
           </Flex>
         </Box>

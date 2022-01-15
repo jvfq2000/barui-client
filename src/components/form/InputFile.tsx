@@ -8,7 +8,6 @@ import {
   FormLabel,
   FormErrorMessage,
   Button,
-  Box,
   Flex,
 } from "@chakra-ui/react";
 
@@ -46,13 +45,14 @@ const InputFileBase: ForwardRefRenderFunction<
         {!!label && (
           <FormLabel
             borderRadius="5"
-            borderColor="gray.900"
+            border="1px solid green"
             p="3"
             h="47px"
             bg="gray.900"
             htmlFor={name}
             id={`label-for-${name}`}
             _hover={{
+              bg: "gray.800",
               cursor: "pointer",
             }}
           >

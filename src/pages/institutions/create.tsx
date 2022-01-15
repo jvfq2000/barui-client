@@ -61,7 +61,7 @@ export default function CreateInstitution(): JSX.Element {
     api
       .get(`states`)
       .then(response => {
-        const states = response.data;
+        const states = response.data as IState[];
         setStates(states);
       })
       .catch(error => {
@@ -219,11 +219,10 @@ export default function CreateInstitution(): JSX.Element {
             <HStack w="100%" justify="space-between">
               <Link href="/institutions" passHref>
                 <Button
-                  colorScheme="whiteAlpha"
+                  colorScheme="whigreenpha"
                   leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
                 >
-                  {" "}
-                  Cancelar{" "}
+                  Cancelar
                 </Button>
               </Link>
               <Button

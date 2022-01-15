@@ -29,7 +29,7 @@ import {
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-export default function institutionList(): JSX.Element {
+export default function InstitutionList(): JSX.Element {
   const [institutionSelected, setInstitutionSelected] = useState<IInstitution>(
     {} as IInstitution,
   );

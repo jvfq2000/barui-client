@@ -16,22 +16,28 @@ import {
   Switch,
 } from "@chakra-ui/react";
 
-import { CardCourse } from "../../components/courses/CardCourse";
-import { CourseOptionsModal } from "../../components/courses/CourseOptionsModal";
+import { Can } from "../../components/Can";
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
 import { Pagination } from "../../components/Pagination";
+import { CardRegulation } from "../../components/regulations/CardRegulation";
+import { RegulationOptionsModal } from "../../components/regulations/RegulationOptionsModal";
 import { Sidebar } from "../../components/Sidebar";
-import { ICourse, useCourses } from "../../services/hooks/useCourses";
+import {
+  IRegulation,
+  useRegulations,
+} from "../../services/hooks/useRegulations";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-export default function CourseList(): JSX.Element {
-  const [courseSelected, setCourseSelected] = useState<ICourse>({} as ICourse);
+export default function RegulationList(): JSX.Element {
+  const [regulationSelected, setRegulationSelected] = useState<IRegulation>(
+    {} as IRegulation,
+  );
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
-  const { data, isLoading, isFetching, error } = useCourses({
+  const { data, isLoading, isFetching, error } = useRegulations({
     page,
     filter,
     isActive,
@@ -44,8 +50,8 @@ export default function CourseList(): JSX.Element {
     lg: true,
   });
 
-  function onOpenModal(course: ICourse) {
-    setCourseSelected(course);
+  function onOpenModal(regulation: IRegulation) {
+    setRegulationSelected(regulation);
     onOpen();
   }
 
@@ -57,7 +63,7 @@ export default function CourseList(): JSX.Element {
         <Box flex="1" borderRadius={8}>
           <Flex mb="6" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
-              Cursos
+              Regulamentos
               {!isLoading && isFetching && (
                 <Spinner size="sm" color="gray.500" ml="4" />
               )}
@@ -65,6 +71,44 @@ export default function CourseList(): JSX.Element {
 
             {isWideVersion && (
               <>
+                <Can accessLevel={accessLevel[3]}>
+                  <Text>
+                    Status:
+                    <Switch
+                      ml="2"
+                      colorScheme="green"
+                      isChecked={isActive}
+                      onChange={() => {
+                        setIsActive(!isActive);
+                      }}
+                    ></Switch>
+                  </Text>
+                </Can>
+                <Search
+                  placeholder="Filtrar regulamentos"
+                  handleOnClick={setFilter}
+                />
+              </>
+            )}
+
+            <Can accessLevel={accessLevel[3]}>
+              <Link href="/regulations/create" passHref>
+                <Button
+                  as="a"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="green"
+                  leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
+                >
+                  Criar novo
+                </Button>
+              </Link>
+            </Can>
+          </Flex>
+
+          {!isWideVersion && (
+            <Flex mb="6" align="center" justify="center">
+              <Can accessLevel={accessLevel[3]}>
                 <Text>
                   Status:
                   <Switch
@@ -76,39 +120,7 @@ export default function CourseList(): JSX.Element {
                     }}
                   ></Switch>
                 </Text>
-                <Search
-                  placeholder="Filtrar cursos"
-                  handleOnClick={setFilter}
-                />
-              </>
-            )}
-
-            <Link href="/courses/create" passHref>
-              <Button
-                as="a"
-                size="sm"
-                fontSize="sm"
-                colorScheme="green"
-                leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-              >
-                Criar novo
-              </Button>
-            </Link>
-          </Flex>
-
-          {!isWideVersion && (
-            <Flex mb="6" align="center" justify="center">
-              <Text>
-                Status
-                <Switch
-                  ml="1"
-                  colorScheme="green"
-                  isChecked={isActive}
-                  onChange={() => {
-                    setIsActive(!isActive);
-                  }}
-                ></Switch>
-              </Text>
+              </Can>
               <Search placeholder="Filtrar cursos" handleOnClick={setFilter} />
             </Flex>
           )}
@@ -131,19 +143,19 @@ export default function CourseList(): JSX.Element {
                   minChildWidth={[280, 340]}
                   align="flex-start"
                 >
-                  {data.courses.map(course => {
+                  {data.regulations.map(regulation => {
                     return (
                       <Box
-                        key={course.id}
+                        key={regulation.id}
                         onClick={() => {
-                          onOpenModal(course);
+                          onOpenModal(regulation);
                         }}
                       >
-                        <CardCourse
-                          name={course.name}
-                          numberPeriods={course.numberPeriods}
-                          isActive={course.isActive}
-                          createdAt={course.createdAt}
+                        <CardRegulation
+                          name={regulation.name}
+                          inForceFrom={regulation.inForceFrom}
+                          isActive={regulation.isActive}
+                          createdAt={regulation.createdAt}
                         />
                       </Box>
                     );
@@ -160,8 +172,8 @@ export default function CourseList(): JSX.Element {
           }
         </Box>
       </Flex>
-      <CourseOptionsModal
-        course={courseSelected}
+      <RegulationOptionsModal
+        regulation={regulationSelected}
         isOpen={isOpen}
         onClose={onClose}
       />
@@ -173,6 +185,6 @@ const getServerSideProps = withSSRAuth(async ctx => {
   return {
     props: {},
   };
-}, accessLevel[3]);
+}, accessLevel[0]);
 
 export { getServerSideProps };

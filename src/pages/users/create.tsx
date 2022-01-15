@@ -60,6 +60,11 @@ interface IInstitution {
   name: string;
 }
 
+interface ICourse {
+  id: string;
+  name: string;
+}
+
 export default function CreateUser(): JSX.Element {
   const { user } = useContext(AuthContext);
   const toast = useToast();
@@ -70,7 +75,7 @@ export default function CreateUser(): JSX.Element {
   const [cities, setCities] = useState<ICity[]>();
   const [states, setStates] = useState<IState[]>();
   const [institutions, setInstitutions] = useState<IInstitution[]>();
-  const [courses, setCourses] = useState<IState[]>();
+  const [courses, setCourses] = useState<ICourse[]>();
   const [accessLevelForm, setAccessLevelForm] = useState("");
 
   const createUserFormSchema = yup.object().shape({
@@ -119,7 +124,7 @@ export default function CreateUser(): JSX.Element {
     api
       .get(`states`)
       .then(response => {
-        const states = response.data;
+        const states = response.data as IState[];
         setStates(states);
       })
       .catch(error => {
@@ -222,7 +227,7 @@ export default function CreateUser(): JSX.Element {
       api
         .get(`institutions/by-city-id?cityId=${cityId}`)
         .then(response => {
-          const institutions = response.data;
+          const institutions = response.data as IInstitution[];
           setInstitutions(institutions);
         })
         .catch(error => {
@@ -243,7 +248,7 @@ export default function CreateUser(): JSX.Element {
       api
         .get(`courses/by-institution-id`)
         .then(response => {
-          const courses = response.data;
+          const courses = response.data as ICourse[];
           setCourses(courses);
         })
         .catch(error => {
@@ -459,7 +464,7 @@ export default function CreateUser(): JSX.Element {
             <HStack w="100%" justify="space-between">
               <Link href="/users" passHref>
                 <Button
-                  colorScheme="whiteAlpha"
+                  colorScheme="whigreenpha"
                   leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
                 >
                   Cancelar

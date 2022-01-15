@@ -77,7 +77,7 @@ function AuthProvider({ children }: IAuthProviderProps) {
             avatar,
             avatarUrl,
             identifier,
-          } = response.data;
+          } = response.data as IUser;
 
           setUser({
             email,

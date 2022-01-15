@@ -146,26 +146,24 @@ export default function CreateCourse(): JSX.Element {
 
           <Divider my="6" borderColor="gray.700" />
 
-          <Flex>
-            <HStack w="100%" justify="space-between">
-              <Link href="/courses" passHref>
-                <Button
-                  colorScheme="whigreenpha"
-                  leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
-                >
-                  Cancelar
-                </Button>
-              </Link>
+          <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+            <Link href="/courses" passHref>
               <Button
-                type="submit"
-                colorScheme="green"
-                isLoading={formState.isSubmitting}
-                leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
+                colorScheme="whiteAlpha"
+                leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               >
-                Cadastrar
+                Cancelar
               </Button>
-            </HStack>
-          </Flex>
+            </Link>
+            <Button
+              type="submit"
+              colorScheme="green"
+              isLoading={formState.isSubmitting}
+              leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
+            >
+              Cadastrar
+            </Button>
+          </SimpleGrid>
         </Box>
       </Flex>
     </Box>

@@ -254,11 +254,11 @@ export default function ProfileUser(): JSX.Element {
 
           <Divider my="6" borderColor="gray.700" />
 
-          <Flex justify="right">
+          <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
             <Link href="/users" passHref>
-              <Button colorScheme="whigreenpha"> Voltar </Button>
+              <Button colorScheme="whiteAlpha"> Voltar </Button>
             </Link>
-          </Flex>
+          </SimpleGrid>
         </Box>
       </Flex>
     </Box>

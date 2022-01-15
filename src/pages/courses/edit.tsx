@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Router from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import * as yup from "yup";
 
 import {
@@ -12,7 +12,6 @@ import {
   Heading,
   Button,
   Divider,
-  VStack,
   SimpleGrid,
   HStack,
   useToast,
@@ -21,7 +20,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 import { Input } from "../../components/form/Input";
-import { ISelectOption, Select } from "../../components/form/Select";
+import { Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
 import { api } from "../../services/apiClient";
@@ -167,26 +166,24 @@ export default function EditCourse(): JSX.Element {
 
           <Divider my="6" borderColor="gray.700" />
 
-          <Flex>
-            <HStack w="100%" justify="space-between">
-              <Link href="/courses" passHref>
-                <Button
-                  colorScheme="whigreenpha"
-                  leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
-                >
-                  Cancelar
-                </Button>
-              </Link>
+          <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+            <Link href="/courses" passHref>
               <Button
-                type="submit"
-                colorScheme="green"
-                isLoading={formState.isSubmitting}
-                leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
+                colorScheme="whiteAlpha"
+                leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               >
-                Cadastrar
+                Cancelar
               </Button>
-            </HStack>
-          </Flex>
+            </Link>
+            <Button
+              type="submit"
+              colorScheme="green"
+              isLoading={formState.isSubmitting}
+              leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
+            >
+              Cadastrar
+            </Button>
+          </SimpleGrid>
         </Box>
       </Flex>
     </Box>

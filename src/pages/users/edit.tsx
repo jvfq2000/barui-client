@@ -526,27 +526,27 @@ export default function EditUser(): JSX.Element {
               </SimpleGrid>
             )}
           </VStack>
+
           <Divider my="6" borderColor="gray.700" />
-          <Flex>
-            <HStack w="100%" justify="space-between">
-              <Link href="/users" passHref>
-                <Button
-                  colorScheme="whigreenpha"
-                  leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
-                >
-                  Cancelar
-                </Button>
-              </Link>
+
+          <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+            <Link href="/users" passHref>
               <Button
-                type="submit"
-                colorScheme="green"
-                isLoading={formState.isSubmitting}
-                leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
+                colorScheme="whiteAlpha"
+                leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               >
-                Alterar
+                Cancelar
               </Button>
-            </HStack>
-          </Flex>
+            </Link>
+            <Button
+              type="submit"
+              colorScheme="green"
+              isLoading={formState.isSubmitting}
+              leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
+            >
+              Alterar
+            </Button>
+          </SimpleGrid>
         </Box>
       </Flex>
     </Box>

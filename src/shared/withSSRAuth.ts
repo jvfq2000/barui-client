@@ -17,7 +17,7 @@ function withSSRAuth<P>(
     ctx: GetServerSidePropsContext,
   ): Promise<GetServerSidePropsResult<P>> => {
     const cookies = parseCookies(ctx);
-    const token = cookies["baseApp.token"];
+    const token = cookies["baruiApp.token"];
 
     if (!token) {
       return {
@@ -51,8 +51,8 @@ function withSSRAuth<P>(
       return resultFn;
     } catch (error) {
       if (error instanceof AuthTokenError) {
-        destroyCookie(ctx, "baseApp.token");
-        destroyCookie(ctx, "baseApp.refreshToken");
+        destroyCookie(ctx, "baruiApp.token");
+        destroyCookie(ctx, "baruiApp.refreshToken");
 
         return {
           redirect: {

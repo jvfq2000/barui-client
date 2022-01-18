@@ -6,6 +6,7 @@ import {
   RiDashboardLine,
   RiFileList2Line,
   RiFileList3Line,
+  RiPriceTag3Line,
   RiTimerFlashLine,
 } from "react-icons/ri";
 
@@ -18,7 +19,7 @@ import { NavSection } from "./NavSection";
 
 function SidebarNav(): JSX.Element {
   return (
-    <VStack spacing="12" align="flex-start" borderColor="gray.300">
+    <VStack spacing="12" align="flex-start">
       <NavSection title="GERAL">
         <NavLink icon={RiDashboardLine} href="/dashboard">
           Dashboard
@@ -44,11 +45,16 @@ function SidebarNav(): JSX.Element {
       </Can>
 
       <NavSection title="ATIVIDADES">
+        <NavLink icon={RiTimerFlashLine} href="/activities">
+          Atividades
+        </NavLink>
+        <Can accessLevel={accessLevel[3]}>
+          <NavLink icon={RiPriceTag3Line} href="/activity-categories">
+            Cat. Atividades
+          </NavLink>
+        </Can>
         <NavLink icon={RiFileList2Line} href="/regulations">
           Regulamentos
-        </NavLink>
-        <NavLink icon={RiTimerFlashLine} href="/activites">
-          Atividades
         </NavLink>
       </NavSection>
     </VStack>

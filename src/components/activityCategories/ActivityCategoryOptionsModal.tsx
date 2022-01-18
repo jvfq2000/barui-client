@@ -20,31 +20,23 @@ import {
 } from "@chakra-ui/react";
 
 import { api } from "../../services/apiClient";
-import { IInstitution } from "../../services/hooks/useInstitutions";
+import { IActivityCategory } from "../../services/hooks/useActivityCategories";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
 import { ItemOptionsModal } from "../ItemOptionsModal";
 
-interface IInstitutionOptionsModalProps {
+interface IActivityCategoryOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  institution: IInstitution;
+  activityCategory: IActivityCategory;
 }
 
-function InstitutionOptionsModal({
+function ActivityCategoryOptionsModal({
   isOpen,
   onClose,
-  institution,
-}: IInstitutionOptionsModalProps): JSX.Element {
-  const {
-    id,
-    name,
-    isActive,
-    createdAt,
-
-    cityName,
-    stateName,
-  } = institution;
+  activityCategory,
+}: IActivityCategoryOptionsModalProps): JSX.Element {
+  const { id, name, institutionName, isActive, createdAt } = activityCategory;
 
   const {
     isOpen: isOpenConfirmModal,
@@ -52,27 +44,27 @@ function InstitutionOptionsModal({
     onClose: onCloseConfirmModal,
   } = useDisclosure();
 
-  const msgActivateInstitution =
-    "O campus poderá ser utilizado e todos os usuários vinculados a ele terão acesso ao sistema, deseja prosseguir com a alteração?";
-  const msgInactivateInstitution =
-    "O campus não poderá ser utilizado, e todos os usuários vinculados a ele não poderão acessar o sistema, deseja prosseguir com a alteração?";
+  const msgActivateActivityCategory =
+    "A categoria poderá ser utilizada em cadastros ou edições, deseja prosseguir com a alteração?";
+  const msgInactivateActivityCategory =
+    "A categoria não poderá ser utilizada em cadastros ou edições, deseja prosseguir com a alteração?";
 
   const toast = useToast();
 
   const changeIsActive = useMutation(
     async () => {
       api
-        .patch(`institutions/is-active?institutionId=${id}`)
+        .patch(`activity-categories/is-active?activityCategoryId=${id}`)
         .then(() => {
           toast({
-            description: "Status do campus alterado com sucesso.",
+            description: "Status da categoria alterado com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
             isClosable: true,
           });
 
-          queryClient.invalidateQueries("institutions");
+          queryClient.invalidateQueries("activityCategories");
         })
         .catch(error => {
           toast({
@@ -100,8 +92,8 @@ function InstitutionOptionsModal({
       <Modal onClose={onClose} isOpen={isOpen} size="sm" isCentered>
         <ModalOverlay />
         <ModalContent mx="2" bg="gray.800">
-          <ModalHeader textAlign="center">
-            <Text fontSize="xl" fontWeight="normal">
+          <ModalHeader>
+            <Text fontSize="2xl" fontWeight="bold">
               {name}
             </Text>
           </ModalHeader>
@@ -111,13 +103,12 @@ function InstitutionOptionsModal({
           <ModalBody px={["2", "3"]} justify="center">
             <Divider mb="4" borderColor="gray.700" />
 
-            <ItemOptionsModal label="Estado" value={stateName} />
-            <ItemOptionsModal label="Cidade" value={cityName} />
+            <ItemOptionsModal label="Campus" value={institutionName} />
+            <ItemOptionsModal label="Cadastrado em" value={createdAt} />
             <ItemOptionsModal
               label="Status"
               value={isActive ? "Ativo" : "Inativo"}
             />
-            <ItemOptionsModal label="Cadastrado em" value={createdAt} />
 
             <Divider mt="4" borderColor="gray.700" />
           </ModalBody>
@@ -143,7 +134,7 @@ function InstitutionOptionsModal({
               {isActive && (
                 <Link
                   href={{
-                    pathname: "/institutions/edit",
+                    pathname: "/activity-categories/edit",
                     query: { id },
                   }}
                 >
@@ -165,10 +156,12 @@ function InstitutionOptionsModal({
         handleConfirm={handleChangeIsActive}
         isOpen={isOpenConfirmModal}
         onClose={onCloseConfirmModal}
-        message={isActive ? msgInactivateInstitution : msgActivateInstitution}
+        message={
+          isActive ? msgInactivateActivityCategory : msgActivateActivityCategory
+        }
       ></ConfirmModal>
     </>
   );
 }
 
-export { InstitutionOptionsModal };
+export { ActivityCategoryOptionsModal };

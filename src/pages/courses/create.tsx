@@ -12,7 +12,6 @@ import {
   Button,
   Divider,
   SimpleGrid,
-  HStack,
   useToast,
   Icon,
 } from "@chakra-ui/react";
@@ -146,7 +145,7 @@ export default function CreateCourse(): JSX.Element {
 
           <Divider my="6" borderColor="gray.700" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/courses" passHref>
               <Button
                 colorScheme="whiteAlpha"

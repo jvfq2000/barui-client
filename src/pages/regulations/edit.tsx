@@ -13,7 +13,6 @@ import {
   Button,
   Divider,
   SimpleGrid,
-  HStack,
   useToast,
   Icon,
   VStack,
@@ -55,7 +54,7 @@ export default function CreateRegulation(): JSX.Element {
     name: yup.string().required("Nome obrigatório"),
     inForceFrom: yup.string().required("Em vigor é obrigatório"),
     file: yup.string().test("fileTest", "Arquivo obrigatório", () => {
-      return !!fileUpload;
+      return true;
     }),
     courseId: yup.string().required("Curso obrigatório"),
   });
@@ -234,7 +233,7 @@ export default function CreateRegulation(): JSX.Element {
 
           <Divider my="6" borderColor="gray.700" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/regulations" passHref>
               <Button
                 colorScheme="whiteAlpha"

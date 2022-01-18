@@ -13,7 +13,7 @@ function setupAPIClient(ctx = undefined) {
   const api = axios.create({
     baseURL: "https://api.barui.ji.dev.br",
     headers: {
-      Authorization: `Bearer ${cookies["baseApp.token"]}`,
+      Authorization: `Bearer ${cookies["baruiApp.token"]}`,
     },
   });
 
@@ -24,7 +24,7 @@ function setupAPIClient(ctx = undefined) {
         if (error.response.data?.message === "Token inválido!") {
           cookies = parseCookies(ctx);
 
-          const { "baseApp.refreshToken": refreshToken } = cookies;
+          const { "baruiApp.refreshToken": refreshToken } = cookies;
           const originalConfig = error.config;
 
           if (!isRefreshing) {
@@ -35,11 +35,11 @@ function setupAPIClient(ctx = undefined) {
               .then(response => {
                 const { token, refreshToken } = response.data;
 
-                setCookie(ctx, "baseApp.token", token, {
+                setCookie(ctx, "baruiApp.token", token, {
                   maxAge: 60 * 60 * 24 * 30, // 30 days
                   path: "/",
                 });
-                setCookie(ctx, "baseApp.refreshToken", refreshToken, {
+                setCookie(ctx, "baruiApp.refreshToken", refreshToken, {
                   maxAge: 60 * 60 * 24 * 30, // 30 days
                   path: "/",
                 });

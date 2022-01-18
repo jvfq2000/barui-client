@@ -11,7 +11,7 @@ function withSSRGuest<P>(fn: GetServerSideProps<P>): GetServerSideProps {
   ): Promise<GetServerSidePropsResult<P>> => {
     const cookies = parseCookies(ctx);
 
-    if (cookies["baseApp.token"]) {
+    if (cookies["baruiApp.token"]) {
       return {
         redirect: {
           destination: "/dashboard",

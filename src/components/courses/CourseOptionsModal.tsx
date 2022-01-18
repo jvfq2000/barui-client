@@ -119,7 +119,7 @@ function CourseOptionsModal({
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
-            <SimpleGrid flex="1" gap="4" minChildWidth={120} align="flex-start">
+            <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
               <Button
                 onClick={() => {
                   onClose();

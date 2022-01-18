@@ -36,8 +36,8 @@ const AuthContext = createContext({} as IAuthContextData);
 let authChannel: BroadcastChannel;
 
 function signOut(): void {
-  destroyCookie(undefined, "baseApp.token");
-  destroyCookie(undefined, "baseApp.refreshToken");
+  destroyCookie(undefined, "baruiApp.token");
+  destroyCookie(undefined, "baruiApp.refreshToken");
 
   authChannel.postMessage("signOut");
 
@@ -63,7 +63,7 @@ function AuthProvider({ children }: IAuthProviderProps) {
   }, []);
 
   useEffect(() => {
-    const { "baseApp.token": token } = parseCookies();
+    const { "baruiApp.token": token } = parseCookies();
 
     if (token) {
       api
@@ -110,11 +110,11 @@ function AuthProvider({ children }: IAuthProviderProps) {
 
       const { token, refreshToken } = response.data;
 
-      setCookie(undefined, "baseApp.token", token, {
+      setCookie(undefined, "baruiApp.token", token, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: "/",
       });
-      setCookie(undefined, "baseApp.refreshToken", refreshToken, {
+      setCookie(undefined, "baruiApp.refreshToken", refreshToken, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: "/",
       });

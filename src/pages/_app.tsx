@@ -1,8 +1,9 @@
 import { AppProps } from "next/app";
+import { RiMoonLine, RiSunLine } from "react-icons/ri";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Icon, IconButton } from "@chakra-ui/react";
 
 import { AuthProvider } from "../contexts/AuthContext";
 import { SidebarDrawerProvider } from "../contexts/SidebarDrawerContext";

@@ -7,6 +7,7 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  useColorMode,
 } from "@chakra-ui/react";
 
 interface IInputProps extends ChakraInputProps {
@@ -19,6 +20,8 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
   { name, label, error = null, ...rest },
   ref,
 ): JSX.Element => {
+  const { colorMode } = useColorMode();
+
   return (
     <FormControl isInvalid={!!error}>
       {!!label && (
@@ -31,10 +34,10 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
         name={name}
         id={name}
         focusBorderColor="green.500"
-        bg="gray.900"
+        bg={colorMode === "dark" ? "grayDark.900" : "grayLight.900"}
         variant="filled"
         _hover={{
-          bg: "gray.900",
+          bg: colorMode === "dark" ? "grayDark.900" : "grayLight.900",
         }}
         size="lg"
         ref={ref}

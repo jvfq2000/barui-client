@@ -10,15 +10,15 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
   Divider,
   SimpleGrid,
-  HStack,
   useToast,
   Icon,
+  useColorMode,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
 import { Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
@@ -41,6 +41,7 @@ const editCourseFormSchema = yup.object().shape({
 export default function EditCourse(): JSX.Element {
   const { id } = Router.query;
   const toast = useToast();
+  const { colorMode } = useColorMode();
 
   const editCourse = useMutation(
     async (course: IEditCourseFormData) => {
@@ -115,7 +116,7 @@ export default function EditCourse(): JSX.Element {
           as="form"
           flex="1"
           borderRadius={8}
-          bg="gray.800"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
           onSubmit={handleSubmit(handleEditCourse)}
         >
@@ -123,7 +124,12 @@ export default function EditCourse(): JSX.Element {
             Cadastar curso
           </Heading>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
             <Input
@@ -151,12 +157,6 @@ export default function EditCourse(): JSX.Element {
                 { value: "12", label: "12 semestres" },
                 { value: "13", label: "13 semestres" },
                 { value: "14", label: "14 semestres" },
-                { value: "15", label: "15 semestres" },
-                { value: "16", label: "16 semestres" },
-                { value: "17", label: "17 semestres" },
-                { value: "18", label: "18 semestres" },
-                { value: "19", label: "19 semestres" },
-                { value: "20", label: "20 semestres" },
               ]}
               label="Duração"
               error={errors.numberPeriods}
@@ -164,25 +164,28 @@ export default function EditCourse(): JSX.Element {
             />
           </SimpleGrid>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/courses" passHref>
               <Button
-                colorScheme="whiteAlpha"
+                label="Cancelar"
+                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
-              >
-                Cancelar
-              </Button>
+              />
             </Link>
             <Button
+              label="Cadastrar"
               type="submit"
               colorScheme="green"
               isLoading={formState.isSubmitting}
               leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
-            >
-              Cadastrar
-            </Button>
+            />
           </SimpleGrid>
         </Box>
       </Flex>

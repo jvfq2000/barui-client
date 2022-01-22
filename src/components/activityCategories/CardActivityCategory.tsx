@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, useColorMode } from "@chakra-ui/react";
 
 import { ItemCard } from "../ItemCard";
 
@@ -13,13 +13,18 @@ function CardActivityCategory({
   isActive,
   createdAt,
 }: ICardActivityCategoryProps): JSX.Element {
+  const { colorMode } = useColorMode();
+
   return (
     <Box
       p={["6", "8"]}
-      bg="gray.800"
+      bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius={8}
       pb="4"
-      _hover={{ bg: "gray.700", cursor: "pointer" }}
+      _hover={{
+        bg: colorMode === "dark" ? "grayDark.700" : "grayLight.700",
+        cursor: "pointer",
+      }}
     >
       <Text mb="4" align="center" fontSize="md">
         {name}

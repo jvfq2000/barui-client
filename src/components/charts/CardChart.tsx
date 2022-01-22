@@ -2,19 +2,19 @@ import { Box, Text, useColorMode } from "@chakra-ui/react";
 
 import { ItemCard } from "../ItemCard";
 
-interface ICardCourseProps {
+interface ICardChartProps {
   name: string;
-  numberPeriods: number;
+  inForceFrom: string;
   isActive: boolean;
   createdAt: Date;
 }
 
-function CardCourse({
+function CardChart({
   name,
-  numberPeriods,
+  inForceFrom,
   isActive,
   createdAt,
-}: ICardCourseProps): JSX.Element {
+}: ICardChartProps): JSX.Element {
   const { colorMode } = useColorMode();
 
   return (
@@ -23,17 +23,20 @@ function CardCourse({
       bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius={8}
       pb="4"
-      _hover={{ bg: colorMode === "dark" ? "grayDark.700" : "grayLight.700", cursor: "pointer" }}
+      _hover={{
+        bg: colorMode === "dark" ? "grayDark.700" : "grayLight.700",
+        cursor: "pointer",
+      }}
     >
       <Text mb="4" align="center" fontSize="md">
         {name}
       </Text>
 
-      <ItemCard label="Duração" value={`${numberPeriods} semestres`} />
+      <ItemCard label="Em vigor a partir de" value={inForceFrom} />
       <ItemCard label="Cadastrado em" value={createdAt} />
       <ItemCard label="Status" value={isActive ? "Ativo" : "Inativo"} />
     </Box>
   );
 }
 
-export { CardCourse };
+export { CardChart };

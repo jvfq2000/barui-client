@@ -10,14 +10,15 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
   Divider,
   SimpleGrid,
   useToast,
   Icon,
+  useColorMode,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
@@ -37,6 +38,7 @@ const editActivityCategoryFormSchema = yup.object().shape({
 export default function EditActivityCategory(): JSX.Element {
   const { id } = Router.query;
   const toast = useToast();
+  const { colorMode } = useColorMode();
 
   const editActivityCategory = useMutation(
     async (activityCategory: IEditActivityCategoryFormData) => {
@@ -112,7 +114,7 @@ export default function EditActivityCategory(): JSX.Element {
           as="form"
           flex="1"
           borderRadius={8}
-          bg="gray.800"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
           onSubmit={handleSubmit(handleEditActivityCategory)}
         >
@@ -120,7 +122,12 @@ export default function EditActivityCategory(): JSX.Element {
             Alterar categoria
           </Heading>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
             <Input
@@ -131,25 +138,28 @@ export default function EditActivityCategory(): JSX.Element {
             />
           </SimpleGrid>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/activity-categories" passHref>
               <Button
-                colorScheme="whiteAlpha"
+                label="Cancelar"
+                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
-              >
-                Cancelar
-              </Button>
+              />
             </Link>
             <Button
+              label="Alterar"
               type="submit"
               colorScheme="green"
               isLoading={formState.isSubmitting}
               leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
-            >
-              Alterar
-            </Button>
+            />
           </SimpleGrid>
         </Box>
       </Flex>

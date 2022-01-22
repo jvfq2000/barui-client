@@ -4,7 +4,6 @@ import { useMutation } from "react-query";
 
 import {
   Avatar,
-  Button,
   Divider,
   HStack,
   Icon,
@@ -17,6 +16,7 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text,
+  useColorMode,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -25,6 +25,7 @@ import { api } from "../../services/apiClient";
 import { IUser } from "../../services/hooks/useUsers";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
+import { Button } from "../form/Button";
 import { ItemOptionsModal } from "../ItemOptionsModal";
 
 interface IUserOptionsModalProps {
@@ -58,6 +59,8 @@ function UserOptionsModal({
 
     institutionName,
   } = user;
+
+  const { colorMode } = useColorMode();
 
   const {
     isOpen: isOpenConfirmModal,
@@ -112,7 +115,10 @@ function UserOptionsModal({
     <>
       <Modal onClose={onClose} isOpen={isOpen} size="md" isCentered>
         <ModalOverlay />
-        <ModalContent mx="2" bg="gray.800">
+        <ModalContent
+          mx="2"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+        >
           <ModalHeader>
             <HStack spacing={6}>
               <Avatar size="md" name={name} src={avatar && avatarUrl} />
@@ -125,7 +131,12 @@ function UserOptionsModal({
           <ModalCloseButton />
 
           <ModalBody px={["2", "3"]}>
-            <Divider mb="4" borderColor="gray.700" />
+            <Divider
+              mb="4"
+              bordercolor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
 
             <ItemOptionsModal label="CPF" value={identifier} />
             <ItemOptionsModal label="E-mail" value={email} />
@@ -148,12 +159,18 @@ function UserOptionsModal({
             <ItemOptionsModal label="Início" value={initialSemester} />
             <ItemOptionsModal label="Duração" value={courseNumberPeriods} />
 
-            <Divider mt="4" borderColor="gray.700" />
+            <Divider
+              mt="4"
+              bordercolor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} justifyContent="space-between">
             <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
               <Button
+                label={isActive ? "Inativar" : "Ativar"}
                 onClick={() => {
                   onClose();
                   onOpenConfirmModal();
@@ -165,9 +182,7 @@ function UserOptionsModal({
                     fontSize="20"
                   />
                 }
-              >
-                {isActive ? "Inativar" : "Ativar"}
-              </Button>
+              />
 
               {isActive && (
                 <Link
@@ -177,12 +192,11 @@ function UserOptionsModal({
                   }}
                 >
                   <Button
+                    label="Alterar"
                     onClick={onClose}
                     colorScheme="blue"
                     leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
-                  >
-                    Alterar
-                  </Button>
+                  />
                 </Link>
               )}
             </SimpleGrid>

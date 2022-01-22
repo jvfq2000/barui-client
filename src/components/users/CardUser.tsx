@@ -1,4 +1,4 @@
-import { Avatar, Box, HStack, Text } from "@chakra-ui/react";
+import { Avatar, Box, HStack, Text, useColorMode } from "@chakra-ui/react";
 
 import { ItemCard } from "../ItemCard";
 
@@ -27,6 +27,8 @@ function CardUser({
   isActive,
   createdAt,
 }: ICardUserProps): JSX.Element {
+  const { colorMode } = useColorMode();
+
   let accessLevelFormat = accessLevel;
 
   if (accessLevel === "administrador geral") {
@@ -42,10 +44,13 @@ function CardUser({
   return (
     <Box
       p={["6", "8"]}
-      bg="gray.800"
+      bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius={8}
       pb="4"
-      _hover={{ bg: "gray.700", cursor: "pointer" }}
+      _hover={{
+        bg: colorMode === "dark" ? "grayDark.700" : "grayLight.700",
+        cursor: "pointer",
+      }}
     >
       <HStack mb="4" justify="space-between">
         <Avatar size="md" name={name} src={avatar && avatarUrl} />

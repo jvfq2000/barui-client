@@ -8,9 +8,9 @@ function Logo(): JSX.Element {
       letterSpacing="tight"
       w="64"
     >
-      <Link href="/">
+      <Link href="/" color="green.500">
         Baru
-        <Text as="span" color="green.500">
+        <Text as="span" color="red.500">
           í
         </Text>
       </Link>

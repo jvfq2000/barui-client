@@ -1,5 +1,10 @@
 import { useContext, useRef } from "react";
-import { RiLogoutBoxLine, RiProfileLine } from "react-icons/ri";
+import {
+  RiLogoutBoxLine,
+  RiMoonLine,
+  RiProfileLine,
+  RiSunLine,
+} from "react-icons/ri";
 
 import {
   Flex,
@@ -13,12 +18,14 @@ import {
   PopoverArrow,
   PopoverBody,
   PopoverCloseButton,
-  Button,
   Link,
   Icon,
+  IconButton,
+  useColorMode,
 } from "@chakra-ui/react";
 
 import { AuthContext, signOut } from "../../contexts/AuthContext";
+import { Button } from "../form/Button";
 
 interface IProfileProps {
   showProfileData: boolean;
@@ -27,77 +34,99 @@ interface IProfileProps {
 function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
   const { user } = useContext(AuthContext);
   const initialFocusRef = useRef();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Popover
-      id="propoverProfile"
-      initialFocusRef={initialFocusRef}
-      placement="bottom-end"
-    >
-      <PopoverTrigger>
-        <Flex align="center" cursor="pointer">
-          {showProfileData && (
-            <Box mr="4" textAlign="center">
-              <Text>{user?.name}</Text>
-              <Text color="gray.300" fontSize="small">
-                {user?.email}
-              </Text>
-            </Box>
-          )}
-
-          <Avatar
-            size="md"
-            name={user?.name}
-            src={user?.avatar && user?.avatarUrl}
-          />
-        </Flex>
-      </PopoverTrigger>
-      <PopoverContent
-        color="gray.100"
-        bg="gray.800"
-        borderColor="gray.600"
-        maxW="200"
+    <>
+      <IconButton
+        mr="6"
+        aria-label="grayDark.900"
+        variant="unstyled"
+        icon={<Icon as={colorMode === "dark" ? RiSunLine : RiMoonLine} />}
+        onClick={toggleColorMode}
+      />
+      <Popover
+        id="propoverProfile"
+        initialFocusRef={initialFocusRef}
+        placement="bottom-end"
       >
-        <PopoverHeader pt={4} fontWeight="bold" border="0">
-          <Text>{user?.name}</Text>
-          <Text color="gray.300" fontSize="small">
-            {user?.email}
-          </Text>
-        </PopoverHeader>
+        <PopoverTrigger>
+          <Flex align="center" cursor="pointer">
+            {showProfileData && (
+              <Box mr="4" textAlign="center">
+                <Text>{user?.name}</Text>
+                <Text
+                  color={
+                    colorMode === "dark" ? "grayDark.300" : "grayLight.300"
+                  }
+                  fontSize="small"
+                >
+                  {user?.email}
+                </Text>
+              </Box>
+            )}
 
-        <PopoverArrow bg="gray.800" />
-        <PopoverCloseButton />
+            <Avatar
+              size="md"
+              name={user?.name}
+              src={user?.avatar && user?.avatarUrl}
+            />
+          </Flex>
+        </PopoverTrigger>
+        <PopoverContent
+          color={colorMode === "dark" ? "grayDark.100" : "grayLight.100"}
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+          bordercolor={colorMode === "dark" ? "grayDark.600" : "grayLight.600"}
+          maxW="200"
+        >
+          <PopoverHeader pt={4} fontWeight="bold" border="0">
+            <Text>{user?.name}</Text>
+            <Text
+              color={colorMode === "dark" ? "grayDark.300" : "grayLight.300"}
+              fontSize="small"
+            >
+              {user?.email}
+            </Text>
+          </PopoverHeader>
 
-        <PopoverBody>
-          <Link href="/users/profile">
+          <PopoverArrow
+            bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+          />
+          <PopoverCloseButton />
+
+          <PopoverBody>
+            <Link href="/users/profile">
+              <Button
+                label="Perfil"
+                justifyContent="start"
+                leftIcon={<Icon as={RiProfileLine} />}
+                colorScheme={colorMode === "dark" ? "grayDark" : "grayLight"}
+                variant="outline"
+                w="100%"
+                h="7"
+                mb="2"
+                _hover={{
+                  bg: colorMode === "dark" ? "grayDark.600" : "grayLight.600",
+                }}
+              />
+            </Link>
             <Button
+              label="Sair"
               justifyContent="start"
-              leftIcon={<Icon as={RiProfileLine} />}
-              colorScheme="gray"
+              leftIcon={<Icon as={RiLogoutBoxLine} />}
+              colorScheme={colorMode === "dark" ? "grayDark" : "grayLight"}
               variant="outline"
               w="100%"
               h="7"
-              mb="2"
-              _hover={{ bg: "gray.600" }}
-            >
-              Perfil
-            </Button>
-          </Link>
-          <Button
-            justifyContent="start"
-            leftIcon={<Icon as={RiLogoutBoxLine} />}
-            colorScheme="gray"
-            variant="outline"
-            w="100%"
-            h="7"
-            onClick={signOut}
-            _hover={{ bg: "gray.600" }}
-          >
-            Sair
-          </Button>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
+              onClick={signOut}
+              _hover={{
+                bg: colorMode === "dark" ? "grayDark.600" : "grayLight.600",
+              }}
+            />
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+    </>
   );
 }
 

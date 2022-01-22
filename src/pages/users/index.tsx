@@ -6,7 +6,6 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
   Icon,
   Text,
   useBreakpointValue,
@@ -14,8 +13,10 @@ import {
   SimpleGrid,
   useDisclosure,
   Switch,
+  useColorMode,
 } from "@chakra-ui/react";
 
+import { Button } from "../../components/form/Button";
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
 import { Pagination } from "../../components/Pagination";
@@ -36,6 +37,8 @@ export default function UserList(): JSX.Element {
     filter,
     isActive,
   });
+
+  const { colorMode } = useColorMode();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -59,7 +62,13 @@ export default function UserList(): JSX.Element {
             <Heading size="lg" fontWeight="normal">
               Usuários
               {!isLoading && isFetching && (
-                <Spinner size="sm" color="gray.500" ml="4" />
+                <Spinner
+                  size="sm"
+                  color={
+                    colorMode === "dark" ? "grayDark.500" : "grayLight.500"
+                  }
+                  ml="4"
+                />
               )}
             </Heading>
 
@@ -69,7 +78,7 @@ export default function UserList(): JSX.Element {
                   Status:
                   <Switch
                     ml="2"
-                    colorScheme="green"
+                    colorScheme="grayLigth"
                     isChecked={isActive}
                     onChange={() => {
                       setIsActive(!isActive);
@@ -85,14 +94,13 @@ export default function UserList(): JSX.Element {
 
             <Link href="/users/create" passHref>
               <Button
+                label="Criar novo"
+                colorScheme="green"
                 as="a"
                 size="sm"
                 fontSize="sm"
-                colorScheme="green"
                 leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-              >
-                Criar novo
-              </Button>
+              />
             </Link>
           </Flex>
 
@@ -102,7 +110,7 @@ export default function UserList(): JSX.Element {
                 Status
                 <Switch
                   ml="1"
-                  colorScheme="green"
+                  colorScheme="grayLigth"
                   isChecked={isActive}
                   onChange={() => {
                     setIsActive(!isActive);

@@ -9,6 +9,7 @@ import {
   FormErrorMessage,
   Button,
   Flex,
+  useColorMode,
 } from "@chakra-ui/react";
 
 interface IInputFileProps extends ChakraInputProps {
@@ -39,6 +40,8 @@ const InputFileBase: ForwardRefRenderFunction<
   },
   ref,
 ): JSX.Element => {
+  const { colorMode } = useColorMode();
+
   return (
     <Flex>
       <FormControl isInvalid={!!error}>
@@ -48,11 +51,11 @@ const InputFileBase: ForwardRefRenderFunction<
             border="1px solid green"
             p="3"
             h="47px"
-            bg="gray.900"
+            bg={colorMode === "dark" ? "grayDark.900" : "grayLight.900"}
             htmlFor={name}
             id={`label-for-${name}`}
             _hover={{
-              bg: "gray.800",
+              bg: colorMode === "dark" ? "grayDark.800" : "grayLight.800",
               cursor: "pointer",
             }}
           >
@@ -66,10 +69,10 @@ const InputFileBase: ForwardRefRenderFunction<
           id={name}
           type="file"
           focusBorderColor="green.500"
-          bg="gray.900"
+          bg={colorMode === "dark" ? "grayDark.900" : "grayLight.900"}
           variant="filled"
           _hover={{
-            bg: "gray.900",
+            bg: colorMode === "dark" ? "grayDark.900" : "grayLight.900",
           }}
           size="lg"
           ref={ref}

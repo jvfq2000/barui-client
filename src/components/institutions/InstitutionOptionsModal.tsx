@@ -3,7 +3,6 @@ import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
-  Button,
   Divider,
   Icon,
   Modal,
@@ -15,6 +14,7 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text,
+  useColorMode,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -23,6 +23,7 @@ import { api } from "../../services/apiClient";
 import { IInstitution } from "../../services/hooks/useInstitutions";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
+import { Button } from "../form/Button";
 import { ItemOptionsModal } from "../ItemOptionsModal";
 
 interface IInstitutionOptionsModalProps {
@@ -45,6 +46,8 @@ function InstitutionOptionsModal({
     cityName,
     stateName,
   } = institution;
+
+  const { colorMode } = useColorMode();
 
   const {
     isOpen: isOpenConfirmModal,
@@ -99,7 +102,10 @@ function InstitutionOptionsModal({
     <>
       <Modal onClose={onClose} isOpen={isOpen} size="sm" isCentered>
         <ModalOverlay />
-        <ModalContent mx="2" bg="gray.800">
+        <ModalContent
+          mx="2"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+        >
           <ModalHeader textAlign="center">
             <Text fontSize="xl" fontWeight="normal">
               {name}
@@ -109,7 +115,12 @@ function InstitutionOptionsModal({
           <ModalCloseButton />
 
           <ModalBody px={["2", "3"]} justify="center">
-            <Divider mb="4" borderColor="gray.700" />
+            <Divider
+              mb="4"
+              bordercolor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
 
             <ItemOptionsModal label="Estado" value={stateName} />
             <ItemOptionsModal label="Cidade" value={cityName} />
@@ -119,12 +130,18 @@ function InstitutionOptionsModal({
             />
             <ItemOptionsModal label="Cadastrado em" value={createdAt} />
 
-            <Divider mt="4" borderColor="gray.700" />
+            <Divider
+              mt="4"
+              bordercolor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
             <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
               <Button
+                label={isActive ? "Inativar" : "Ativar"}
                 onClick={() => {
                   onClose();
                   onOpenConfirmModal();
@@ -136,9 +153,7 @@ function InstitutionOptionsModal({
                     fontSize="20"
                   />
                 }
-              >
-                {isActive ? "Inativar" : "Ativar"}
-              </Button>
+              />
 
               {isActive && (
                 <Link
@@ -148,12 +163,11 @@ function InstitutionOptionsModal({
                   }}
                 >
                   <Button
+                    label="Alterar"
                     onClick={onClose}
                     colorScheme="blue"
                     leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
-                  >
-                    Alterar
-                  </Button>
+                  />
                 </Link>
               )}
             </SimpleGrid>

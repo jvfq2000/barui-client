@@ -2,7 +2,11 @@ import Link from "next/link";
 import Router from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
+import {
+  RiAddCircleLine,
+  RiCheckboxCircleLine,
+  RiCloseCircleLine,
+} from "react-icons/ri";
 import { useMutation } from "react-query";
 import * as yup from "yup";
 
@@ -15,24 +19,26 @@ import {
   useToast,
   Icon,
   VStack,
+  useDisclosure,
   useColorMode,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { CardActivity } from "../../components/charts/CardActivity";
+import { PersistenceActivityModal } from "../../components/charts/PersistenceActivityModal";
 import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
-import { InputFile } from "../../components/form/InputFile";
 import { InputMask } from "../../components/form/InputMask";
 import { ISelectOption, Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
 import { api } from "../../services/apiClient";
-import { IRegulation } from "../../services/hooks/useRegulations";
+import { IActivity } from "../../services/hooks/useCharts";
 import { queryClient } from "../../services/queryClient";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-interface ICreateRegulationFormData {
+interface ICreateChartFormData {
   name: string;
   inForceFrom: string;
   file: File;
@@ -44,51 +50,52 @@ interface ICourse {
   name: string;
 }
 
-export default function CreateRegulation(): JSX.Element {
-  const { id } = Router.query;
+interface ICategory {
+  id: string;
+  name: string;
+}
 
+const createChartFormSchema = yup.object().shape({
+  name: yup.string().required("Nome obrigatório"),
+  inForceFrom: yup.string().required("Em vigor é obrigatório"),
+  courseId: yup.string().required("Curso obrigatório"),
+});
+
+export default function CreateChart(): JSX.Element {
   const toast = useToast();
   const { colorMode } = useColorMode();
 
   const [courses, setCourses] = useState<ICourse[]>();
-  const [fileUpload, setFileUpload] = useState<File>(null);
+  const [categories, setCategories] = useState<ICategory[]>();
+  const [activities, setActivities] = useState<IActivity[]>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const createRegulationFormSchema = yup.object().shape({
-    name: yup.string().required("Nome obrigatório"),
-    inForceFrom: yup.string().required("Em vigor é obrigatório"),
-    file: yup.string().test("fileTest", "Arquivo obrigatório", () => {
-      return true;
-    }),
-    courseId: yup.string().required("Curso obrigatório"),
-  });
-
-  const { register, handleSubmit, formState, setValue } = useForm({
-    resolver: yupResolver(createRegulationFormSchema),
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(createChartFormSchema),
   });
 
   const { errors } = formState;
 
-  const createRegulation = useMutation(
-    async (regulation: ICreateRegulationFormData) => {
+  const createChart = useMutation(
+    async (chart: ICreateChartFormData) => {
       const formData = new FormData();
-      formData.append("file", fileUpload);
-      formData.append("name", regulation.name);
-      formData.append("inForceFrom", regulation.inForceFrom);
-      formData.append("courseId", regulation.courseId);
+      formData.append("name", chart.name);
+      formData.append("inForceFrom", chart.inForceFrom);
+      formData.append("courseId", chart.courseId);
 
       api
-        .put(`regulations?regulationId=${id}`, formData)
+        .post("charts", formData)
         .then(response => {
           toast({
-            description: "Regulamento alterado com sucesso.",
+            description: "Quadro de atividades cadastrado com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
             isClosable: true,
           });
 
-          Router.push("/regulations");
-          return response.data.regulation;
+          Router.push("/charts");
+          return response.data.chart;
         })
         .catch(error => {
           toast({
@@ -102,20 +109,13 @@ export default function CreateRegulation(): JSX.Element {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("regulations");
+        queryClient.invalidateQueries("charts");
       },
     },
   );
 
-  const handleCreateRegulation: SubmitHandler<
-    ICreateRegulationFormData
-  > = async data => {
-    await createRegulation.mutateAsync(data);
-  };
-
-  const handleChangeFile = event => {
-    const file = event.target.files[0];
-    setFileUpload(file);
+  const handleCreateChart: SubmitHandler<ICreateChartFormData> = async data => {
+    await createChart.mutateAsync(data);
   };
 
   useEffect(() => {
@@ -124,6 +124,25 @@ export default function CreateRegulation(): JSX.Element {
       .then(response => {
         const courses = response.data as ICourse[];
         setCourses(courses);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      });
+  }, []);
+
+  useEffect(() => {
+    api
+      .get(`activity-categories/by-institution-id`)
+      .then(response => {
+        const categories = response.data as ICourse[];
+        setCategories(categories);
       })
       .catch(error => {
         toast({
@@ -150,28 +169,6 @@ export default function CreateRegulation(): JSX.Element {
     return options;
   }
 
-  useEffect(() => {
-    api
-      .get(`regulations/by-id?regulationId=${id}`)
-      .then(response => {
-        const { name, inForceFrom, courseId } = response.data as IRegulation;
-
-        setValue("name", name);
-        setValue("inForceFrom", inForceFrom);
-        setValue("courseId", courseId);
-      })
-      .catch(error => {
-        toast({
-          title: "Ops!",
-          description: error.response.data.message,
-          status: "error",
-          position: "top",
-          duration: 8000,
-          isClosable: true,
-        });
-      });
-  }, []);
-
   return (
     <Box>
       <Header />
@@ -184,10 +181,10 @@ export default function CreateRegulation(): JSX.Element {
           borderRadius={8}
           bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
-          onSubmit={handleSubmit(handleCreateRegulation)}
+          onSubmit={handleSubmit(handleCreateChart)}
         >
           <Heading size="lg" fontWeight="normal">
-            Alterar regulamento
+            Cadastar quadro
           </Heading>
 
           <Divider
@@ -226,16 +223,36 @@ export default function CreateRegulation(): JSX.Element {
                 {...register("courseId")}
               />
 
-              <Box position="relative" top="40%">
-                <InputFile
-                  name="file"
-                  label={fileUpload?.name || "Selecionar arquivo"}
-                  pt="1"
-                  error={errors.file}
-                  {...register("file")}
-                  onChange={handleChangeFile}
+              <Box w="100%" position="relative" top="42%">
+                <Button
+                  label="Adicionar atividade"
+                  colorScheme="teal"
+                  w="100%"
+                  leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
+                  onClick={onOpen}
                 />
               </Box>
+            </SimpleGrid>
+
+            <SimpleGrid
+              flex="1"
+              gap="4"
+              minChildWidth={[280, 340]}
+              align="flex-start"
+            >
+              {activities?.map(activity => {
+                return (
+                  <CardActivity
+                    key={activity.id}
+                    name={activity.name}
+                    maxHours={activity.maxHours}
+                    minHours={activity.minHours}
+                    categoryName={activity.categoryName}
+                    isActive={activity.isActive}
+                    createdAt={activity.createdAt}
+                  />
+                );
+              })}
             </SimpleGrid>
           </VStack>
 
@@ -247,7 +264,7 @@ export default function CreateRegulation(): JSX.Element {
           />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
-            <Link href="/regulations" passHref>
+            <Link href="/charts" passHref>
               <Button
                 label="Cancelar"
                 colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
@@ -255,15 +272,22 @@ export default function CreateRegulation(): JSX.Element {
               />
             </Link>
             <Button
-              label="Alterar"
-              type="submit"
+              label="Cadastrar"
               colorScheme="green"
+              type="submit"
               isLoading={formState.isSubmitting}
               leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
             />
           </SimpleGrid>
         </Box>
       </Flex>
+      <PersistenceActivityModal
+        isOpen={isOpen}
+        onClose={onClose}
+        categories={categories}
+        activities={activities}
+        onSubmit={setActivities}
+      />
     </Box>
   );
 }

@@ -1,6 +1,9 @@
+/* eslint-disable no-nested-ternary */
 import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/router";
 import { cloneElement, ReactElement } from "react";
+
+import { useColorMode } from "@chakra-ui/react";
 
 interface IActiveLinkProps extends LinkProps {
   children: ReactElement;
@@ -15,6 +18,8 @@ function ActiveLink({
   ...rest
 }: IActiveLinkProps): JSX.Element {
   const { asPath } = useRouter();
+  const { colorMode } = useColorMode();
+
   let isActive = false;
 
   if (
@@ -35,7 +40,13 @@ function ActiveLink({
 
   return (
     <Link {...rest}>
-      {cloneElement(children, { color: isActive ? "green.400" : "gray.50" })}
+      {cloneElement(children, {
+        color: isActive
+          ? "green.400"
+          : colorMode === "dark"
+          ? "grayDark.50"
+          : "grayLight.50",
+      })}
     </Link>
   );
 }

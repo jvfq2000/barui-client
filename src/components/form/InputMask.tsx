@@ -8,6 +8,7 @@ import {
   FormErrorMessage,
   Input,
   InputProps,
+  useColorMode,
 } from "@chakra-ui/react";
 
 interface IInputMaskProps extends InputProps {
@@ -22,6 +23,8 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputMaskProps> = (
   { name, mask, maskChar, label, error = null, ...rest },
   ref,
 ): JSX.Element => {
+  const { colorMode } = useColorMode();
+
   return (
     <FormControl isInvalid={!!error}>
       {!!label && (
@@ -37,10 +40,10 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputMaskProps> = (
         mask={mask}
         maskChar={maskChar}
         focusBorderColor="green.500"
-        bg="gray.900"
+        bg={colorMode === "dark" ? "grayDark.900" : "grayLight.900"}
         variant="filled"
         _hover={{
-          bg: "gray.900",
+          bg: colorMode === "dark" ? "grayDark.900" : "grayLight.900",
         }}
         size="lg"
         ref={ref}

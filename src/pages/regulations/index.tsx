@@ -6,7 +6,6 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
   Icon,
   Text,
   useBreakpointValue,
@@ -14,9 +13,11 @@ import {
   SimpleGrid,
   useDisclosure,
   Switch,
+  useColorMode,
 } from "@chakra-ui/react";
 
 import { Can } from "../../components/Can";
+import { Button } from "../../components/form/Button";
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
 import { Pagination } from "../../components/Pagination";
@@ -43,6 +44,8 @@ export default function RegulationList(): JSX.Element {
     isActive,
   });
 
+  const { colorMode } = useColorMode();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isWideVersion = useBreakpointValue({
@@ -65,7 +68,13 @@ export default function RegulationList(): JSX.Element {
             <Heading size="lg" fontWeight="normal">
               Regulamentos
               {!isLoading && isFetching && (
-                <Spinner size="sm" color="gray.500" ml="4" />
+                <Spinner
+                  size="sm"
+                  color={
+                    colorMode === "dark" ? "grayDark.500" : "grayLight.500"
+                  }
+                  ml="4"
+                />
               )}
             </Heading>
 
@@ -76,7 +85,7 @@ export default function RegulationList(): JSX.Element {
                     Status:
                     <Switch
                       ml="2"
-                      colorScheme="green"
+                      colorScheme="grayLigth"
                       isChecked={isActive}
                       onChange={() => {
                         setIsActive(!isActive);
@@ -94,14 +103,13 @@ export default function RegulationList(): JSX.Element {
             <Can accessLevel={accessLevel[3]}>
               <Link href="/regulations/create" passHref>
                 <Button
+                  label="Criar novo"
                   as="a"
                   size="sm"
                   fontSize="sm"
                   colorScheme="green"
                   leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-                >
-                  Criar novo
-                </Button>
+                />
               </Link>
             </Can>
           </Flex>
@@ -113,7 +121,7 @@ export default function RegulationList(): JSX.Element {
                   Status:
                   <Switch
                     ml="2"
-                    colorScheme="green"
+                    colorScheme="grayLigth"
                     isChecked={isActive}
                     onChange={() => {
                       setIsActive(!isActive);
@@ -121,7 +129,10 @@ export default function RegulationList(): JSX.Element {
                   ></Switch>
                 </Text>
               </Can>
-              <Search placeholder="Filtrar cursos" handleOnClick={setFilter} />
+              <Search
+                placeholder="Filtrar regulamentos"
+                handleOnClick={setFilter}
+              />
             </Flex>
           )}
 
@@ -133,7 +144,7 @@ export default function RegulationList(): JSX.Element {
               </Flex>
             ) : error ? (
               <Flex>
-                <Text>Falha ao obter cursos.</Text>
+                <Text>Falha ao obter regulamentos.</Text>
               </Flex>
             ) : (
               <>

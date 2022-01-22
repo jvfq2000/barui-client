@@ -3,7 +3,6 @@ import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
-  Button,
   Divider,
   Icon,
   Modal,
@@ -15,6 +14,7 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text,
+  useColorMode,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -23,6 +23,7 @@ import { api } from "../../services/apiClient";
 import { ICourse } from "../../services/hooks/useCourses";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
+import { Button } from "../form/Button";
 import { ItemOptionsModal } from "../ItemOptionsModal";
 
 interface ICourseOptionsModalProps {
@@ -38,6 +39,8 @@ function CourseOptionsModal({
 }: ICourseOptionsModalProps): JSX.Element {
   const { id, name, numberPeriods, institutionName, isActive, createdAt } =
     course;
+
+  const { colorMode } = useColorMode();
 
   const {
     isOpen: isOpenConfirmModal,
@@ -92,7 +95,10 @@ function CourseOptionsModal({
     <>
       <Modal onClose={onClose} isOpen={isOpen} size="sm" isCentered>
         <ModalOverlay />
-        <ModalContent mx="2" bg="gray.800">
+        <ModalContent
+          mx="2"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+        >
           <ModalHeader>
             <Text fontSize="2xl" fontWeight="bold">
               {name}
@@ -102,7 +108,12 @@ function CourseOptionsModal({
           <ModalCloseButton />
 
           <ModalBody px={["2", "3"]} justify="center">
-            <Divider mb="4" borderColor="gray.700" />
+            <Divider
+              mb="4"
+              bordercolor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
 
             <ItemOptionsModal label="Campus" value={institutionName} />
             <ItemOptionsModal
@@ -115,12 +126,18 @@ function CourseOptionsModal({
               value={isActive ? "Ativo" : "Inativo"}
             />
 
-            <Divider mt="4" borderColor="gray.700" />
+            <Divider
+              mt="4"
+              bordercolor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
             <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
               <Button
+                label={isActive ? "Inativar" : "Ativar"}
                 onClick={() => {
                   onClose();
                   onOpenConfirmModal();
@@ -132,9 +149,7 @@ function CourseOptionsModal({
                     fontSize="20"
                   />
                 }
-              >
-                {isActive ? "Inativar" : "Ativar"}
-              </Button>
+              />
 
               {isActive && (
                 <Link
@@ -144,12 +159,11 @@ function CourseOptionsModal({
                   }}
                 >
                   <Button
+                    label="Alterar"
                     onClick={onClose}
                     colorScheme="blue"
                     leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
-                  >
-                    Alterar
-                  </Button>
+                  />
                 </Link>
               )}
             </SimpleGrid>

@@ -3,7 +3,6 @@ import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
-  Button,
   Divider,
   Icon,
   Modal,
@@ -15,6 +14,7 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text,
+  useColorMode,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -23,6 +23,7 @@ import { api } from "../../services/apiClient";
 import { IActivityCategory } from "../../services/hooks/useActivityCategories";
 import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
+import { Button } from "../form/Button";
 import { ItemOptionsModal } from "../ItemOptionsModal";
 
 interface IActivityCategoryOptionsModalProps {
@@ -37,6 +38,8 @@ function ActivityCategoryOptionsModal({
   activityCategory,
 }: IActivityCategoryOptionsModalProps): JSX.Element {
   const { id, name, institutionName, isActive, createdAt } = activityCategory;
+
+  const { colorMode } = useColorMode();
 
   const {
     isOpen: isOpenConfirmModal,
@@ -91,7 +94,10 @@ function ActivityCategoryOptionsModal({
     <>
       <Modal onClose={onClose} isOpen={isOpen} size="sm" isCentered>
         <ModalOverlay />
-        <ModalContent mx="2" bg="gray.800">
+        <ModalContent
+          mx="2"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+        >
           <ModalHeader>
             <Text fontSize="2xl" fontWeight="bold">
               {name}
@@ -101,7 +107,12 @@ function ActivityCategoryOptionsModal({
           <ModalCloseButton />
 
           <ModalBody px={["2", "3"]} justify="center">
-            <Divider mb="4" borderColor="gray.700" />
+            <Divider
+              mb="4"
+              borderColor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
 
             <ItemOptionsModal label="Campus" value={institutionName} />
             <ItemOptionsModal label="Cadastrado em" value={createdAt} />
@@ -110,12 +121,18 @@ function ActivityCategoryOptionsModal({
               value={isActive ? "Ativo" : "Inativo"}
             />
 
-            <Divider mt="4" borderColor="gray.700" />
+            <Divider
+              mt="4"
+              borderColor={
+                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+              }
+            />
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
             <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
               <Button
+                label={isActive ? "Inativar" : "Ativar"}
                 onClick={() => {
                   onClose();
                   onOpenConfirmModal();
@@ -127,9 +144,7 @@ function ActivityCategoryOptionsModal({
                     fontSize="20"
                   />
                 }
-              >
-                {isActive ? "Inativar" : "Ativar"}
-              </Button>
+              />
 
               {isActive && (
                 <Link
@@ -139,12 +154,11 @@ function ActivityCategoryOptionsModal({
                   }}
                 >
                   <Button
+                    label="Alterar"
                     onClick={onClose}
                     colorScheme="blue"
                     leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
-                  >
-                    Alterar
-                  </Button>
+                  />
                 </Link>
               )}
             </SimpleGrid>

@@ -6,7 +6,6 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
   Icon,
   Text,
   useBreakpointValue,
@@ -14,8 +13,10 @@ import {
   SimpleGrid,
   useDisclosure,
   Switch,
+  useColorMode,
 } from "@chakra-ui/react";
 
+import { Button } from "../../components/form/Button";
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
 import { CardInstitution } from "../../components/institutions/CardInstitution";
@@ -42,6 +43,8 @@ export default function InstitutionList(): JSX.Element {
     isActive,
   });
 
+  const { colorMode } = useColorMode();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isWideVersion = useBreakpointValue({
@@ -64,7 +67,13 @@ export default function InstitutionList(): JSX.Element {
             <Heading size="lg" fontWeight="normal">
               Campus
               {!isLoading && isFetching && (
-                <Spinner size="sm" color="gray.500" ml="4" />
+                <Spinner
+                  size="sm"
+                  color={
+                    colorMode === "dark" ? "grayDark.500" : "grayLight.500"
+                  }
+                  ml="4"
+                />
               )}
             </Heading>
 
@@ -74,7 +83,7 @@ export default function InstitutionList(): JSX.Element {
                   Status:
                   <Switch
                     ml="2"
-                    colorScheme="green"
+                    colorScheme="grayLigth"
                     isChecked={isActive}
                     onChange={() => {
                       setIsActive(!isActive);
@@ -90,14 +99,13 @@ export default function InstitutionList(): JSX.Element {
 
             <Link href="/institutions/create" passHref>
               <Button
+                label="Criar novo"
                 as="a"
                 size="sm"
                 fontSize="sm"
                 colorScheme="green"
                 leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-              >
-                Criar novo
-              </Button>
+              />
             </Link>
           </Flex>
 
@@ -107,7 +115,7 @@ export default function InstitutionList(): JSX.Element {
                 Status
                 <Switch
                   ml="1"
-                  colorScheme="green"
+                  colorScheme="grayLigth"
                   isChecked={isActive}
                   onChange={() => {
                     setIsActive(!isActive);

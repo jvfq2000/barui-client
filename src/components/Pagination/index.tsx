@@ -1,4 +1,4 @@
-import { HStack, Stack, Box, Text } from "@chakra-ui/react";
+import { HStack, Stack, Box, Text, useColorMode } from "@chakra-ui/react";
 
 import { PaginationItem } from "./PaginationItem";
 
@@ -25,6 +25,8 @@ function Pagination({
   currentPage = 1,
   onPageChange,
 }: IPaginationProps): JSX.Element {
+  const { colorMode } = useColorMode();
+
   let lastPage = Math.floor(totalCountOfRegisters / registersPerPage);
   const lastItemOfPage =
     (currentPage - 1) * registersPerPage + registersPerPage;
@@ -69,7 +71,7 @@ function Pagination({
               <>
                 <PaginationItem onPageChange={onPageChange} number={1} />
                 {currentPage > 2 + siblingsCount && (
-                  <Text color="gray.300" w="8" textAlign="center">
+                  <Text color={colorMode === "dark" ? "grayDark.300" : "grayLight.300"} w="8" textAlign="center">
                     ...
                   </Text>
                 )}
@@ -107,7 +109,7 @@ function Pagination({
             {siblingsCount + currentPage < lastPage && (
               <>
                 {lastPage > 1 + siblingsCount + currentPage && (
-                  <Text color="gray.300" w="8" textAlign="center">
+                  <Text color={colorMode === "dark" ? "grayDark.300" : "grayLight.300"} w="8" textAlign="center">
                     ...
                   </Text>
                 )}

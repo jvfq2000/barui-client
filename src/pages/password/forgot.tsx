@@ -2,9 +2,17 @@ import Router from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { Flex, Button, Box, Divider, Link, useToast } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Divider,
+  Link,
+  useToast,
+  useColorMode,
+} from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
 import { Logo } from "../../components/Header/Logo";
 import { api } from "../../services/apiClient";
@@ -23,6 +31,8 @@ export default function ForgotPassword(): JSX.Element {
     resolver: yupResolver(forgotPasswordFormSchema),
   });
   const { errors } = formState;
+
+  const { colorMode } = useColorMode();
 
   const toast = useToast();
 
@@ -59,7 +69,7 @@ export default function ForgotPassword(): JSX.Element {
         as="form"
         w="100%"
         maxW={[308, 400]}
-        bg="gray.800"
+        bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
         p="8"
         borderRadius={8}
         flexDir="column"
@@ -79,15 +89,14 @@ export default function ForgotPassword(): JSX.Element {
           </Box>
 
           <Button
+            label="Enviar token"
             type="submit"
             mt="6"
             colorScheme="green"
             size="lg"
             w="100%"
             isLoading={formState.isSubmitting}
-          >
-            Enviar token
-          </Button>
+          />
 
           <Divider mt="8" />
 

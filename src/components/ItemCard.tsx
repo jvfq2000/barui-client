@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { HStack, Text } from "@chakra-ui/react";
+import { HStack, Text, useColorMode } from "@chakra-ui/react";
 
 interface IItemCardProps {
   label: string;
@@ -7,6 +7,9 @@ interface IItemCardProps {
 }
 
 function ItemCard({ label, value }: IItemCardProps): JSX.Element {
+  const { colorMode } = useColorMode();
+  const defaultColor = colorMode === "dark" ? "grayDark.300" : "grayLight.300";
+
   return (
     <HStack>
       <Text fontSize="sm">{label}:</Text>
@@ -15,7 +18,7 @@ function ItemCard({ label, value }: IItemCardProps): JSX.Element {
         fontWeight={label === "Status" ? "bold" : "normal"}
         color={
           label !== "Status"
-            ? "gray.300"
+            ? defaultColor
             : value === "Ativo"
             ? "green.500"
             : "red.700"

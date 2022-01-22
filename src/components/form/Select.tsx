@@ -7,6 +7,7 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  useColorMode,
 } from "@chakra-ui/react";
 
 export interface ISelectOption {
@@ -26,6 +27,8 @@ const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, ISelectProps> = (
   { name, placeholder, options, label, error = null, ...rest },
   ref,
 ): JSX.Element => {
+  const { colorMode } = useColorMode();
+
   return (
     <FormControl isInvalid={!!error}>
       {!!label && (
@@ -39,10 +42,10 @@ const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, ISelectProps> = (
         id={name}
         placeholder={placeholder}
         focusBorderColor="green.500"
-        bg="gray.900"
+        bg={colorMode === "dark" ? "grayDark.900" : "grayLight.900"}
         variant="filled"
         _hover={{
-          bg: "gray.900",
+          bg: colorMode === "dark" ? "grayDark.900" : "grayLight.900",
         }}
         size="lg"
         ref={ref}

@@ -1,12 +1,11 @@
 import {
   RiBookMarkLine,
   RiBuilding2Line,
-  RiClipboardLine,
   RiContactsLine,
   RiDashboardLine,
   RiFileList2Line,
-  RiFileList3Line,
   RiPriceTag3Line,
+  RiTableLine,
   RiTimerFlashLine,
 } from "react-icons/ri";
 
@@ -51,6 +50,11 @@ function SidebarNav(): JSX.Element {
         <Can accessLevel={accessLevel[3]}>
           <NavLink icon={RiPriceTag3Line} href="/activity-categories">
             Cat. Atividades
+          </NavLink>
+        </Can>
+        <Can accessLevel={accessLevel[3]}>
+          <NavLink icon={RiTableLine} href="/charts">
+            Quadros
           </NavLink>
         </Can>
         <NavLink icon={RiFileList2Line} href="/regulations">

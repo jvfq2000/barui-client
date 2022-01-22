@@ -1,21 +1,24 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { RiArrowGoBackLine } from "react-icons/ri";
 import * as yup from "yup";
 
 import {
   Box,
   Flex,
   Heading,
-  Button,
   Divider,
   VStack,
   SimpleGrid,
   Avatar,
   useToast,
+  Icon,
+  useColorMode,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
 import { InputFile } from "../../components/form/InputFile";
 import { Header } from "../../components/Header";
@@ -50,6 +53,8 @@ const profileUserFormSchema = yup.object().shape({
 
 export default function ProfileUser(): JSX.Element {
   const toast = useToast();
+  const { colorMode } = useColorMode();
+
   const [avatar, setAvatar] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarUpload, setAvatarUpload] = useState<File>(null);
@@ -134,12 +139,22 @@ export default function ProfileUser(): JSX.Element {
       <Flex w="100%" my="6" maxW={1480} mx="auto" px={[4, 6]}>
         <Sidebar />
 
-        <Box flex="1" borderRadius={8} bg="gray.800" p={["6", "8"]}>
+        <Box
+          flex="1"
+          borderRadius={8}
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+          p={["6", "8"]}
+        >
           <Heading size="lg" fontWeight="normal">
             Perfil
           </Heading>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -156,6 +171,7 @@ export default function ProfileUser(): JSX.Element {
                   name="avatar"
                   label={avatarUpload?.name || "Alterar avatar"}
                   pt="1"
+                  accept="image/*"
                   error={errors.avatar}
                   {...register("avatar")}
                   onChange={handleChangeAvatar}
@@ -252,11 +268,20 @@ export default function ProfileUser(): JSX.Element {
             </SimpleGrid>
           </VStack>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/users" passHref>
-              <Button colorScheme="whiteAlpha"> Voltar </Button>
+              <Button
+                label="Voltar"
+                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
+                leftIcon={<Icon as={RiArrowGoBackLine} />}
+              />
             </Link>
           </SimpleGrid>
         </Box>

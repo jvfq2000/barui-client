@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RiSearchLine } from "react-icons/ri";
 
-import { Flex, Input, Icon, IconButton } from "@chakra-ui/react";
+import { Flex, Input, Icon, IconButton, useColorMode } from "@chakra-ui/react";
 
 interface ISearchProps {
   handleOnClick: (value: string) => void;
@@ -13,6 +13,7 @@ function Search({
   placeholder = "buscar",
 }: ISearchProps): JSX.Element {
   const [search, setSearch] = useState("");
+  const { colorMode } = useColorMode();
 
   return (
     <Flex
@@ -23,17 +24,17 @@ function Search({
       mx={[2, 6]}
       maxW={400}
       alignSelf="center"
-      color="gray.200"
+      color={colorMode === "dark" ? "grayDark.200" : "grayLight.200"}
       position="relative"
-      bg="gray.800"
+      bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius="full"
     >
       <Input
-        color="gray.50"
+        color={colorMode === "dark" ? "grayDark.50" : "grayLight.50"}
         variant="unstyled"
         placeholder={placeholder}
         _placeholder={{
-          color: "gray.400",
+          color: "grayDark.400",
         }}
         onChange={event => {
           setSearch(event.target.value);

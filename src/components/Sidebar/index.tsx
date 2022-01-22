@@ -9,6 +9,7 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerOverlay,
+  useColorMode,
 } from "@chakra-ui/react";
 
 import { useSidebarDrawer } from "../../contexts/SidebarDrawerContext";
@@ -16,6 +17,7 @@ import { SidebarNav } from "./SidebarNav";
 
 function Sidebar(): JSX.Element {
   const { isOpen, onClose } = useSidebarDrawer();
+  const { colorMode } = useColorMode();
 
   const isDrawerSidebar = useBreakpointValue({
     base: true,
@@ -26,7 +28,7 @@ function Sidebar(): JSX.Element {
     return (
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay>
-          <DrawerContent bg="gray.800" p="4">
+          <DrawerContent bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"} p="4">
             <DrawerCloseButton mt="6" />
             <DrawerHeader>Navegação</DrawerHeader>
 

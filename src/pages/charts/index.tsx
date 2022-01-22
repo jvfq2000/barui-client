@@ -16,27 +16,24 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 
-import { ActivityCategoryOptionsModal } from "../../components/activityCategories/ActivityCategoryOptionsModal";
-import { CardActivityCategory } from "../../components/activityCategories/CardActivityCategory";
+import { Can } from "../../components/Can";
+import { CardChart } from "../../components/charts/CardChart";
+import { ChartOptionsModal } from "../../components/charts/ChartOptionsModal";
 import { Button } from "../../components/form/Button";
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import {
-  IActivityCategory,
-  useActivityCategories,
-} from "../../services/hooks/useActivityCategories";
+import { IChart, useCharts } from "../../services/hooks/useCharts";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-export default function ActivityCategoryList(): JSX.Element {
-  const [activityCategorySelected, setActivityCategorySelected] =
-    useState<IActivityCategory>({} as IActivityCategory);
+export default function ChartList(): JSX.Element {
+  const [chartSelected, setChartSelected] = useState<IChart>({} as IChart);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
-  const { data, isLoading, isFetching, error } = useActivityCategories({
+  const { data, isLoading, isFetching, error } = useCharts({
     page,
     filter,
     isActive,
@@ -51,8 +48,8 @@ export default function ActivityCategoryList(): JSX.Element {
     lg: true,
   });
 
-  function onOpenModal(activityCategory: IActivityCategory) {
-    setActivityCategorySelected(activityCategory);
+  function onOpenModal(chart: IChart) {
+    setChartSelected(chart);
     onOpen();
   }
 
@@ -64,7 +61,7 @@ export default function ActivityCategoryList(): JSX.Element {
         <Box flex="1" borderRadius={8}>
           <Flex mb="6" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
-              Cat. de Atividades
+              Quadros
               {!isLoading && isFetching && (
                 <Spinner
                   size="sm"
@@ -78,6 +75,43 @@ export default function ActivityCategoryList(): JSX.Element {
 
             {isWideVersion && (
               <>
+                <Can accessLevel={accessLevel[3]}>
+                  <Text>
+                    Status:
+                    <Switch
+                      ml="2"
+                      colorScheme="grayLigth"
+                      isChecked={isActive}
+                      onChange={() => {
+                        setIsActive(!isActive);
+                      }}
+                    ></Switch>
+                  </Text>
+                </Can>
+                <Search
+                  placeholder="Filtrar quadros"
+                  handleOnClick={setFilter}
+                />
+              </>
+            )}
+
+            <Can accessLevel={accessLevel[3]}>
+              <Link href="/charts/create" passHref>
+                <Button
+                  label="Criar novo"
+                  as="a"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="green"
+                  leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
+                />
+              </Link>
+            </Can>
+          </Flex>
+
+          {!isWideVersion && (
+            <Flex mb="6" align="center" justify="center">
+              <Can accessLevel={accessLevel[3]}>
                 <Text>
                   Status:
                   <Switch
@@ -89,42 +123,8 @@ export default function ActivityCategoryList(): JSX.Element {
                     }}
                   ></Switch>
                 </Text>
-                <Search
-                  placeholder="Filtrar categorias"
-                  handleOnClick={setFilter}
-                />
-              </>
-            )}
-
-            <Link href="/activity-categories/create" passHref>
-              <Button
-                label="Criar nova"
-                colorScheme="green"
-                as="a"
-                size="sm"
-                fontSize="sm"
-                leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-              />
-            </Link>
-          </Flex>
-
-          {!isWideVersion && (
-            <Flex mb="6" align="center" justify="center">
-              <Text>
-                Status
-                <Switch
-                  ml="1"
-                  colorScheme="grayLigth"
-                  isChecked={isActive}
-                  onChange={() => {
-                    setIsActive(!isActive);
-                  }}
-                ></Switch>
-              </Text>
-              <Search
-                placeholder="Filtrar categorias"
-                handleOnClick={setFilter}
-              />
+              </Can>
+              <Search placeholder="Filtrar quadros" handleOnClick={setFilter} />
             </Flex>
           )}
 
@@ -136,7 +136,7 @@ export default function ActivityCategoryList(): JSX.Element {
               </Flex>
             ) : error ? (
               <Flex>
-                <Text>Falha ao obter categorias.</Text>
+                <Text>Falha ao obter quadros.</Text>
               </Flex>
             ) : (
               <>
@@ -146,18 +146,19 @@ export default function ActivityCategoryList(): JSX.Element {
                   minChildWidth={[280, 340]}
                   align="flex-start"
                 >
-                  {data.activityCategories.map(activityCategory => {
+                  {data.charts.map(chart => {
                     return (
                       <Box
-                        key={activityCategory.id}
+                        key={chart.id}
                         onClick={() => {
-                          onOpenModal(activityCategory);
+                          onOpenModal(chart);
                         }}
                       >
-                        <CardActivityCategory
-                          name={activityCategory.name}
-                          isActive={activityCategory.isActive}
-                          createdAt={activityCategory.createdAt}
+                        <CardChart
+                          name={chart.name}
+                          inForceFrom={chart.inForceFrom}
+                          isActive={chart.isActive}
+                          createdAt={chart.createdAt}
                         />
                       </Box>
                     );
@@ -174,8 +175,8 @@ export default function ActivityCategoryList(): JSX.Element {
           }
         </Box>
       </Flex>
-      <ActivityCategoryOptionsModal
-        activityCategory={activityCategorySelected}
+      <ChartOptionsModal
+        chart={chartSelected}
         isOpen={isOpen}
         onClose={onClose}
       />
@@ -187,6 +188,6 @@ const getServerSideProps = withSSRAuth(async ctx => {
   return {
     props: {},
   };
-}, accessLevel[3]);
+}, accessLevel[0]);
 
 export { getServerSideProps };

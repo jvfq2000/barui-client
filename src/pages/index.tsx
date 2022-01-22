@@ -4,15 +4,16 @@ import * as yup from "yup";
 
 import {
   Flex,
-  Button,
   VStack,
   Box,
   Divider,
   Link,
   useToast,
+  useColorMode,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { Button } from "../components/form/Button";
 import { Input } from "../components/form/Input";
 import { Logo } from "../components/Header/Logo";
 import { AuthContext } from "../contexts/AuthContext";
@@ -32,6 +33,7 @@ const signInFormSchema = yup.object().shape({
 export default function SignIn(): JSX.Element {
   const { signIn } = useContext(AuthContext);
   const toast = useToast();
+  const { colorMode } = useColorMode();
 
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(signInFormSchema),
@@ -58,7 +60,7 @@ export default function SignIn(): JSX.Element {
         as="form"
         w="100%"
         maxW={[308, 400]}
-        bg="gray.800"
+        bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
         p="8"
         borderRadius={8}
         flexDir="column"
@@ -85,15 +87,14 @@ export default function SignIn(): JSX.Element {
           </VStack>
 
           <Button
+            label="Entrar"
             type="submit"
             mt="6"
             colorScheme="green"
             size="lg"
             w="100%"
             isLoading={formState.isSubmitting}
-          >
-            Entrar
-          </Button>
+          />
 
           <Divider mt="8" />
 

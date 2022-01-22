@@ -1,10 +1,5 @@
 import Link from "next/link";
-import {
-  RiFileDownloadLine,
-  RiLockLine,
-  RiLockUnlockLine,
-  RiPencilLine,
-} from "react-icons/ri";
+import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
@@ -19,34 +14,34 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text,
+  useColorMode,
   useDisclosure,
   useToast,
-  Link as ChackraLink,
-  useColorMode,
 } from "@chakra-ui/react";
 
 import { api } from "../../services/apiClient";
-import { IRegulation } from "../../services/hooks/useRegulations";
+import { IChart } from "../../services/hooks/useCharts";
 import { queryClient } from "../../services/queryClient";
 import { accessLevel } from "../../utils/permitions";
 import { Can } from "../Can";
 import { ConfirmModal } from "../ConfirmModal";
 import { Button } from "../form/Button";
 import { ItemOptionsModal } from "../ItemOptionsModal";
+import { CardActivity } from "./CardActivity";
 
-interface IRegulationOptionsModalProps {
+interface IChartOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  regulation: IRegulation;
+  chart: IChart;
 }
 
-function RegulationOptionsModal({
+function ChartOptionsModal({
   isOpen,
   onClose,
-  regulation,
-}: IRegulationOptionsModalProps): JSX.Element {
-  const { id, name, inForceFrom, fileUrl, courseName, isActive, createdAt } =
-    regulation;
+  chart,
+}: IChartOptionsModalProps): JSX.Element {
+  const { id, name, inForceFrom, courseName, isActive, createdAt, activities } =
+    chart;
 
   const { colorMode } = useColorMode();
 
@@ -56,27 +51,27 @@ function RegulationOptionsModal({
     onClose: onCloseConfirmModal,
   } = useDisclosure();
 
-  const msgActivateRegulation =
-    "O regulamento poderá ser acessado pelos alunos, deseja prosseguir com a alteração?";
-  const msgInactivateRegulation =
-    "O regulamento não poderá ser acessado pelos alunos, deseja prosseguir com a alteração?";
+  const msgActivateChart =
+    "O quadro poderá ser acessado pelos alunos, deseja prosseguir com a alteração?";
+  const msgInactivateChart =
+    "O quadro não poderá ser acessado pelos alunos, deseja prosseguir com a alteração?";
 
   const toast = useToast();
 
   const changeIsActive = useMutation(
     async () => {
       api
-        .patch(`regulations/is-active?regulationId=${id}`)
+        .patch(`charts/is-active?chartId=${id}`)
         .then(() => {
           toast({
-            description: "Status do regulamento alterado com sucesso.",
+            description: "Status do quadro alterado com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
             isClosable: true,
           });
 
-          queryClient.invalidateQueries("regulations");
+          queryClient.invalidateQueries("charts");
         })
         .catch(error => {
           toast({
@@ -101,7 +96,7 @@ function RegulationOptionsModal({
 
   return (
     <>
-      <Modal onClose={onClose} isOpen={isOpen} size="md" isCentered>
+      <Modal onClose={onClose} isOpen={isOpen} size="6xl" isCentered>
         <ModalOverlay />
         <ModalContent
           mx="2"
@@ -118,7 +113,7 @@ function RegulationOptionsModal({
           <ModalBody px={["2", "3"]} justify="center">
             <Divider
               mb="4"
-              bordercolor={
+              borderColor={
                 colorMode === "dark" ? "grayDark.700" : "grayLight.700"
               }
             />
@@ -134,9 +129,32 @@ function RegulationOptionsModal({
               value={isActive ? "Ativo" : "Inativo"}
             />
 
+            <br />
+
+            <SimpleGrid
+              flex="1"
+              gap="4"
+              minChildWidth={[280, 340]}
+              align="flex-start"
+            >
+              {activities?.map(activity => {
+                return (
+                  <CardActivity
+                    key={activity.id}
+                    name={activity.name}
+                    maxHours={activity.maxHours}
+                    minHours={activity.minHours}
+                    categoryName={activity.categoryName}
+                    isActive={activity.isActive}
+                    createdAt={activity.createdAt}
+                  />
+                );
+              })}
+            </SimpleGrid>
+
             <Divider
               mt="4"
-              bordercolor={
+              borderColor={
                 colorMode === "dark" ? "grayDark.700" : "grayLight.700"
               }
             />
@@ -162,31 +180,21 @@ function RegulationOptionsModal({
               </Can>
 
               {isActive && (
-                <>
-                  <Can accessLevel={accessLevel[3]}>
-                    <Link
-                      href={{
-                        pathname: "/regulations/edit",
-                        query: { id },
-                      }}
-                    >
-                      <Button
-                        label="Alterar"
-                        onClick={onClose}
-                        colorScheme="blue"
-                        leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
-                      />
-                    </Link>
-                  </Can>
-                  <ChackraLink href={fileUrl} isExternal>
+                <Can accessLevel={accessLevel[3]}>
+                  <Link
+                    href={{
+                      pathname: "/charts/edit",
+                      query: { id },
+                    }}
+                  >
                     <Button
-                      label="Download"
+                      label="Alterar"
                       onClick={onClose}
-                      colorScheme="green"
-                      leftIcon={<Icon as={RiFileDownloadLine} fontSize="20" />}
+                      colorScheme="blue"
+                      leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
                     />
-                  </ChackraLink>
-                </>
+                  </Link>
+                </Can>
               )}
             </SimpleGrid>
           </ModalFooter>
@@ -197,10 +205,10 @@ function RegulationOptionsModal({
         handleConfirm={handleChangeIsActive}
         isOpen={isOpenConfirmModal}
         onClose={onCloseConfirmModal}
-        message={isActive ? msgInactivateRegulation : msgActivateRegulation}
+        message={isActive ? msgInactivateChart : msgActivateChart}
       ></ConfirmModal>
     </>
   );
 }
 
-export { RegulationOptionsModal };
+export { ChartOptionsModal };

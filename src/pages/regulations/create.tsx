@@ -10,15 +10,16 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
   Divider,
   SimpleGrid,
   useToast,
   Icon,
   VStack,
+  useColorMode,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
 import { InputFile } from "../../components/form/InputFile";
 import { InputMask } from "../../components/form/InputMask";
@@ -44,6 +45,8 @@ interface ICourse {
 
 export default function CreateRegulation(): JSX.Element {
   const toast = useToast();
+  const { colorMode } = useColorMode();
+
   const [courses, setCourses] = useState<ICourse[]>();
   const [fileUpload, setFileUpload] = useState<File>(null);
 
@@ -154,7 +157,7 @@ export default function CreateRegulation(): JSX.Element {
           as="form"
           flex="1"
           borderRadius={8}
-          bg="gray.800"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
           onSubmit={handleSubmit(handleCreateRegulation)}
         >
@@ -162,7 +165,12 @@ export default function CreateRegulation(): JSX.Element {
             Cadastar regulamento
           </Heading>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -174,7 +182,7 @@ export default function CreateRegulation(): JSX.Element {
               />
               <InputMask
                 mask="**/****"
-                placeholder="01/2022"
+                placeholder="semestre/ano"
                 maskChar="_"
                 name="inForceFrom"
                 label="Em vigor a partir de"
@@ -206,25 +214,28 @@ export default function CreateRegulation(): JSX.Element {
             </SimpleGrid>
           </VStack>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/regulations" passHref>
               <Button
-                colorScheme="whiteAlpha"
+                label="Cancelar"
+                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
-              >
-                Cancelar
-              </Button>
+              />
             </Link>
             <Button
+              label="Cadastrar"
               type="submit"
               colorScheme="green"
               isLoading={formState.isSubmitting}
               leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
-            >
-              Cadastrar
-            </Button>
+            />
           </SimpleGrid>
         </Box>
       </Flex>

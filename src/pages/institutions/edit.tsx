@@ -10,15 +10,16 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
   Divider,
   VStack,
   SimpleGrid,
   useToast,
   Icon,
+  useColorMode,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
+import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
 import { ISelectOption, Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
@@ -53,6 +54,7 @@ const editInstitutionFormSchema = yup.object().shape({
 export default function EditInstitution(): JSX.Element {
   const { id } = Router.query;
   const toast = useToast();
+  const { colorMode } = useColorMode();
 
   const [stateId, setStateId] = useState("");
   const [cities, setCities] = useState<ICity[]>();
@@ -199,7 +201,7 @@ export default function EditInstitution(): JSX.Element {
           as="form"
           flex="1"
           borderRadius={8}
-          bg="gray.800"
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
           onSubmit={handleSubmit(handleEditInstitution)}
         >
@@ -207,7 +209,12 @@ export default function EditInstitution(): JSX.Element {
             Cadastar campus
           </Heading>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -243,25 +250,28 @@ export default function EditInstitution(): JSX.Element {
             </SimpleGrid>
           </VStack>
 
-          <Divider my="6" borderColor="gray.700" />
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/institutions" passHref>
               <Button
-                colorScheme="whiteAlpha"
+                label="Cancelar"
+                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
-              >
-                Cancelar
-              </Button>
+              />
             </Link>
             <Button
+              label="Alterar"
               type="submit"
               colorScheme="green"
               isLoading={formState.isSubmitting}
               leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
-            >
-              Alterar
-            </Button>
+            />
           </SimpleGrid>
         </Box>
       </Flex>

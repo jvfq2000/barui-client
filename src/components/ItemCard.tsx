@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { HStack, Text, useColorMode } from "@chakra-ui/react";
+import { Text, useColorMode } from "@chakra-ui/react";
 
 interface IItemCardProps {
   label: string;
@@ -11,9 +11,11 @@ function ItemCard({ label, value }: IItemCardProps): JSX.Element {
   const defaultColor = colorMode === "dark" ? "grayDark.300" : "grayLight.300";
 
   return (
-    <HStack>
-      <Text fontSize="sm">{label}:</Text>
+    <Text fontSize="sm">
+      {label}:
       <Text
+        as="span"
+        ml="1"
         fontSize="sm"
         fontWeight={label === "Status" ? "bold" : "normal"}
         color={
@@ -26,7 +28,7 @@ function ItemCard({ label, value }: IItemCardProps): JSX.Element {
       >
         {value}
       </Text>
-    </HStack>
+    </Text>
   );
 }
 

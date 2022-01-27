@@ -22,6 +22,7 @@ import {
   Icon,
   IconButton,
   useColorMode,
+  Tooltip,
 } from "@chakra-ui/react";
 
 import { AuthContext, signOut } from "../../contexts/AuthContext";
@@ -38,13 +39,16 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
 
   return (
     <>
-      <IconButton
-        mr="6"
-        aria-label="grayDark.900"
-        variant="unstyled"
-        icon={<Icon as={colorMode === "dark" ? RiSunLine : RiMoonLine} />}
-        onClick={toggleColorMode}
-      />
+      <Tooltip label="Alterar tema" hasArrow bg="gray.300" color="black">
+        <IconButton
+          mr="6"
+          aria-label="grayDark.900"
+          colorScheme="grayDark"
+          size="sm"
+          icon={<Icon as={colorMode === "dark" ? RiSunLine : RiMoonLine} />}
+          onClick={toggleColorMode}
+        />
+      </Tooltip>
       <Popover
         id="propoverProfile"
         initialFocusRef={initialFocusRef}
@@ -62,6 +66,14 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
                   fontSize="small"
                 >
                   {user?.email}
+                </Text>
+                <Text
+                  color={
+                    colorMode === "dark" ? "grayDark.300" : "grayLight.300"
+                  }
+                  fontSize="small"
+                >
+                  {user?.accessLevel}
                 </Text>
               </Box>
             )}
@@ -86,6 +98,12 @@ function Profile({ showProfileData = true }: IProfileProps): JSX.Element {
               fontSize="small"
             >
               {user?.email}
+            </Text>
+            <Text
+              color={colorMode === "dark" ? "grayDark.300" : "grayLight.300"}
+              fontSize="small"
+            >
+              {user?.accessLevel}
             </Text>
           </PopoverHeader>
 

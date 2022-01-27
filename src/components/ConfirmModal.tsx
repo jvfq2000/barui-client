@@ -68,7 +68,7 @@ function ConfirmModal({
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Button
               label="Cancelar"
-              colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
+              colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
               onClick={onClose}
               leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
             />

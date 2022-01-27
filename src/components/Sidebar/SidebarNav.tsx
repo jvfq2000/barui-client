@@ -21,7 +21,7 @@ function SidebarNav(): JSX.Element {
     <VStack spacing="12" align="flex-start">
       <NavSection title="GERAL">
         <NavLink icon={RiDashboardLine} href="/dashboard">
-          Dashboard
+          Painel
         </NavLink>
       </NavSection>
 

@@ -1,5 +1,9 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { RiCloseCircleLine, RiPencilLine } from "react-icons/ri";
+import {
+  RiAddCircleLine,
+  RiCloseCircleLine,
+  RiPencilLine,
+} from "react-icons/ri";
 import * as yup from "yup";
 
 import {
@@ -15,6 +19,7 @@ import {
   SimpleGrid,
   Text,
   useColorMode,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
@@ -34,13 +39,14 @@ interface IChartOptionsModalProps {
   onClose(): void;
   categories: ICategory[];
   activities: IActivity[];
-  onSubmit(activities: IActivity[]): void;
+  index: number;
+  onSave(activities: IActivity[]): void;
 }
 
 const persistenceActivityFormSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
-  maxHours: yup.number().required("Carga horária máxima obrigatória"),
-  minHours: yup.number().required("Carga horária minima obrigatória"),
+  maxHours: yup.string().required("Carga horária máxima obrigatória"),
+  minHours: yup.string().required("Carga horária minima obrigatória"),
   categoryId: yup.string().required("Categoria obrigatória"),
 });
 
@@ -49,20 +55,114 @@ function PersistenceActivityModal({
   onClose,
   categories,
   activities,
-  onSubmit,
+  index,
+  onSave,
 }: IChartOptionsModalProps): JSX.Element {
   const { colorMode } = useColorMode();
+  const toast = useToast();
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm({
     resolver: yupResolver(persistenceActivityFormSchema),
   });
 
   const { errors } = formState;
 
+  function indexIsValid(index: number): boolean {
+    if (!activities || activities.length === 0) {
+      return false;
+    }
+
+    if (index >= activities.length) {
+      return false;
+    }
+
+    if (index) {
+      return true;
+    }
+
+    if (index === 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (indexIsValid(index)) {
+    setValue("name", activities[index].name);
+    setValue("maxHours", activities[index].maxHours);
+    setValue("minHours", activities[index].minHours);
+    setValue("categoryId", activities[index].categoryId);
+  } else {
+    setValue("name", "");
+    setValue("maxHours", "");
+    setValue("minHours", "");
+    setValue("categoryId", "");
+  }
+
   const handleAddActivitie: SubmitHandler<IActivity> = async data => {
-    activities.push(data);
-    onSubmit(activities);
+    const activity = data;
+
+    activity.categoryName = categories.find(
+      category => category.id === data.categoryId,
+    ).name;
+
+    if (indexIsValid(index)) {
+      const activityAlreadyExists = activities.find(
+        (item, i) => item.name === activity.name && i !== index,
+      );
+
+      if (activityAlreadyExists) {
+        toast({
+          description:
+            "Já existe outra atividade neste quadro que possui o mesmo nome.",
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      } else {
+        const newActivities = activities;
+        newActivities[index] = activity;
+
+        onSave(newActivities);
+        onClose();
+      }
+    } else {
+      const activityAlreadyExists = activities?.find(
+        item => item.name === activity.name,
+      );
+
+      if (activityAlreadyExists) {
+        toast({
+          description:
+            "Já existe outra atividade neste quadro que possui o mesmo nome.",
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      } else {
+        onSave(activities ? [...activities, activity] : [activity]);
+        onClose();
+      }
+    }
   };
+
+  function deleteActivity() {
+    const newActivities = activities;
+    newActivities.splice(index, 1);
+
+    onSave(newActivities);
+    onClose();
+  }
+
+  function modfyIsActivate() {
+    const newActivities = activities;
+    newActivities.splice(index, 1);
+
+    onSave(newActivities);
+    onClose();
+  }
 
   function generateOptionsCategory(): ISelectOption[] {
     const options: ISelectOption[] = [];
@@ -95,7 +195,7 @@ function PersistenceActivityModal({
 
           <ModalCloseButton />
 
-          <ModalBody px={["2", "3"]} justify="center">
+          <ModalBody px={["2", "3"]}>
             <Divider
               mb="4"
               borderColor={
@@ -115,29 +215,29 @@ function PersistenceActivityModal({
 
               <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
                 <Select
-                  name="catogoryId"
+                  name="categoryId"
                   placeholder="Selecione"
                   options={generateOptionsCategory()}
                   label="Categoria"
-                  error={errors.catogoryId}
-                  {...register("catogoryId")}
+                  error={errors.categoryId}
+                  {...register("categoryId")}
                 />
               </SimpleGrid>
 
               <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
                 <Input
                   type="number"
-                  name="maxHours"
-                  label="Carga hor. máx."
-                  error={errors.maxHours}
-                  {...register("maxHours")}
-                />
-                <Input
-                  type="number"
                   name="minHours"
                   label="Carga hor. mín."
                   error={errors.minHours}
                   {...register("minHours")}
+                />
+                <Input
+                  type="number"
+                  name="maxHours"
+                  label="Carga hor. máx."
+                  error={errors.maxHours}
+                  {...register("maxHours")}
                 />
               </SimpleGrid>
             </VStack>
@@ -154,18 +254,29 @@ function PersistenceActivityModal({
             <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
               <Button
                 label="Cancelar"
-                onClick={() => {
-                  onClose();
-                }}
-                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
+                onClick={onClose}
+                colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               />
               <Button
-                label="Adicionar"
-                onClick={onClose}
+                label={indexIsValid(index) ? "Alterar" : "Cadastrar"}
+                type="submit"
                 colorScheme="green"
-                leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                leftIcon={
+                  <Icon
+                    as={indexIsValid(index) ? RiPencilLine : RiAddCircleLine}
+                    fontSize="20"
+                  />
+                }
               />
+              {indexIsValid(index) && !activities[index].id && (
+                <Button
+                  label="Excluir"
+                  onClick={deleteActivity}
+                  colorScheme="red"
+                  leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
+                />
+              )}
             </SimpleGrid>
           </ModalFooter>
         </ModalContent>

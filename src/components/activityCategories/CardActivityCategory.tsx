@@ -17,6 +17,7 @@ function CardActivityCategory({
 
   return (
     <Box
+      h="100%"
       p={["6", "8"]}
       bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius={8}

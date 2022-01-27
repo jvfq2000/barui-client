@@ -101,14 +101,14 @@ export default function ResetPassword(): JSX.Element {
             <Input
               name="password"
               type="password"
-              label="Senha"
+              label="Nova senha"
               error={errors.password}
               {...register("password")}
             />
             <Input
               name="passwordConfirmation"
               type="password"
-              label="Confirmação da senha"
+              label="Confirmar nova senha"
               error={errors.passwordConfirmation}
               {...register("passwordConfirmation")}
             />

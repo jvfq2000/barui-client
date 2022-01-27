@@ -28,7 +28,10 @@ function Sidebar(): JSX.Element {
     return (
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay>
-          <DrawerContent bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"} p="4">
+          <DrawerContent
+            bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+            p="4"
+          >
             <DrawerCloseButton mt="6" />
             <DrawerHeader>Navegação</DrawerHeader>
 

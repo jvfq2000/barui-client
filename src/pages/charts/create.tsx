@@ -43,6 +43,7 @@ interface ICreateChartFormData {
   inForceFrom: string;
   file: File;
   courseId: string;
+  activities: IActivity[];
 }
 
 interface ICourse {
@@ -68,6 +69,7 @@ export default function CreateChart(): JSX.Element {
   const [courses, setCourses] = useState<ICourse[]>();
   const [categories, setCategories] = useState<ICategory[]>();
   const [activities, setActivities] = useState<IActivity[]>();
+  const [index, setIndex] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { register, handleSubmit, formState } = useForm({
@@ -78,13 +80,11 @@ export default function CreateChart(): JSX.Element {
 
   const createChart = useMutation(
     async (chart: ICreateChartFormData) => {
-      const formData = new FormData();
-      formData.append("name", chart.name);
-      formData.append("inForceFrom", chart.inForceFrom);
-      formData.append("courseId", chart.courseId);
+      const fullChart = chart;
+      fullChart.activities = activities;
 
       api
-        .post("charts", formData)
+        .post("charts", fullChart)
         .then(response => {
           toast({
             description: "Quadro de atividades cadastrado com sucesso.",
@@ -229,28 +229,31 @@ export default function CreateChart(): JSX.Element {
                   colorScheme="teal"
                   w="100%"
                   leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-                  onClick={onOpen}
+                  onClick={() => {
+                    setIndex(null);
+                    onOpen();
+                  }}
                 />
               </Box>
             </SimpleGrid>
 
-            <SimpleGrid
-              flex="1"
-              gap="4"
-              minChildWidth={[280, 340]}
-              align="flex-start"
-            >
-              {activities?.map(activity => {
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              {activities?.map((activity, index) => {
                 return (
-                  <CardActivity
-                    key={activity.id}
-                    name={activity.name}
-                    maxHours={activity.maxHours}
-                    minHours={activity.minHours}
-                    categoryName={activity.categoryName}
-                    isActive={activity.isActive}
-                    createdAt={activity.createdAt}
-                  />
+                  <Box
+                    key={index}
+                    onClick={() => {
+                      setIndex(index);
+                      onOpen();
+                    }}
+                  >
+                    <CardActivity
+                      name={activity.name}
+                      maxHours={activity.maxHours}
+                      minHours={activity.minHours}
+                      categoryName={activity.categoryName}
+                    />
+                  </Box>
                 );
               })}
             </SimpleGrid>
@@ -267,7 +270,7 @@ export default function CreateChart(): JSX.Element {
             <Link href="/charts" passHref>
               <Button
                 label="Cancelar"
-                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
+                colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               />
             </Link>
@@ -281,12 +284,14 @@ export default function CreateChart(): JSX.Element {
           </SimpleGrid>
         </Box>
       </Flex>
+
       <PersistenceActivityModal
         isOpen={isOpen}
         onClose={onClose}
         categories={categories}
         activities={activities}
-        onSubmit={setActivities}
+        index={index}
+        onSave={setActivities}
       />
     </Box>
   );

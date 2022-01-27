@@ -93,11 +93,6 @@ export default function Dashboard(): JSX.Element {
             >
               Olá, {user?.name}
             </Text>
-            <Text
-              color={colorMode === "dark" ? "grayDark.100" : "grayLight.100"}
-            >
-              Que bom te encontrar aqui!
-            </Text>
           </Stack>
 
           <SimpleGrid

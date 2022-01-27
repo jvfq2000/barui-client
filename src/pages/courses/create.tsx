@@ -155,7 +155,7 @@ export default function CreateCourse(): JSX.Element {
             <Link href="/courses" passHref>
               <Button
                 label="Cancelar"
-                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
+                colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               />
             </Link>

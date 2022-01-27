@@ -12,13 +12,14 @@ import {
   Spinner,
   SimpleGrid,
   useDisclosure,
-  Switch,
   useColorMode,
+  VStack,
 } from "@chakra-ui/react";
 
 import { ActivityCategoryOptionsModal } from "../../components/activityCategories/ActivityCategoryOptionsModal";
 import { CardActivityCategory } from "../../components/activityCategories/CardActivityCategory";
 import { Button } from "../../components/form/Button";
+import { Switch } from "../../components/form/Switch";
 import { Header } from "../../components/Header";
 import { Search } from "../../components/Header/Search";
 import { Pagination } from "../../components/Pagination";
@@ -78,20 +79,15 @@ export default function ActivityCategoryList(): JSX.Element {
 
             {isWideVersion && (
               <>
-                <Text>
-                  Status:
-                  <Switch
-                    ml="2"
-                    colorScheme="grayLigth"
-                    isChecked={isActive}
-                    onChange={() => {
-                      setIsActive(!isActive);
-                    }}
-                  ></Switch>
-                </Text>
+                <Switch
+                  labelLeft="Inativos"
+                  labelRight="Ativos"
+                  isActive={isActive}
+                  setIsActive={setIsActive}
+                />
                 <Search
                   placeholder="Filtrar categorias"
-                  handleOnClick={setFilter}
+                  setSearch={setFilter}
                 />
               </>
             )}
@@ -109,23 +105,15 @@ export default function ActivityCategoryList(): JSX.Element {
           </Flex>
 
           {!isWideVersion && (
-            <Flex mb="6" align="center" justify="center">
-              <Text>
-                Status
-                <Switch
-                  ml="1"
-                  colorScheme="grayLigth"
-                  isChecked={isActive}
-                  onChange={() => {
-                    setIsActive(!isActive);
-                  }}
-                ></Switch>
-              </Text>
-              <Search
-                placeholder="Filtrar categorias"
-                handleOnClick={setFilter}
+            <VStack spacing="4" mb="6" justify="center">
+              <Switch
+                labelLeft="Inativos"
+                labelRight="Ativos"
+                isActive={isActive}
+                setIsActive={setIsActive}
               />
-            </Flex>
+              <Search placeholder="Filtrar categorias" setSearch={setFilter} />
+            </VStack>
           )}
 
           {

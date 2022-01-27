@@ -232,7 +232,7 @@ export default function CreateInstitution(): JSX.Element {
             <Link href="/institutions" passHref>
               <Button
                 label="Cancelar"
-                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
+                colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               />
             </Link>

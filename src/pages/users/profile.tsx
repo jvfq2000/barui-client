@@ -279,7 +279,7 @@ export default function ProfileUser(): JSX.Element {
             <Link href="/users" passHref>
               <Button
                 label="Voltar"
-                colorScheme={colorMode === "dark" ? "grayLight" : "grayDark"}
+                colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiArrowGoBackLine} />}
               />
             </Link>

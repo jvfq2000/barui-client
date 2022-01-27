@@ -18,9 +18,9 @@ const ButtonBase: ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = ({
   return (
     <ChakraButton
       color="white"
-      bg={`${colorScheme}.600`}
+      bg={`${colorScheme}.500`}
       _hover={{
-        bg: `${colorScheme}.700`,
+        bg: `${colorScheme}.600`,
       }}
       {...rest}
     >

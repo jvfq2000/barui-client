@@ -71,7 +71,13 @@ function Pagination({
               <>
                 <PaginationItem onPageChange={onPageChange} number={1} />
                 {currentPage > 2 + siblingsCount && (
-                  <Text color={colorMode === "dark" ? "grayDark.300" : "grayLight.300"} w="8" textAlign="center">
+                  <Text
+                    color={
+                      colorMode === "dark" ? "grayDark.300" : "grayLight.300"
+                    }
+                    w="8"
+                    textAlign="center"
+                  >
                     ...
                   </Text>
                 )}
@@ -109,7 +115,13 @@ function Pagination({
             {siblingsCount + currentPage < lastPage && (
               <>
                 {lastPage > 1 + siblingsCount + currentPage && (
-                  <Text color={colorMode === "dark" ? "grayDark.300" : "grayLight.300"} w="8" textAlign="center">
+                  <Text
+                    color={
+                      colorMode === "dark" ? "grayDark.300" : "grayLight.300"
+                    }
+                    w="8"
+                    textAlign="center"
+                  >
                     ...
                   </Text>
                 )}

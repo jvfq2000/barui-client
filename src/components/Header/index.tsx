@@ -13,6 +13,7 @@ function Header(): JSX.Element {
     base: false,
     lg: true,
   });
+
   return (
     <Flex
       as="header"

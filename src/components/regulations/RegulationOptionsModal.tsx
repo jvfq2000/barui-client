@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  RiFileDownloadLine,
+  RiDownload2Line,
   RiLockLine,
   RiLockUnlockLine,
   RiPencilLine,
@@ -183,7 +183,7 @@ function RegulationOptionsModal({
                       label="Download"
                       onClick={onClose}
                       colorScheme="green"
-                      leftIcon={<Icon as={RiFileDownloadLine} fontSize="20" />}
+                      leftIcon={<Icon as={RiDownload2Line} fontSize="20" />}
                     />
                   </ChackraLink>
                 </>

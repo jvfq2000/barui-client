@@ -6,8 +6,6 @@ interface ICardUserProps {
   name: string;
   lastName: string;
   email: string;
-  identifier: string;
-  courseName: string;
   avatar: string;
   avatarUrl: string;
   isActive: boolean;
@@ -19,8 +17,6 @@ function CardUser({
   name,
   lastName,
   email,
-  identifier,
-  courseName,
   avatar,
   avatarUrl,
   accessLevel,
@@ -44,7 +40,7 @@ function CardUser({
   return (
     <Box
       h="100%"
-      p={["6", "8"]}
+      p={["2", "4"]}
       bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius={8}
       pb="4"
@@ -54,7 +50,7 @@ function CardUser({
       }}
     >
       <HStack mb="4" justify="space-between">
-        <Avatar size="md" name={name} src={avatar && avatarUrl} />
+        <Avatar size="lg" name={name} src={avatar && avatarUrl} />
         <Text align="center" fontSize="md">
           {name}
         </Text>
@@ -63,10 +59,8 @@ function CardUser({
         </Text>
       </HStack>
 
-      <ItemCard label="CPF" value={identifier} />
       <ItemCard label="Nome completo" value={`${name} ${lastName}`} />
       <ItemCard label="E-mail" value={email} />
-      <ItemCard label="Curso" value={courseName} />
       <ItemCard label="Cadastrado em" value={createdAt} />
       <ItemCard label="Status" value={isActive ? "Ativo" : "Inativo"} />
     </Box>

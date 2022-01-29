@@ -15,7 +15,7 @@ function Search({
     <Flex
       as="label"
       flex="1"
-      py="3"
+      py="2"
       px="2"
       mx={[2, 6]}
       maxW={400}
@@ -23,6 +23,7 @@ function Search({
       color={colorMode === "dark" ? "grayDark.200" : "grayLight.200"}
       position="relative"
       bg={colorMode === "dark" ? "grayDark.900" : "grayLight.900"}
+      border="solid 1px gray"
       borderRadius="full"
     >
       <Input

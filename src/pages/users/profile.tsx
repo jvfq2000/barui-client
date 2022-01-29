@@ -160,27 +160,28 @@ export default function ProfileUser(): JSX.Element {
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Box align="center">
                 <Avatar
-                  mr="4"
-                  size="xl"
+                  mb="4"
+                  size="2xl"
                   name={getValues("name")}
                   src={avatar && avatarUrl}
                 />
-              </Box>
-              <Box position="relative" top="30%">
-                <InputFile
-                  name="avatar"
-                  label={avatarUpload?.name || "Alterar avatar"}
-                  pt="1"
-                  accept="image/*"
-                  error={errors.avatar}
-                  {...register("avatar")}
-                  onChange={handleChangeAvatar}
-                  showButtonUpload
-                  handleButtonUpload={handleUploadAvatar}
-                  labelBotton="Alterar"
-                  isLoadingButton={isLoadingUploadAvatar}
-                  fileSelected={fileSelected}
-                />
+
+                <Box maxW="300px">
+                  <InputFile
+                    name="avatar"
+                    label={avatarUpload?.name || "Alterar avatar"}
+                    pt="1"
+                    accept="image/*"
+                    error={errors.avatar}
+                    {...register("avatar")}
+                    onChange={handleChangeAvatar}
+                    showButtonUpload
+                    handleButtonUpload={handleUploadAvatar}
+                    labelBotton="Alterar"
+                    isLoadingButton={isLoadingUploadAvatar}
+                    fileSelected={fileSelected}
+                  />
+                </Box>
               </Box>
             </SimpleGrid>
 
@@ -276,7 +277,7 @@ export default function ProfileUser(): JSX.Element {
           />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
-            <Link href="/users" passHref>
+            <Link href="/dashboard" passHref>
               <Button
                 label="Voltar"
                 colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}

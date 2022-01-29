@@ -14,14 +14,19 @@ import {
   useDisclosure,
   useColorMode,
   VStack,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
 } from "@chakra-ui/react";
 
 import { ActivityCategoryOptionsModal } from "../../components/activityCategories/ActivityCategoryOptionsModal";
 import { CardActivityCategory } from "../../components/activityCategories/CardActivityCategory";
 import { Button } from "../../components/form/Button";
-import { Switch } from "../../components/form/Switch";
 import { Header } from "../../components/Header";
-import { Search } from "../../components/Header/Search";
+import { MountOptionsList } from "../../components/MountOptionsList";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
 import {
@@ -29,6 +34,7 @@ import {
   useActivityCategories,
 } from "../../services/hooks/useActivityCategories";
 import { withSSRAuth } from "../../shared/withSSRAuth";
+import { defaultBgColor } from "../../utils/generateBgColor";
 import { accessLevel } from "../../utils/permitions";
 
 export default function ActivityCategoryList(): JSX.Element {
@@ -37,6 +43,7 @@ export default function ActivityCategoryList(): JSX.Element {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [listInTable, setListInTable] = useState(true);
   const { data, isLoading, isFetching, error } = useActivityCategories({
     page,
     filter,
@@ -62,7 +69,12 @@ export default function ActivityCategoryList(): JSX.Element {
       <Header />
       <Flex w="100%" my="6" maxW={1480} mx="auto" px={[4, 6]}>
         <Sidebar />
-        <Box flex="1" borderRadius={8}>
+        <Box
+          flex="1"
+          borderRadius={8}
+          p={listInTable && isWideVersion ? "8" : "0"}
+          bg={defaultBgColor(listInTable, isWideVersion, colorMode)}
+        >
           <Flex mb="6" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
               Cat. de Atividades
@@ -78,18 +90,14 @@ export default function ActivityCategoryList(): JSX.Element {
             </Heading>
 
             {isWideVersion && (
-              <>
-                <Switch
-                  labelLeft="Inativos"
-                  labelRight="Ativos"
-                  isActive={isActive}
-                  setIsActive={setIsActive}
-                />
-                <Search
-                  placeholder="Filtrar categorias"
-                  setSearch={setFilter}
-                />
-              </>
+              <MountOptionsList
+                listInTable={listInTable}
+                setListInTable={setListInTable}
+                isActive={isActive}
+                setIsActive={setIsActive}
+                labelFilter="Filtrar categorias"
+                setFilter={setFilter}
+              />
             )}
 
             <Link href="/activity-categories/create" passHref>
@@ -106,13 +114,14 @@ export default function ActivityCategoryList(): JSX.Element {
 
           {!isWideVersion && (
             <VStack spacing="4" mb="6" justify="center">
-              <Switch
-                labelLeft="Inativos"
-                labelRight="Ativos"
+              <MountOptionsList
+                listInTable={listInTable}
+                setListInTable={setListInTable}
                 isActive={isActive}
                 setIsActive={setIsActive}
+                labelFilter="Filtrar categorias"
+                setFilter={setFilter}
               />
-              <Search placeholder="Filtrar categorias" setSearch={setFilter} />
             </VStack>
           )}
 
@@ -128,29 +137,74 @@ export default function ActivityCategoryList(): JSX.Element {
               </Flex>
             ) : (
               <>
-                <SimpleGrid
-                  flex="1"
-                  gap="4"
-                  minChildWidth={[280, 340]}
-                  align="flex-start"
-                >
-                  {data.activityCategories.map(activityCategory => {
-                    return (
-                      <Box
-                        key={activityCategory.id}
-                        onClick={() => {
-                          onOpenModal(activityCategory);
-                        }}
-                      >
-                        <CardActivityCategory
-                          name={activityCategory.name}
-                          isActive={activityCategory.isActive}
-                          createdAt={activityCategory.createdAt}
-                        />
-                      </Box>
-                    );
-                  })}
-                </SimpleGrid>
+                {((!listInTable && isWideVersion) || !isWideVersion) && (
+                  <SimpleGrid
+                    flex="1"
+                    gap="4"
+                    minChildWidth={[280, 340]}
+                    align="flex-start"
+                  >
+                    {data.activityCategories.map(activityCategory => {
+                      return (
+                        <Box
+                          key={activityCategory.id}
+                          onClick={() => {
+                            onOpenModal(activityCategory);
+                          }}
+                        >
+                          <CardActivityCategory
+                            name={activityCategory.name}
+                            isActive={activityCategory.isActive}
+                            createdAt={activityCategory.createdAt}
+                          />
+                        </Box>
+                      );
+                    })}
+                  </SimpleGrid>
+                )}
+
+                {listInTable && isWideVersion && (
+                  <Table variant="simple" size="md">
+                    <Thead>
+                      <Tr>
+                        <Th>nome</Th>
+                        <Th>cadastrado em</Th>
+                        <Th>status</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {data.activityCategories.map(activityCategory => {
+                        return (
+                          <Tr
+                            key={activityCategory.id}
+                            _hover={{
+                              bg:
+                                colorMode === "dark"
+                                  ? "grayDark.700"
+                                  : "grayLight.700",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              onOpenModal(activityCategory);
+                            }}
+                          >
+                            <Td>{activityCategory.name} </Td>
+                            <Td>{activityCategory.createdAt}</Td>
+                            <Td
+                              color={
+                                activityCategory.isActive
+                                  ? "green.500"
+                                  : "red.700"
+                              }
+                            >
+                              {activityCategory.isActive ? "Ativo" : "Inativo"}
+                            </Td>
+                          </Tr>
+                        );
+                      })}
+                    </Tbody>
+                  </Table>
+                )}
 
                 <Pagination
                   totalCountOfRegisters={data.totalCount}

@@ -7,10 +7,11 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Button,
   Flex,
   useColorMode,
 } from "@chakra-ui/react";
+
+import { Button } from "./Button";
 
 interface IInputFileProps extends ChakraInputProps {
   name: string;
@@ -83,13 +84,12 @@ const InputFileBase: ForwardRefRenderFunction<
 
       {showButtonUpload && (
         <Button
+          label={labelBotton}
           display={fileSelected ? "block" : "none"}
           colorScheme="green"
           onClick={handleButtonUpload}
           isLoading={isLoadingButton}
-        >
-          {labelBotton}
-        </Button>
+        />
       )}
     </Flex>
   );

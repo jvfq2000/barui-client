@@ -24,15 +24,15 @@ import {
 } from "@chakra-ui/react";
 
 import { Button } from "../../components/form/Button";
-import { Switch } from "../../components/form/Switch";
 import { Header } from "../../components/Header";
-import { Search } from "../../components/Header/Search";
+import { MountOptionsList } from "../../components/MountOptionsList";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
 import { CardUser } from "../../components/users/CardUser";
 import { UserOptionsModal } from "../../components/users/UserOptionsModal";
 import { IUser, useUsers } from "../../services/hooks/useUsers";
 import { withSSRAuth } from "../../shared/withSSRAuth";
+import { defaultBgColor } from "../../utils/generateBgColor";
 import { accessLevel } from "../../utils/permitions";
 
 export default function UserList(): JSX.Element {
@@ -40,6 +40,7 @@ export default function UserList(): JSX.Element {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [listInTable, setListInTable] = useState(true);
   const { data, isLoading, isFetching, error } = useUsers({
     page,
     filter,
@@ -60,13 +61,6 @@ export default function UserList(): JSX.Element {
     onOpen();
   }
 
-  function bgColor(): string {
-    if (isWideVersion) {
-      return colorMode === "dark" ? "grayDark.800" : "grayLight.800";
-    }
-    return "";
-  }
-
   return (
     <Box>
       <Header />
@@ -75,8 +69,8 @@ export default function UserList(): JSX.Element {
         <Box
           flex="1"
           borderRadius={8}
-          p={isWideVersion ? "8" : "0"}
-          bg={bgColor()}
+          p={listInTable && isWideVersion ? "8" : "0"}
+          bg={defaultBgColor(listInTable, isWideVersion, colorMode)}
         >
           <Flex mb="6" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
@@ -93,15 +87,14 @@ export default function UserList(): JSX.Element {
             </Heading>
 
             {isWideVersion && (
-              <>
-                <Switch
-                  labelLeft="Inativos"
-                  labelRight="Ativos"
-                  isActive={isActive}
-                  setIsActive={setIsActive}
-                />
-                <Search placeholder="Filtrar usuários" setSearch={setFilter} />
-              </>
+              <MountOptionsList
+                listInTable={listInTable}
+                setListInTable={setListInTable}
+                isActive={isActive}
+                setIsActive={setIsActive}
+                labelFilter="Filtrar usuários"
+                setFilter={setFilter}
+              />
             )}
 
             <Link href="/users/create" passHref>
@@ -118,13 +111,14 @@ export default function UserList(): JSX.Element {
 
           {!isWideVersion && (
             <VStack spacing="4" mb="6" justify="center">
-              <Switch
-                labelLeft="Inativos"
-                labelRight="Ativos"
+              <MountOptionsList
+                listInTable={listInTable}
+                setListInTable={setListInTable}
                 isActive={isActive}
                 setIsActive={setIsActive}
+                labelFilter="Filtrar usuários"
+                setFilter={setFilter}
               />
-              <Search placeholder="Filtrar categorias" setSearch={setFilter} />
             </VStack>
           )}
 
@@ -140,7 +134,7 @@ export default function UserList(): JSX.Element {
               </Flex>
             ) : (
               <>
-                {!isWideVersion && (
+                {((!listInTable && isWideVersion) || !isWideVersion) && (
                   <SimpleGrid
                     flex="1"
                     gap="4"
@@ -156,11 +150,9 @@ export default function UserList(): JSX.Element {
                           }}
                         >
                           <CardUser
-                            identifier={user.identifier}
                             name={user.name}
                             lastName={user.lastName}
                             email={user.email}
-                            courseName={user.courseName}
                             avatar={user.avatar}
                             avatarUrl={user.avatarUrl}
                             accessLevel={user.accessLevel}
@@ -173,20 +165,34 @@ export default function UserList(): JSX.Element {
                   </SimpleGrid>
                 )}
 
-                {isWideVersion && (
-                  <Table variant="simple">
+                {listInTable && isWideVersion && (
+                  <Table variant="simple" size="sm">
                     <Thead>
                       <Tr>
                         <Th />
                         <Th>nome</Th>
                         <Th>email</Th>
                         <Th>nível de acesso</Th>
+                        <Th>cadastrado em</Th>
+                        <Th>status</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {data.users.map(user => {
                         return (
-                          <Tr key={user.id}>
+                          <Tr
+                            key={user.id}
+                            _hover={{
+                              bg:
+                                colorMode === "dark"
+                                  ? "grayDark.700"
+                                  : "grayLight.700",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              onOpenModal(user);
+                            }}
+                          >
                             <Td>
                               <Avatar
                                 size="lg"
@@ -196,7 +202,14 @@ export default function UserList(): JSX.Element {
                             </Td>
                             <Td>{`${user.name} ${user.lastName}`} </Td>
                             <Td>{user.email}</Td>
-                            <Td>{user.accessLevel}</Td>
+                            <Td>
+                              {user.accessLevel[0].toUpperCase() +
+                                user.accessLevel.substring(1)}
+                            </Td>
+                            <Td>{user.createdAt}</Td>
+                            <Td color={user.isActive ? "green.500" : "red.700"}>
+                              {user.isActive ? "Ativo" : "Inativo"}
+                            </Td>
                           </Tr>
                         );
                       })}

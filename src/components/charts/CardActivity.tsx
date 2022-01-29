@@ -24,7 +24,7 @@ function CardActivity({
   return (
     <Box
       h="100%"
-      p={["6", "8"]}
+      p={["2", "4"]}
       bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius={8}
       border="1px solid #353646"

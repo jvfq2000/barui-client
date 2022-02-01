@@ -6,9 +6,9 @@ interface ICardActivityProps {
   name: string;
   maxHours: number;
   minHours: number;
+  showHover?: boolean;
   isActive?: boolean;
   createdAt?: Date;
-  categoryName: string;
 }
 
 function CardActivity({
@@ -17,7 +17,7 @@ function CardActivity({
   minHours,
   isActive,
   createdAt,
-  categoryName,
+  showHover = true,
 }: ICardActivityProps): JSX.Element {
   const { colorMode } = useColorMode();
 
@@ -27,12 +27,17 @@ function CardActivity({
       p={["2", "4"]}
       bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
       borderRadius={8}
-      border="1px solid #353646"
+      border="1px solid"
+      borderColor={colorMode === "dark" ? "grayDark.700" : "grayLight.700"}
       pb="4"
-      _hover={{
-        bg: colorMode === "dark" ? "grayDark.700" : "grayLight.700",
-        cursor: "pointer",
-      }}
+      _hover={
+        showHover
+          ? {
+              bg: colorMode === "dark" ? "grayDark.700" : "grayLight.700",
+              cursor: "pointer",
+            }
+          : {}
+      }
     >
       <Text mb="4" align="center" fontSize="md">
         {name}
@@ -40,7 +45,6 @@ function CardActivity({
 
       <ItemCard label="Carga hor. mín." value={`${minHours} horas`} />
       <ItemCard label="Carga hor. máx." value={`${maxHours} horas`} />
-      <ItemCard label="Categoria" value={categoryName} />
       {createdAt && <ItemCard label="Cadastrado em" value={createdAt} />}
       {isActive !== null && isActive !== undefined && (
         <ItemCard label="Status" value={isActive ? "Ativo" : "Inativo"} />

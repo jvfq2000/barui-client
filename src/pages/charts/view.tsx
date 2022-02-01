@@ -1,13 +1,8 @@
 import Link from "next/link";
 import Router from "next/router";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  RiAddCircleLine,
-  RiCheckboxCircleLine,
-  RiCloseCircleLine,
-} from "react-icons/ri";
-import { useMutation } from "react-query";
+import { useForm } from "react-hook-form";
+import { RiArrowGoBackFill } from "react-icons/ri";
 import * as yup from "yup";
 
 import {
@@ -19,7 +14,6 @@ import {
   useToast,
   Icon,
   VStack,
-  useDisclosure,
   useColorMode,
   Text,
   Table,
@@ -34,26 +28,14 @@ import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 import { AlterList } from "../../components/AlterList";
 import { CardActivity } from "../../components/charts/CardActivity";
-import { PersistenceActivityModal } from "../../components/charts/PersistenceActivityModal";
 import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
-import { InputMask } from "../../components/form/InputMask";
-import { ISelectOption, Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
 import { api } from "../../services/apiClient";
-import { IActivity } from "../../services/hooks/useCharts";
-import { queryClient } from "../../services/queryClient";
+import { IChart } from "../../services/hooks/useCharts";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
-
-interface ICreateChartFormData {
-  name: string;
-  inForceFrom: string;
-  file: File;
-  courseId: string;
-  activities: IActivity[];
-}
 
 interface ICourse {
   id: string;
@@ -68,89 +50,28 @@ interface ICategory {
 const createChartFormSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
   inForceFrom: yup.string().required("Em vigor é obrigatório"),
-  courseId: yup.string().required("Curso obrigatório"),
+  course: yup.string().required("Curso obrigatório"),
 });
 
 export default function CreateChart(): JSX.Element {
+  const { id } = Router.query;
   const toast = useToast();
   const { colorMode } = useColorMode();
 
-  const [courses, setCourses] = useState<ICourse[]>();
   const [categories, setCategories] = useState<ICategory[]>();
-  const [activities, setActivities] = useState<IActivity[]>();
-  const [index, setIndex] = useState(0);
+  const [chart, setChart] = useState<IChart>();
   const [listInTable, setListInTable] = useState(true);
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, formState, setValue } = useForm({
     resolver: yupResolver(createChartFormSchema),
   });
 
   const { errors } = formState;
-
-  const createChart = useMutation(
-    async (chart: ICreateChartFormData) => {
-      const fullChart = chart;
-      fullChart.activities = activities;
-
-      api
-        .post("charts", fullChart)
-        .then(response => {
-          toast({
-            description: "Quadro de atividades cadastrado com sucesso.",
-            status: "success",
-            position: "top",
-            duration: 8000,
-            isClosable: true,
-          });
-
-          Router.push("/charts");
-          return response.data.chart;
-        })
-        .catch(error => {
-          toast({
-            description: error.response.data.message,
-            status: "error",
-            position: "top",
-            duration: 8000,
-            isClosable: true,
-          });
-        });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("charts");
-      },
-    },
-  );
-
-  const handleCreateChart: SubmitHandler<ICreateChartFormData> = async data => {
-    await createChart.mutateAsync(data);
-  };
-
-  useEffect(() => {
-    api
-      .get(`courses/by-institution-id`)
-      .then(response => {
-        const courses = response.data as ICourse[];
-        setCourses(courses);
-      })
-      .catch(error => {
-        toast({
-          title: "Ops!",
-          description: error.response.data.message,
-          status: "error",
-          position: "top",
-          duration: 8000,
-          isClosable: true,
-        });
-      });
-  }, []);
 
   useEffect(() => {
     api
@@ -171,27 +92,28 @@ export default function CreateChart(): JSX.Element {
       });
   }, []);
 
-  function generateOptionsCourses(): ISelectOption[] {
-    const options: ISelectOption[] = [];
+  useEffect(() => {
+    api
+      .get(`charts/by-id?chartId=${id}`)
+      .then(response => {
+        const chartResponse = response.data as IChart;
+        setChart(chartResponse);
 
-    courses?.forEach(course => {
-      options.push({
-        value: course.id,
-        label: course.name,
+        setValue("name", chartResponse.name);
+        setValue("inForceFrom", chartResponse.inForceFrom);
+        setValue("course", chartResponse.courseName);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
       });
-    });
-
-    return options;
-  }
-
-  function setIndexActivityByName(name: string) {
-    activities.forEach((activity, index) => {
-      if (activity.name === name) {
-        setIndex(index);
-        onOpen();
-      }
-    });
-  }
+  }, []);
 
   return (
     <Box>
@@ -205,10 +127,9 @@ export default function CreateChart(): JSX.Element {
           borderRadius={8}
           bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
-          onSubmit={handleSubmit(handleCreateChart)}
         >
           <Heading size="lg" fontWeight="normal">
-            Cadastar quadro
+            Visualisar quadro
             {isWideVersion && (
               <AlterList
                 listInTable={listInTable}
@@ -227,46 +148,29 @@ export default function CreateChart(): JSX.Element {
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Input
+                isDisabled
                 name="name"
                 label="Nome"
                 error={errors.name}
                 {...register("name")}
               />
-              <InputMask
-                mask="**/****"
-                placeholder="semestre/ano"
-                maskChar="_"
+              <Input
+                isDisabled
                 name="inForceFrom"
                 label="Em vigor a partir de"
                 error={errors.inForceFrom}
                 {...register("inForceFrom")}
               />
-            </SimpleGrid>
-            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Select
-                name="courseId"
-                placeholder="Selecione"
-                options={generateOptionsCourses()}
+              <Input
+                isDisabled
+                name="course"
                 label="Curso"
-                error={errors.courseId}
-                {...register("courseId")}
+                error={errors.course}
+                {...register("course")}
               />
-
-              <Box w="100%" position="relative" top="42%">
-                <Button
-                  label="Adicionar atividade"
-                  colorScheme="teal"
-                  w="100%"
-                  leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-                  onClick={() => {
-                    setIndex(null);
-                    onOpen();
-                  }}
-                />
-              </Box>
             </SimpleGrid>
             {categories?.map(category => {
-              const filterActivities = activities?.filter(
+              const filterActivities = chart?.activities?.filter(
                 activity => activity.categoryId === category.id,
               );
 
@@ -297,13 +201,9 @@ export default function CreateChart(): JSX.Element {
                       >
                         {filterActivities?.map(activity => {
                           return (
-                            <Box
-                              key={activity.name}
-                              onClick={() => {
-                                setIndexActivityByName(activity.name);
-                              }}
-                            >
+                            <Box key={activity.name}>
                               <CardActivity
+                                showHover={false}
                                 name={activity.name}
                                 maxHours={activity.maxHours}
                                 minHours={activity.minHours}
@@ -324,19 +224,7 @@ export default function CreateChart(): JSX.Element {
                         <Tbody>
                           {filterActivities.map(activity => {
                             return (
-                              <Tr
-                                key={activity.name}
-                                _hover={{
-                                  bg:
-                                    colorMode === "dark"
-                                      ? "grayDark.700"
-                                      : "grayLight.700",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => {
-                                  setIndexActivityByName(activity.name);
-                                }}
-                              >
+                              <Tr key={activity.name}>
                                 <Td>{activity.name} </Td>
                                 <Td>{`${activity.minHours} horas`}</Td>
                                 <Td>{`${activity.maxHours} horas`}</Td>
@@ -363,30 +251,14 @@ export default function CreateChart(): JSX.Element {
           <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
             <Link href="/charts" passHref>
               <Button
-                label="Cancelar"
+                label="Voltar"
                 colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
-                leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
+                leftIcon={<Icon as={RiArrowGoBackFill} fontSize="20" />}
               />
             </Link>
-            <Button
-              label="Cadastrar"
-              colorScheme="green"
-              type="submit"
-              isLoading={formState.isSubmitting}
-              leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
-            />
           </SimpleGrid>
         </Box>
       </Flex>
-
-      <PersistenceActivityModal
-        isOpen={isOpen}
-        onClose={onClose}
-        categories={categories}
-        activities={activities}
-        index={index}
-        onSave={setActivities}
-      />
     </Box>
   );
 }

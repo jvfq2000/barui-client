@@ -2,6 +2,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import {
   RiAddCircleLine,
   RiCloseCircleLine,
+  RiDeleteBinLine,
   RiPencilLine,
 } from "react-icons/ri";
 import * as yup from "yup";
@@ -274,7 +275,7 @@ function PersistenceActivityModal({
                   label="Excluir"
                   onClick={deleteActivity}
                   colorScheme="red"
-                  leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
+                  leftIcon={<Icon as={RiDeleteBinLine} fontSize="20" />}
                 />
               )}
             </SimpleGrid>

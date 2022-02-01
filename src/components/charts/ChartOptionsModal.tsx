@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
+import {
+  RiEyeLine,
+  RiLockLine,
+  RiLockUnlockLine,
+  RiPencilLine,
+} from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
@@ -40,8 +45,7 @@ function ChartOptionsModal({
   onClose,
   chart,
 }: IChartOptionsModalProps): JSX.Element {
-  const { id, name, inForceFrom, courseName, isActive, createdAt, activities } =
-    chart;
+  const { id, name, inForceFrom, courseName, isActive, createdAt } = chart;
 
   const { colorMode } = useColorMode();
 
@@ -96,7 +100,7 @@ function ChartOptionsModal({
 
   return (
     <>
-      <Modal onClose={onClose} isOpen={isOpen} size="6xl" isCentered>
+      <Modal onClose={onClose} isOpen={isOpen} size="sm" isCentered>
         <ModalOverlay />
         <ModalContent
           mx="2"
@@ -128,29 +132,6 @@ function ChartOptionsModal({
               label="Status"
               value={isActive ? "Ativo" : "Inativo"}
             />
-
-            <br />
-
-            <SimpleGrid
-              flex="1"
-              gap="4"
-              minChildWidth={[280, 340]}
-              align="flex-start"
-            >
-              {activities?.map(activity => {
-                return (
-                  <CardActivity
-                    key={activity.id}
-                    name={activity.name}
-                    maxHours={activity.maxHours}
-                    minHours={activity.minHours}
-                    categoryName={activity.categoryName}
-                    isActive={activity.isActive}
-                    createdAt={activity.createdAt}
-                  />
-                );
-              })}
-            </SimpleGrid>
 
             <Divider
               mt="4"
@@ -192,6 +173,20 @@ function ChartOptionsModal({
                       onClick={onClose}
                       colorScheme="blue"
                       leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                    />
+                  </Link>
+
+                  <Link
+                    href={{
+                      pathname: "/charts/view",
+                      query: { id },
+                    }}
+                  >
+                    <Button
+                      label="Visualizar"
+                      onClick={onClose}
+                      colorScheme="green"
+                      leftIcon={<Icon as={RiEyeLine} fontSize="20" />}
                     />
                   </Link>
                 </Can>

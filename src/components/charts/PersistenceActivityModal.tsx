@@ -3,6 +3,8 @@ import {
   RiAddCircleLine,
   RiCloseCircleLine,
   RiDeleteBinLine,
+  RiLockLine,
+  RiLockUnlockLine,
   RiPencilLine,
 } from "react-icons/ri";
 import * as yup from "yup";
@@ -123,6 +125,9 @@ function PersistenceActivityModal({
         });
       } else {
         const newActivities = activities;
+        activity.id = newActivities[index].id;
+        activity.isActive = newActivities[index].isActive;
+        activity.createdAt = newActivities[index].createdAt;
         newActivities[index] = activity;
 
         onSave(newActivities);
@@ -143,6 +148,7 @@ function PersistenceActivityModal({
           isClosable: true,
         });
       } else {
+        activity.isActive = true;
         onSave(activities ? [...activities, activity] : [activity]);
         onClose();
       }
@@ -159,7 +165,7 @@ function PersistenceActivityModal({
 
   function modfyIsActivate() {
     const newActivities = activities;
-    newActivities.splice(index, 1);
+    newActivities[index].isActive = !newActivities[index].isActive;
 
     onSave(newActivities);
     onClose();
@@ -259,6 +265,32 @@ function PersistenceActivityModal({
                 colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
                 leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
               />
+              {indexIsValid(index) && !activities[index].id && (
+                <Button
+                  label="Excluir"
+                  onClick={deleteActivity}
+                  colorScheme="red"
+                  leftIcon={<Icon as={RiDeleteBinLine} fontSize="20" />}
+                />
+              )}
+
+              {indexIsValid(index) && activities[index].id && (
+                <Button
+                  label={activities[index].isActive ? "Inativar" : "Ativar"}
+                  onClick={modfyIsActivate}
+                  colorScheme={activities[index].isActive ? "red" : "teal"}
+                  leftIcon={
+                    <Icon
+                      as={
+                        activities[index].isActive
+                          ? RiLockLine
+                          : RiLockUnlockLine
+                      }
+                      fontSize="20"
+                    />
+                  }
+                />
+              )}
               <Button
                 label={indexIsValid(index) ? "Alterar" : "Cadastrar"}
                 type="submit"
@@ -270,14 +302,6 @@ function PersistenceActivityModal({
                   />
                 }
               />
-              {indexIsValid(index) && !activities[index].id && (
-                <Button
-                  label="Excluir"
-                  onClick={deleteActivity}
-                  colorScheme="red"
-                  leftIcon={<Icon as={RiDeleteBinLine} fontSize="20" />}
-                />
-              )}
             </SimpleGrid>
           </ModalFooter>
         </ModalContent>

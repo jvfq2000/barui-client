@@ -207,6 +207,7 @@ export default function CreateChart(): JSX.Element {
                                 name={activity.name}
                                 maxHours={activity.maxHours}
                                 minHours={activity.minHours}
+                                isActive={activity.isActive}
                               />
                             </Box>
                           );
@@ -219,6 +220,7 @@ export default function CreateChart(): JSX.Element {
                             <Th>nome</Th>
                             <Th>carga hor. mín.</Th>
                             <Th>carga hor. máx.</Th>
+                            <Th>status</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
@@ -228,6 +230,13 @@ export default function CreateChart(): JSX.Element {
                                 <Td>{activity.name} </Td>
                                 <Td>{`${activity.minHours} horas`}</Td>
                                 <Td>{`${activity.maxHours} horas`}</Td>
+                                <Td
+                                  color={
+                                    activity.isActive ? "green.500" : "red.700"
+                                  }
+                                >
+                                  {activity.isActive ? "Ativo" : "Inativo"}
+                                </Td>
                               </Tr>
                             );
                           })}

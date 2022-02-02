@@ -32,7 +32,6 @@ import { Can } from "../Can";
 import { ConfirmModal } from "../ConfirmModal";
 import { Button } from "../form/Button";
 import { ItemOptionsModal } from "../ItemOptionsModal";
-import { CardActivity } from "./CardActivity";
 
 interface IChartOptionsModalProps {
   isOpen: boolean;

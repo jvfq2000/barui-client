@@ -44,7 +44,8 @@ function ChartOptionsModal({
   onClose,
   chart,
 }: IChartOptionsModalProps): JSX.Element {
-  const { id, name, inForceFrom, courseName, isActive, createdAt } = chart;
+  const { id, name, inForceFrom, minHours, courseName, isActive, createdAt } =
+    chart;
 
   const { colorMode } = useColorMode();
 
@@ -126,6 +127,7 @@ function ChartOptionsModal({
               label="Em vigor a partir de"
               value={inForceFrom}
             />
+            <ItemOptionsModal label="Qtd. mín. horas" value={minHours} />
             <ItemOptionsModal label="Cadastrado em" value={createdAt} />
             <ItemOptionsModal
               label="Status"

@@ -163,7 +163,7 @@ export default function ChartList(): JSX.Element {
                   </SimpleGrid>
                 )}
 
-                {listInTable && isWideVersion && (
+                {listInTable && isWideVersion && !!data.charts.length && (
                   <Table variant="simple" size="md">
                     <Thead>
                       <Tr>

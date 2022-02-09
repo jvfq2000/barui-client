@@ -160,7 +160,7 @@ export default function CourseList(): JSX.Element {
                   </SimpleGrid>
                 )}
 
-                {listInTable && isWideVersion && (
+                {listInTable && isWideVersion && !!data.courses.length && (
                   <Table variant="simple" size="md">
                     <Thead>
                       <Tr>

@@ -1,0 +1,252 @@
+import Link from "next/link";
+import Router from "next/router";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
+import { useMutation } from "react-query";
+import * as yup from "yup";
+
+import {
+  Box,
+  Flex,
+  Heading,
+  Divider,
+  SimpleGrid,
+  useToast,
+  Icon,
+  VStack,
+  useColorMode,
+} from "@chakra-ui/react";
+import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+
+import { Button } from "../../components/form/Button";
+import { Input } from "../../components/form/Input";
+import { InputFile } from "../../components/form/InputFile";
+import { InputMask } from "../../components/form/InputMask";
+import { ISelectOption, Select } from "../../components/form/Select";
+import { Header } from "../../components/Header";
+import { Sidebar } from "../../components/Sidebar";
+import { api } from "../../services/apiClient";
+import { queryClient } from "../../services/queryClient";
+import { withSSRAuth } from "../../shared/withSSRAuth";
+import { accessLevel } from "../../utils/permitions";
+
+interface ICreateActivityFormData {
+  name: string;
+  inForceFrom: string;
+  file: File;
+  courseId: string;
+}
+
+interface ICourse {
+  id: string;
+  name: string;
+}
+
+export default function CreateActivity(): JSX.Element {
+  const toast = useToast();
+  const { colorMode } = useColorMode();
+
+  const [courses, setCourses] = useState<ICourse[]>();
+  const [fileUpload, setFileUpload] = useState<File>(null);
+
+  const createActivityFormSchema = yup.object().shape({
+    name: yup.string().required("Nome obrigatório"),
+    inForceFrom: yup.string().required("Em vigor é obrigatório"),
+    file: yup.string().test("fileTest", "Arquivo obrigatório", () => {
+      return !!fileUpload;
+    }),
+    courseId: yup.string().required("Curso obrigatório"),
+  });
+
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(createActivityFormSchema),
+  });
+
+  const { errors } = formState;
+
+  const createActivity = useMutation(
+    async (Activity: ICreateActivityFormData) => {
+      const formData = new FormData();
+      formData.append("file", fileUpload);
+      formData.append("name", Activity.name);
+      formData.append("inForceFrom", Activity.inForceFrom);
+      formData.append("courseId", Activity.courseId);
+
+      api
+        .post("student-activities", formData)
+        .then(response => {
+          toast({
+            description: "Regulamento cadastrado com sucesso.",
+            status: "success",
+            position: "top",
+            duration: 8000,
+            isClosable: true,
+          });
+
+          Router.push("/activities");
+          return response.data.Activity;
+        })
+        .catch(error => {
+          toast({
+            description: error.response.data.message,
+            status: "error",
+            position: "top",
+            duration: 8000,
+            isClosable: true,
+          });
+        });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("activities");
+      },
+    },
+  );
+
+  const handleCreateActivity: SubmitHandler<
+    ICreateActivityFormData
+  > = async data => {
+    await createActivity.mutateAsync(data);
+  };
+
+  const handleChangeFile = event => {
+    const file = event.target.files[0];
+    setFileUpload(file);
+  };
+
+  useEffect(() => {
+    api
+      .get(`courses/by-institution-id`)
+      .then(response => {
+        const courses = response.data as ICourse[];
+        setCourses(courses);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      });
+  }, []);
+
+  function generateOptionsCourses(): ISelectOption[] {
+    const options: ISelectOption[] = [];
+
+    courses?.forEach(course => {
+      options.push({
+        value: course.id,
+        label: course.name,
+      });
+    });
+
+    return options;
+  }
+
+  return (
+    <Box>
+      <Header />
+      <Flex w="100%" my="6" maxW={1480} mx="auto" px={[4, 6]}>
+        <Sidebar />
+
+        <Box
+          as="form"
+          flex="1"
+          borderRadius={8}
+          bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
+          p={["6", "8"]}
+          onSubmit={handleSubmit(handleCreateActivity)}
+        >
+          <Heading size="lg" fontWeight="normal">
+            Cadastar regulamento
+          </Heading>
+
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
+
+          <VStack spacing="8">
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Input
+                name="name"
+                label="Nome"
+                error={errors.name}
+                {...register("name")}
+              />
+              <InputMask
+                mask="**/****"
+                placeholder="semestre/ano"
+                maskChar="_"
+                name="inForceFrom"
+                label="Em vigor a partir de"
+                error={errors.inForceFrom}
+                {...register("inForceFrom")}
+              />
+            </SimpleGrid>
+
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Select
+                name="courseId"
+                placeholder="Selecione"
+                options={generateOptionsCourses()}
+                label="Curso"
+                error={errors.courseId}
+                {...register("courseId")}
+              />
+
+              <Box position="relative" top="40%">
+                <InputFile
+                  name="file"
+                  label={fileUpload?.name || "Selecionar arquivo"}
+                  pt="1"
+                  error={errors.file}
+                  {...register("file")}
+                  onChange={handleChangeFile}
+                />
+              </Box>
+            </SimpleGrid>
+          </VStack>
+
+          <Divider
+            my="6"
+            bordercolor={
+              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
+            }
+          />
+
+          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+            <Link href="/activities" passHref>
+              <Button
+                label="Cancelar"
+                colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
+                leftIcon={<Icon as={RiCloseCircleLine} fontSize="20" />}
+              />
+            </Link>
+            <Button
+              label="Cadastrar"
+              type="submit"
+              colorScheme="green"
+              isLoading={formState.isSubmitting}
+              leftIcon={<Icon as={RiCheckboxCircleLine} fontSize="20" />}
+            />
+          </SimpleGrid>
+        </Box>
+      </Flex>
+    </Box>
+  );
+}
+
+const getServerSideProps = withSSRAuth(async ctx => {
+  return {
+    props: {},
+  };
+}, accessLevel[3]);
+
+export { getServerSideProps };

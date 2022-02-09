@@ -195,7 +195,7 @@ export default function RegulationList(): JSX.Element {
                   </SimpleGrid>
                 )}
 
-                {listInTable && isWideVersion && (
+                {listInTable && isWideVersion && !!data.regulations.length && (
                   <Table variant="simple" size="md">
                     <Thead>
                       <Tr>

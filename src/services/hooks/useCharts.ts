@@ -21,6 +21,7 @@ interface IChart {
   id: string;
   name: string;
   inForceFrom: string;
+  minHours: number;
   isActive: boolean;
   createdAt: Date;
 
@@ -62,6 +63,7 @@ async function getCharts({
       id: chart.id,
       name: chart.name,
       inForceFrom: chart.inForceFrom,
+      minHours: chart.minHours,
       isActive: chart.isActive,
       createdAt: new Date(chart.createdAt).toLocaleDateString("pt-BR", {
         day: "2-digit",

@@ -165,7 +165,7 @@ export default function UserList(): JSX.Element {
                   </SimpleGrid>
                 )}
 
-                {listInTable && isWideVersion && (
+                {listInTable && isWideVersion && !!data.users.length && (
                   <Table variant="simple" size="sm">
                     <Thead>
                       <Tr>

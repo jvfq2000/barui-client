@@ -50,6 +50,7 @@ import { accessLevel } from "../../utils/permitions";
 interface ICreateChartFormData {
   name: string;
   inForceFrom: string;
+  minHours: number;
   file: File;
   courseId: string;
   activities: IActivity[];
@@ -68,6 +69,7 @@ interface ICategory {
 const createChartFormSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
   inForceFrom: yup.string().required("Em vigor é obrigatório"),
+  minHours: yup.string().required("Qtd. mín horas é obrigatório"),
   courseId: yup.string().required("Curso obrigatório"),
 });
 
@@ -240,6 +242,13 @@ export default function CreateChart(): JSX.Element {
                 label="Em vigor a partir de"
                 error={errors.inForceFrom}
                 {...register("inForceFrom")}
+              />
+              <Input
+                type="number"
+                name="minHours"
+                label="Qtd. min. horas"
+                error={errors.minHours}
+                {...register("minHours")}
               />
             </SimpleGrid>
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">

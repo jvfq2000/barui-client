@@ -165,7 +165,7 @@ export default function InstitutionList(): JSX.Element {
                   </SimpleGrid>
                 )}
 
-                {listInTable && isWideVersion && (
+                {listInTable && isWideVersion && !!data.institutions.length && (
                   <Table variant="simple" size="md">
                     <Thead>
                       <Tr>

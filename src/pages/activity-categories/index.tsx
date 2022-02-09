@@ -163,48 +163,52 @@ export default function ActivityCategoryList(): JSX.Element {
                   </SimpleGrid>
                 )}
 
-                {listInTable && isWideVersion && (
-                  <Table variant="simple" size="md">
-                    <Thead>
-                      <Tr>
-                        <Th>nome</Th>
-                        <Th>cadastrado em</Th>
-                        <Th>status</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {data.activityCategories.map(activityCategory => {
-                        return (
-                          <Tr
-                            key={activityCategory.id}
-                            _hover={{
-                              bg:
-                                colorMode === "dark"
-                                  ? "grayDark.700"
-                                  : "grayLight.700",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              onOpenModal(activityCategory);
-                            }}
-                          >
-                            <Td>{activityCategory.name} </Td>
-                            <Td>{activityCategory.createdAt}</Td>
-                            <Td
-                              color={
-                                activityCategory.isActive
-                                  ? "green.500"
-                                  : "red.700"
-                              }
+                {listInTable &&
+                  isWideVersion &&
+                  !!data.activityCategories.length && (
+                    <Table variant="simple" size="md">
+                      <Thead>
+                        <Tr>
+                          <Th>nome</Th>
+                          <Th>cadastrado em</Th>
+                          <Th>status</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {data.activityCategories.map(activityCategory => {
+                          return (
+                            <Tr
+                              key={activityCategory.id}
+                              _hover={{
+                                bg:
+                                  colorMode === "dark"
+                                    ? "grayDark.700"
+                                    : "grayLight.700",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                onOpenModal(activityCategory);
+                              }}
                             >
-                              {activityCategory.isActive ? "Ativo" : "Inativo"}
-                            </Td>
-                          </Tr>
-                        );
-                      })}
-                    </Tbody>
-                  </Table>
-                )}
+                              <Td>{activityCategory.name} </Td>
+                              <Td>{activityCategory.createdAt}</Td>
+                              <Td
+                                color={
+                                  activityCategory.isActive
+                                    ? "green.500"
+                                    : "red.700"
+                                }
+                              >
+                                {activityCategory.isActive
+                                  ? "Ativo"
+                                  : "Inativo"}
+                              </Td>
+                            </Tr>
+                          );
+                        })}
+                      </Tbody>
+                    </Table>
+                  )}
 
                 <Pagination
                   totalCountOfRegisters={data.totalCount}

@@ -44,7 +44,7 @@ function SidebarNav(): JSX.Element {
       </Can>
 
       <NavSection title="ATIVIDADES">
-        <NavLink icon={RiTimerFlashLine} href="/activities">
+        <NavLink icon={RiTimerFlashLine} href="/student-activities">
           Atividades
         </NavLink>
         <Can accessLevel={accessLevel[3]}>

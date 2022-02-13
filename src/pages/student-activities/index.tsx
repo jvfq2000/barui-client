@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Router from "next/router";
 import { useState } from "react";
 import { RiAddCircleLine } from "react-icons/ri";
 
@@ -22,29 +23,29 @@ import {
   Td,
 } from "@chakra-ui/react";
 
-import { ActivityCategoryOptionsModal } from "../../components/activityCategories/ActivityCategoryOptionsModal";
-import { CardActivityCategory } from "../../components/activityCategories/CardActivityCategory";
 import { Button } from "../../components/form/Button";
 import { Header } from "../../components/Header";
 import { MountOptionsList } from "../../components/MountOptionsList";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
+import { CardStudentActivity } from "../../components/studentActivities/CardStudentActivity";
+import { StudentActivityOptionsModal } from "../../components/studentActivities/StudentActivityOptionsModal";
 import {
-  IActivityCategory,
-  useActivityCategories,
-} from "../../services/hooks/useActivityCategories";
+  IStudentActivity,
+  useStudentActivities,
+} from "../../services/hooks/useStudentActivities";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { defaultBgColor } from "../../utils/generateBgColor";
 import { accessLevel } from "../../utils/permitions";
 
-export default function ActivityCategoryList(): JSX.Element {
-  const [activityCategorySelected, setActivityCategorySelected] =
-    useState<IActivityCategory>({} as IActivityCategory);
+export default function StudentActivityList(): JSX.Element {
+  const [studentActivitySelected, setStudentActivitySelected] =
+    useState<IStudentActivity>({} as IStudentActivity);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [listInTable, setListInTable] = useState(true);
-  const { data, isLoading, isFetching, error } = useActivityCategories({
+  const { data, isLoading, isFetching, error } = useStudentActivities({
     page,
     filter,
     isActive,
@@ -59,8 +60,8 @@ export default function ActivityCategoryList(): JSX.Element {
     lg: true,
   });
 
-  function onOpenModal(activityCategory: IActivityCategory) {
-    setActivityCategorySelected(activityCategory);
+  function onOpenModal(studentActivity: IStudentActivity) {
+    setStudentActivitySelected(studentActivity);
     onOpen();
   }
 
@@ -77,7 +78,7 @@ export default function ActivityCategoryList(): JSX.Element {
         >
           <Flex mb="6" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
-              Categorias
+              Atividades
               {!isLoading && isFetching && (
                 <Spinner
                   size="sm"
@@ -95,18 +96,18 @@ export default function ActivityCategoryList(): JSX.Element {
                 setListInTable={setListInTable}
                 isActive={isActive}
                 setIsActive={setIsActive}
-                labelFilter="Filtrar categorias"
+                labelFilter="Filtrar atividades"
                 setFilter={setFilter}
               />
             )}
 
-            <Link href="/activity-categories/create" passHref>
+            <Link href="/student-activities/create" passHref>
               <Button
                 label="Criar nova"
-                colorScheme="green"
                 as="a"
                 size="sm"
                 fontSize="sm"
+                colorScheme="green"
                 leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
               />
             </Link>
@@ -119,7 +120,7 @@ export default function ActivityCategoryList(): JSX.Element {
                 setListInTable={setListInTable}
                 isActive={isActive}
                 setIsActive={setIsActive}
-                labelFilter="Filtrar categorias"
+                labelFilter="Filtrar atividades"
                 setFilter={setFilter}
               />
             </VStack>
@@ -133,7 +134,7 @@ export default function ActivityCategoryList(): JSX.Element {
               </Flex>
             ) : error ? (
               <Flex>
-                <Text>Falha ao obter categorias.</Text>
+                <Text>Falha ao obter cursos.</Text>
               </Flex>
             ) : (
               <>
@@ -144,18 +145,22 @@ export default function ActivityCategoryList(): JSX.Element {
                     minChildWidth={[280, 340]}
                     align="flex-start"
                   >
-                    {data.activityCategories.map(activityCategory => {
+                    {data.studentActivities.map(studentActivity => {
                       return (
                         <Box
-                          key={activityCategory.id}
+                          key={studentActivity.id}
                           onClick={() => {
-                            onOpenModal(activityCategory);
+                            onOpenModal(studentActivity);
                           }}
                         >
-                          <CardActivityCategory
-                            name={activityCategory.name}
-                            isActive={activityCategory.isActive}
-                            createdAt={activityCategory.createdAt}
+                          <CardStudentActivity
+                            description={studentActivity.description}
+                            semester={studentActivity.semester}
+                            approvedHours={studentActivity.approvedHours}
+                            hours={studentActivity.hours}
+                            isCertified={studentActivity.isCertified}
+                            isActive={studentActivity.isActive}
+                            createdAt={studentActivity.createdAt}
                           />
                         </Box>
                       );
@@ -165,20 +170,24 @@ export default function ActivityCategoryList(): JSX.Element {
 
                 {listInTable &&
                   isWideVersion &&
-                  !!data.activityCategories.length && (
+                  !!data.studentActivities.length && (
                     <Table variant="simple" size="md">
                       <Thead>
                         <Tr>
-                          <Th>nome</Th>
+                          <Th>descrição</Th>
+                          <Th>semestre</Th>
+                          <Th>comprovado</Th>
+                          <Th>qtd. horas</Th>
+                          <Th>qtd. horas aprovadas</Th>
                           <Th>cadastrado em</Th>
                           <Th>status</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {data.activityCategories.map(activityCategory => {
+                        {data.studentActivities.map(studentActivity => {
                           return (
                             <Tr
-                              key={activityCategory.id}
+                              key={studentActivity.id}
                               _hover={{
                                 bg:
                                   colorMode === "dark"
@@ -187,21 +196,23 @@ export default function ActivityCategoryList(): JSX.Element {
                                 cursor: "pointer",
                               }}
                               onClick={() => {
-                                onOpenModal(activityCategory);
+                                onOpenModal(studentActivity);
                               }}
                             >
-                              <Td>{activityCategory.name} </Td>
-                              <Td>{activityCategory.createdAt}</Td>
+                              <Td>{studentActivity.description} </Td>
+                              <Td>{studentActivity.semester} </Td>
+                              <Td>{studentActivity.isCertified}</Td>
+                              <Td>{studentActivity.hours}</Td>
+                              <Td>{studentActivity.approvedHours}</Td>
+                              <Td>{studentActivity.createdAt}</Td>
                               <Td
                                 color={
-                                  activityCategory.isActive
+                                  studentActivity.isActive
                                     ? "green.500"
                                     : "red.700"
                                 }
                               >
-                                {activityCategory.isActive
-                                  ? "Ativo"
-                                  : "Inativo"}
+                                {studentActivity.isActive ? "Ativo" : "Inativo"}
                               </Td>
                             </Tr>
                           );
@@ -220,8 +231,8 @@ export default function ActivityCategoryList(): JSX.Element {
           }
         </Box>
       </Flex>
-      <ActivityCategoryOptionsModal
-        activityCategory={activityCategorySelected}
+      <StudentActivityOptionsModal
+        studentActivity={studentActivitySelected}
         isOpen={isOpen}
         onClose={onClose}
       />
@@ -233,6 +244,6 @@ const getServerSideProps = withSSRAuth(async ctx => {
   return {
     props: {},
   };
-}, accessLevel[3]);
+}, accessLevel[0]);
 
 export { getServerSideProps };

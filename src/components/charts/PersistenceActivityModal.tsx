@@ -25,7 +25,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { IActivity } from "../../services/hooks/useCharts";
 import { Button } from "../form/Button";

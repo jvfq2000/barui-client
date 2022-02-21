@@ -22,7 +22,7 @@ import {
   FormLabel,
   FormControl,
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { Button } from "../../components/form/Button";
 import { Input } from "../../components/form/Input";
@@ -96,11 +96,12 @@ export default function CreateStudentActivity(): JSX.Element {
   const createStudentActivity = useMutation(
     async (studentActivity: ICreateStudentActivityFormData) => {
       const formData = new FormData();
+
       formData.append("file", fileUpload);
       formData.append("description", studentActivity.description);
       formData.append("semester", studentActivity.semester);
       formData.append("hours", String(studentActivity.hours));
-      formData.append("isCertified", String(studentActivity.isCertified));
+      formData.append("isCertified", String(!!isCertified));
       formData.append("justification", studentActivity.justification);
       formData.append("activityId", studentActivity.activityId);
 
@@ -151,7 +152,6 @@ export default function CreateStudentActivity(): JSX.Element {
       .get("charts/by-student-id")
       .then(response => {
         const chart = response.data;
-        console.log(chart);
 
         api
           .get(`activity-categories/by-chart-id?chartId=${chart.id}`)

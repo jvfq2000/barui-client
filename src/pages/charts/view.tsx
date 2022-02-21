@@ -24,7 +24,7 @@ import {
   Td,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { AlterList } from "../../components/AlterList";
 import { CardActivity } from "../../components/charts/CardActivity";

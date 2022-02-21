@@ -30,7 +30,7 @@ import {
   Td,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { AlterList } from "../../components/AlterList";
 import { CardActivity } from "../../components/charts/CardActivity";
@@ -160,8 +160,6 @@ export default function EditChart(): JSX.Element {
       .get(`charts/by-id?chartId=${id}`)
       .then(response => {
         const chart = response.data as IChart;
-
-        console.log(chart);
 
         setValue("name", chart.name);
         setValue("inForceFrom", chart.inForceFrom);

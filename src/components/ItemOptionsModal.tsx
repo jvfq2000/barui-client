@@ -20,7 +20,7 @@ function ItemOptionsModal({
         fontSize="lg"
         color={colorMode === "dark" ? "grayDark.300" : "grayLight.300"}
       >
-        {value}
+        {value === "undefined" || value === "null" ? "" : value}
       </Text>
     </Text>
   );

@@ -11,6 +11,7 @@ interface IStudentActivity {
   justification: string;
   approvedHours: number;
   file: string;
+  fileUrl: string;
   isActive: boolean;
   createdAt: Date;
 
@@ -64,6 +65,7 @@ async function getStudentActivities({
       justification: studentActivity.justification,
       approvedHours: studentActivity.approvedHours,
       file: studentActivity.file,
+      fileUrl: studentActivity.fileUrl,
       isActive: studentActivity.isActive,
       createdAt: new Date(studentActivity.createdAt).toLocaleDateString(
         "pt-BR",

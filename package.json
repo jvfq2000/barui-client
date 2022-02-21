@@ -1,5 +1,5 @@
 {
-  "name": "base-client",
+  "name": "barui-client",
   "private": true,
   "scripts": {
     "dev": "next dev",

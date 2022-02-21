@@ -17,6 +17,7 @@ import {
   useColorMode,
   useDisclosure,
   useToast,
+  Link as LinkChakra,
 } from "@chakra-ui/react";
 
 import { api } from "../../services/apiClient";
@@ -47,7 +48,7 @@ function StudentActivityOptionsModal({
     isCertified,
     justification,
     approvedHours,
-    file,
+    fileUrl,
     userId: activityUserId,
     userName,
     categoryName,
@@ -132,17 +133,25 @@ function StudentActivityOptionsModal({
             />
 
             {!!userId && <ItemOptionsModal label="Aluno" value={userName} />}
+            <ItemOptionsModal label="Semestre" value={semester} />
             <ItemOptionsModal
               label="Comprovado"
               value={isCertified ? "Sim" : "Não"}
             />
+            {isCertified && (
+              <LinkChakra href={fileUrl} isExternal>
+                <Text fontSize="lg" fontWeight="bold" color="green.500">
+                  Baixar comprovação
+                </Text>
+              </LinkChakra>
+            )}
             {!isCertified && (
               <ItemOptionsModal label="Justificativa" value={justification} />
             )}
-            <ItemOptionsModal label="Qtd. horas" value={`${hours}`} />
+            <ItemOptionsModal label="Qtd. horas" value={hours} />
             <ItemOptionsModal
               label="Qtd. horas aprovadas"
-              value={`${approvedHours}`}
+              value={approvedHours}
             />
             <ItemOptionsModal label="Categoria" value={categoryName} />
             <ItemOptionsModal label="Atividade" value={activityName} />

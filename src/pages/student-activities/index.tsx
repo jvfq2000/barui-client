@@ -139,12 +139,7 @@ export default function StudentActivityList(): JSX.Element {
             ) : (
               <>
                 {((!listInTable && isWideVersion) || !isWideVersion) && (
-                  <SimpleGrid
-                    flex="1"
-                    gap="4"
-                    minChildWidth={[280, 340]}
-                    align="flex-start"
-                  >
+                  <SimpleGrid flex="1" gap="4" minChildWidth={[280, 340]}>
                     {data.studentActivities.map(studentActivity => {
                       return (
                         <Box

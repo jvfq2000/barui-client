@@ -137,12 +137,7 @@ export default function ChartList(): JSX.Element {
             ) : (
               <>
                 {((!listInTable && isWideVersion) || !isWideVersion) && (
-                  <SimpleGrid
-                    flex="1"
-                    gap="4"
-                    minChildWidth={[280, 340]}
-                    align="flex-start"
-                  >
+                  <SimpleGrid flex="1" gap="4" minChildWidth={[280, 340]}>
                     {data.charts.map(chart => {
                       return (
                         <Box

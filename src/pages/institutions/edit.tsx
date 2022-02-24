@@ -209,12 +209,7 @@ export default function EditInstitution(): JSX.Element {
             Cadastar campus
           </Heading>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -250,14 +245,9 @@ export default function EditInstitution(): JSX.Element {
             </SimpleGrid>
           </VStack>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100}>
             <Link href="/institutions" passHref>
               <Button
                 label="Cancelar"

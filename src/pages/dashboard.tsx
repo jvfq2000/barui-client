@@ -95,12 +95,7 @@ export default function Dashboard(): JSX.Element {
             </Text>
           </Stack>
 
-          <SimpleGrid
-            flex="1"
-            gap="4"
-            minChildWidth={[280, 320]}
-            align="flex-start"
-          >
+          <SimpleGrid flex="1" gap="4" minChildWidth={[280, 320]}>
             <Box
               p={["4", "8"]}
               bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}

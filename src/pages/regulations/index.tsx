@@ -165,12 +165,7 @@ export default function RegulationList(): JSX.Element {
             ) : (
               <>
                 {((!listInTable && isWideVersion) || !isWideVersion) && (
-                  <SimpleGrid
-                    flex="1"
-                    gap="4"
-                    minChildWidth={[280, 340]}
-                    align="flex-start"
-                  >
+                  <SimpleGrid flex="1" gap="4" minChildWidth={[280, 340]}>
                     {data.regulations.map(regulation => {
                       return (
                         <Box

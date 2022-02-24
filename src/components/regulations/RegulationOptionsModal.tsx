@@ -115,13 +115,8 @@ function RegulationOptionsModal({
 
           <ModalCloseButton />
 
-          <ModalBody px={["2", "3"]} justify="center">
-            <Divider
-              mb="4"
-              bordercolor={
-                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-              }
-            />
+          <ModalBody px={["2", "3"]}>
+            <Divider mb="4" />
 
             <ItemOptionsModal label="Curso" value={courseName} />
             <ItemOptionsModal
@@ -134,16 +129,11 @@ function RegulationOptionsModal({
               value={isActive ? "Ativo" : "Inativo"}
             />
 
-            <Divider
-              mt="4"
-              bordercolor={
-                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-              }
-            />
+            <Divider mt="4" />
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
-            <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+            <SimpleGrid flex="1" gap="4" minChildWidth={100}>
               <Can accessLevel={accessLevel[3]}>
                 <Button
                   label={isActive ? "Inativar" : "Ativar"}

@@ -134,12 +134,7 @@ export default function CourseList(): JSX.Element {
             ) : (
               <>
                 {((!listInTable && isWideVersion) || !isWideVersion) && (
-                  <SimpleGrid
-                    flex="1"
-                    gap="4"
-                    minChildWidth={[280, 340]}
-                    align="flex-start"
-                  >
+                  <SimpleGrid flex="1" gap="4" minChildWidth={[280, 340]}>
                     {data.courses.map(course => {
                       return (
                         <Box

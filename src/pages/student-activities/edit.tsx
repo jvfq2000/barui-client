@@ -3,7 +3,7 @@ import Router from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import * as yup from "yup";
 
 import {
@@ -32,11 +32,12 @@ import { ISelectOption, Select } from "../../components/form/Select";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
 import { api } from "../../services/apiClient";
+import { IStudentActivity } from "../../services/hooks/useStudentActivities";
 import { queryClient } from "../../services/queryClient";
 import { withSSRAuth } from "../../shared/withSSRAuth";
 import { accessLevel } from "../../utils/permitions";
 
-interface ICreateStudentActivityFormData {
+interface IEditStudentActivityFormData {
   description: string;
   hours: number;
   semester: string;
@@ -44,6 +45,7 @@ interface ICreateStudentActivityFormData {
   justification?: string;
   file?: File;
   activityId: string;
+  userId: string;
 }
 
 interface ICategory {
@@ -57,7 +59,8 @@ interface IActivity {
   name: string;
 }
 
-export default function CreateStudentActivity(): JSX.Element {
+export default function EditStudentActivity(): JSX.Element {
+  const { id } = Router.query;
   const toast = useToast();
   const { colorMode } = useColorMode();
 
@@ -66,8 +69,9 @@ export default function CreateStudentActivity(): JSX.Element {
   const [categoryId, setCategoryId] = useState("");
   const [isCertified, setIsCertified] = useState(1);
   const [fileUpload, setFileUpload] = useState<File>(null);
+  const [studentActivity, setStudentActivity] = useState<IStudentActivity>();
 
-  const createStudentActivityFormSchema = yup.object().shape({
+  const editStudentActivityFormSchema = yup.object().shape({
     description: yup.string().required("Descrição obrigatória"),
     semester: yup.string().required("Semestre obrigatório"),
     hours: yup.string().required("Qtd. horas obrigatório"),
@@ -82,31 +86,33 @@ export default function CreateStudentActivity(): JSX.Element {
         return !isCertified ? !!value : true;
       }),
     file: yup.string().test("fileTest", "Arquivo obrigatório", () => {
-      return isCertified ? !!fileUpload : true;
+      return isCertified && !studentActivity.file ? !!fileUpload : true;
     }),
+    categoryId: yup.string(),
     activityId: yup.string().required("Atividade obrigatória"),
   });
 
-  const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(createStudentActivityFormSchema),
+  const { register, handleSubmit, formState, setValue } = useForm({
+    resolver: yupResolver(editStudentActivityFormSchema),
   });
 
   const { errors } = formState;
 
-  const createStudentActivity = useMutation(
-    async (studentActivity: ICreateStudentActivityFormData) => {
+  const editStudentActivity = useMutation(
+    async (studentActivityForm: IEditStudentActivityFormData) => {
       const formData = new FormData();
 
       formData.append("file", fileUpload);
-      formData.append("description", studentActivity.description);
-      formData.append("semester", studentActivity.semester);
-      formData.append("hours", String(studentActivity.hours));
+      formData.append("description", studentActivityForm.description);
+      formData.append("semester", studentActivityForm.semester);
+      formData.append("hours", String(studentActivityForm.hours));
       formData.append("isCertified", String(!!isCertified));
-      formData.append("justification", studentActivity.justification);
-      formData.append("activityId", studentActivity.activityId);
+      formData.append("justification", studentActivityForm.justification);
+      formData.append("activityId", studentActivityForm.activityId);
+      formData.append("userId", studentActivity.userId);
 
       api
-        .post("student-activities", formData)
+        .put(`student-activities?studentActivityId=${id}`, formData)
         .then(response => {
           toast({
             description: "Atividade complementar cadastrada com sucesso.",
@@ -136,10 +142,10 @@ export default function CreateStudentActivity(): JSX.Element {
     },
   );
 
-  const handleCreateStudentActivity: SubmitHandler<
-    ICreateStudentActivityFormData
+  const handleEditStudentActivity: SubmitHandler<
+    IEditStudentActivityFormData
   > = async data => {
-    await createStudentActivity.mutateAsync(data);
+    await editStudentActivity.mutateAsync(data);
   };
 
   const handleChangeFile = event => {
@@ -189,28 +195,51 @@ export default function CreateStudentActivity(): JSX.Element {
       });
   }, []);
 
+  const { data, isLoading } = useQuery(
+    ["activitiesSelect", categoryId],
+    async (): Promise<IActivity[]> => {
+      const { data } = await api.get(
+        `charts/activities?chartId=${categories[0].chartId}&categoryId=${categoryId}`,
+      );
+      return data;
+    },
+    {
+      staleTime: 1000 * 60 * 60,
+    },
+  );
+
   useEffect(() => {
-    if (categoryId) {
-      api
-        .get(
-          `charts/activities?chartId=${categories[0].chartId}&categoryId=${categoryId}`,
-        )
-        .then(response => {
-          const activities = response.data as IActivity[];
-          setActivities(activities);
-        })
-        .catch(error => {
-          toast({
-            title: "Ops!",
-            description: error.response.data.message,
-            status: "error",
-            position: "top",
-            duration: 8000,
-            isClosable: true,
-          });
+    setActivities(data);
+  }, [data]);
+
+  useEffect(() => {
+    api
+      .get(`student-activities/by-id?studentActivityId=${id}`)
+      .then(response => {
+        const activity = response.data;
+
+        setStudentActivity(activity);
+        setIsCertified(activity.isCertified ? 1 : 0);
+        setCategoryId(activity.categoryId);
+
+        setValue("description", activity.description);
+        setValue("semester", activity.semester);
+        setValue("hours", activity.hours);
+        setValue("isCertified", activity.isCertified ? 1 : 0);
+        setValue("justification", activity.justification);
+        setValue("activityId", activity.activityId);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
         });
-    }
-  }, [categoryId]);
+      });
+  }, []);
 
   function generateOptionsCategories(): ISelectOption[] {
     const options: ISelectOption[] = [];
@@ -250,7 +279,7 @@ export default function CreateStudentActivity(): JSX.Element {
           borderRadius={8}
           bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
-          onSubmit={handleSubmit(handleCreateStudentActivity)}
+          onSubmit={handleSubmit(handleEditStudentActivity)}
         >
           <Heading size="lg" fontWeight="normal">
             Cadastar atividade complementar
@@ -292,15 +321,19 @@ export default function CreateStudentActivity(): JSX.Element {
                 onChange={event => {
                   setCategoryId(event.target.value);
                 }}
+                value={categoryId}
               />
 
               <Select
                 name="activityId"
-                placeholder="Selecione"
+                placeholder={
+                  isLoading ? "Buscando atividades ..." : "Selecione"
+                }
                 options={generateOptionsActivities()}
                 label="Atividade"
                 error={errors.activityId}
                 {...register("activityId")}
+                isDisabled={isLoading}
               />
             </SimpleGrid>
 
@@ -360,7 +393,7 @@ export default function CreateStudentActivity(): JSX.Element {
               />
             </Link>
             <Button
-              label="Cadastrar"
+              label="Alterar"
               type="submit"
               colorScheme="green"
               isLoading={formState.isSubmitting}

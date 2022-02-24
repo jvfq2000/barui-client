@@ -131,12 +131,7 @@ function UserOptionsModal({
           <ModalCloseButton />
 
           <ModalBody px={["2", "3"]}>
-            <Divider
-              mb="4"
-              bordercolor={
-                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-              }
-            />
+            <Divider mb="4" />
 
             <ItemOptionsModal label="CPF" value={identifier} />
             <ItemOptionsModal label="E-mail" value={email} />
@@ -159,16 +154,11 @@ function UserOptionsModal({
             <ItemOptionsModal label="Início" value={initialSemester} />
             <ItemOptionsModal label="Duração" value={courseNumberPeriods} />
 
-            <Divider
-              mt="4"
-              bordercolor={
-                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-              }
-            />
+            <Divider mt="4" />
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} justifyContent="space-between">
-            <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+            <SimpleGrid flex="1" gap="4" minChildWidth={100}>
               <Button
                 label={isActive ? "Inativar" : "Ativar"}
                 onClick={() => {

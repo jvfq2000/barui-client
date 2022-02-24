@@ -139,12 +139,7 @@ export default function InstitutionList(): JSX.Element {
             ) : (
               <>
                 {((!listInTable && isWideVersion) || !isWideVersion) && (
-                  <SimpleGrid
-                    flex="1"
-                    gap="4"
-                    minChildWidth={[280, 340]}
-                    align="flex-start"
-                  >
+                  <SimpleGrid flex="1" gap="4" minChildWidth={[280, 340]}>
                     {data.institutions.map(institution => {
                       return (
                         <Box

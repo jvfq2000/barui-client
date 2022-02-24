@@ -47,25 +47,15 @@ function ConfirmModal({
         <ModalCloseButton />
 
         <ModalBody px={["2", "6"]}>
-          <Divider
-            mb="4"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider mb="4" />
 
           <Text fontSize="lg">{message}</Text>
 
-          <Divider
-            mt="4"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider mt="4" />
         </ModalBody>
 
         <ModalFooter px={["2", "6"]} mt="2" justifyContent="space-between">
-          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100}>
             <Button
               label="Cancelar"
               colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}

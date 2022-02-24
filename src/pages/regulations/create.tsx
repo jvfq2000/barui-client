@@ -165,12 +165,7 @@ export default function CreateRegulation(): JSX.Element {
             Cadastar regulamento
           </Heading>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -181,7 +176,7 @@ export default function CreateRegulation(): JSX.Element {
                 {...register("name")}
               />
               <InputMask
-                mask="**/****"
+                mask="*/****"
                 placeholder="semestre/ano"
                 maskChar="_"
                 name="inForceFrom"
@@ -214,14 +209,9 @@ export default function CreateRegulation(): JSX.Element {
             </SimpleGrid>
           </VStack>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100}>
             <Link href="/regulations" passHref>
               <Button
                 label="Cancelar"

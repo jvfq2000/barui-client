@@ -101,12 +101,7 @@ export default function CreateActivityCategory(): JSX.Element {
             Cadastar categoria
           </Heading>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
           <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
             <Input
@@ -117,14 +112,9 @@ export default function CreateActivityCategory(): JSX.Element {
             />
           </SimpleGrid>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100}>
             <Link href="/activity-categories" passHref>
               <Button
                 label="Cancelar"

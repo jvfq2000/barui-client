@@ -203,12 +203,7 @@ function PersistenceActivityModal({
           <ModalCloseButton />
 
           <ModalBody px={["2", "3"]}>
-            <Divider
-              mb="4"
-              borderColor={
-                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-              }
-            />
+            <Divider mb="4" />
 
             <VStack spacing="8">
               <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -249,16 +244,11 @@ function PersistenceActivityModal({
               </SimpleGrid>
             </VStack>
 
-            <Divider
-              mt="4"
-              borderColor={
-                colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-              }
-            />
+            <Divider mt="4" />
           </ModalBody>
 
           <ModalFooter px={["2", "3"]} mt="2" justifyContent="space-between">
-            <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+            <SimpleGrid flex="1" gap="4" minChildWidth={100}>
               <Button
                 label="Cancelar"
                 onClick={onClose}

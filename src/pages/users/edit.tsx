@@ -400,12 +400,7 @@ export default function EditUser(): JSX.Element {
             Alterar usuário
           </Heading>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -521,7 +516,7 @@ export default function EditUser(): JSX.Element {
                   {...register("registration")}
                 />
                 <InputMask
-                  mask="**/****"
+                  mask="*/****"
                   placeholder="semestre/ano"
                   maskChar="_"
                   name="initialSemester"
@@ -533,14 +528,9 @@ export default function EditUser(): JSX.Element {
             )}
           </VStack>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100}>
             <Link href="/users" passHref>
               <Button
                 label="Cancelar"

@@ -15,6 +15,7 @@ import {
   useToast,
   Icon,
   useColorMode,
+  Center,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -149,39 +150,38 @@ export default function ProfileUser(): JSX.Element {
             Perfil
           </Heading>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <Box align="center">
-                <Avatar
-                  mb="4"
-                  size="2xl"
-                  name={getValues("name")}
-                  src={avatar && avatarUrl}
-                />
-
-                <Box maxW="300px">
-                  <InputFile
-                    name="avatar"
-                    label={avatarUpload?.name || "Alterar avatar"}
-                    pt="1"
-                    accept="image/*"
-                    error={errors.avatar}
-                    {...register("avatar")}
-                    onChange={handleChangeAvatar}
-                    showButtonUpload
-                    handleButtonUpload={handleUploadAvatar}
-                    labelBotton="Alterar"
-                    isLoadingButton={isLoadingUploadAvatar}
-                    fileSelected={fileSelected}
+              <Box>
+                <Center>
+                  <Avatar
+                    mb="4"
+                    size="2xl"
+                    name={getValues("name")}
+                    src={avatar && avatarUrl}
                   />
-                </Box>
+                </Center>
+
+                <Center>
+                  <Box maxW="800px">
+                    <InputFile
+                      name="avatar"
+                      label={avatarUpload?.name || "Alterar avatar"}
+                      pt="1"
+                      accept="image/*"
+                      error={errors.avatar}
+                      {...register("avatar")}
+                      onChange={handleChangeAvatar}
+                      showButtonUpload
+                      handleButtonUpload={handleUploadAvatar}
+                      labelBotton="Alterar"
+                      isLoadingButton={isLoadingUploadAvatar}
+                      fileSelected={fileSelected}
+                    />
+                  </Box>
+                </Center>
               </Box>
             </SimpleGrid>
 
@@ -269,14 +269,9 @@ export default function ProfileUser(): JSX.Element {
             </SimpleGrid>
           </VStack>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100}>
             <Link href="/dashboard" passHref>
               <Button
                 label="Voltar"

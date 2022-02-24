@@ -138,12 +138,7 @@ export default function CreateChart(): JSX.Element {
             )}
           </Heading>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
@@ -188,11 +183,9 @@ export default function CreateChart(): JSX.Element {
                     <Text w="100%" textAlign="center">
                       {category.name}
                     </Text>
-                    <Divider
-                      borderColor={
-                        colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-                      }
-                    />
+
+                    <Divider />
+
                     {(!listInTable && isWideVersion) || !isWideVersion ? (
                       <SimpleGrid
                         minChildWidth="240px"
@@ -250,14 +243,9 @@ export default function CreateChart(): JSX.Element {
             })}
           </VStack>
 
-          <Divider
-            my="6"
-            bordercolor={
-              colorMode === "dark" ? "grayDark.700" : "grayLight.700"
-            }
-          />
+          <Divider my="6" />
 
-          <SimpleGrid flex="1" gap="4" minChildWidth={100} align="flex-start">
+          <SimpleGrid flex="1" gap="4" minChildWidth={100}>
             <Link href="/charts" passHref>
               <Button
                 label="Voltar"

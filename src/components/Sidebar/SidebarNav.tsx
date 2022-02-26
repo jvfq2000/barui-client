@@ -11,6 +11,7 @@ import {
 
 import { VStack } from "@chakra-ui/react";
 
+import { useCan } from "../../services/hooks/useCan";
 import { accessLevel } from "../../utils/permitions";
 import { Can } from "../Can";
 import { NavLink } from "./NavLink";
@@ -44,7 +45,14 @@ function SidebarNav(): JSX.Element {
       </Can>
 
       <NavSection title="ATIVIDADES">
-        <NavLink icon={RiTimerFlashLine} href="/student-activities">
+        <NavLink
+          icon={RiTimerFlashLine}
+          href={
+            useCan(accessLevel[1])
+              ? "/student-activities/students"
+              : "/student-activities"
+          }
+        >
           Atividades
         </NavLink>
         <Can accessLevel={accessLevel[3]}>

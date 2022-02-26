@@ -9,8 +9,8 @@ interface IMountOptionsListProps {
   setListInTable(listInTable: boolean): void;
   isActive?: boolean;
   setIsActive?(isActive: boolean): void;
-  labelFilter: string;
-  setFilter(filter: string): void;
+  labelFilter?: string;
+  setFilter?(filter: string): void;
 }
 
 function MountOptionsList({
@@ -39,7 +39,9 @@ function MountOptionsList({
           setIsActive={setIsActive}
         />
       )}
-      <Search placeholder={labelFilter} setSearch={setFilter} />
+      {!!labelFilter && (
+        <Search placeholder={labelFilter} setSearch={setFilter} />
+      )}
     </>
   );
 }

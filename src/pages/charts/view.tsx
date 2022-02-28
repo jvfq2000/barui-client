@@ -102,6 +102,7 @@ export default function CreateChart(): JSX.Element {
         setValue("name", chartResponse.name);
         setValue("inForceFrom", chartResponse.inForceFrom);
         setValue("course", chartResponse.courseName);
+        setValue("minHours", chartResponse.minHours);
       })
       .catch(error => {
         toast({
@@ -156,6 +157,16 @@ export default function CreateChart(): JSX.Element {
                 error={errors.inForceFrom}
                 {...register("inForceFrom")}
               />
+            </SimpleGrid>
+
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              <Input
+                isDisabled
+                name="minHours"
+                label="Qtd. min. horas"
+                error={errors.minHours}
+                {...register("minHours")}
+              />
               <Input
                 isDisabled
                 name="course"
@@ -164,6 +175,7 @@ export default function CreateChart(): JSX.Element {
                 {...register("course")}
               />
             </SimpleGrid>
+
             {categories?.map(category => {
               const filterActivities = chart?.activities?.filter(
                 activity => activity.categoryId === category.id,

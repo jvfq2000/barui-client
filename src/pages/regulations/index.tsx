@@ -31,7 +31,7 @@ import { Pagination } from "../../components/Pagination";
 import { CardRegulation } from "../../components/regulations/CardRegulation";
 import { RegulationOptionsModal } from "../../components/regulations/RegulationOptionsModal";
 import { Sidebar } from "../../components/Sidebar";
-import { AuthContext } from "../../contexts/AuthContext";
+import { useCan } from "../../services/hooks/useCan";
 import {
   IRegulation,
   useRegulations,
@@ -41,7 +41,6 @@ import { defaultBgColor } from "../../utils/generateBgColor";
 import { accessLevel } from "../../utils/permitions";
 
 export default function RegulationList(): JSX.Element {
-  const { user } = useContext(AuthContext);
   const [regulationSelected, setRegulationSelected] = useState<IRegulation>(
     {} as IRegulation,
   );
@@ -94,7 +93,7 @@ export default function RegulationList(): JSX.Element {
               )}
             </Heading>
 
-            {isWideVersion && user.accessLevel !== accessLevel[0] && (
+            {isWideVersion && useCan(accessLevel[2]) && (
               <MountOptionsList
                 listInTable={listInTable}
                 setListInTable={setListInTable}
@@ -105,7 +104,7 @@ export default function RegulationList(): JSX.Element {
               />
             )}
 
-            {isWideVersion && user.accessLevel === accessLevel[0] && (
+            {isWideVersion && useCan(accessLevel[2]) && (
               <MountOptionsList
                 listInTable={listInTable}
                 setListInTable={setListInTable}
@@ -128,7 +127,7 @@ export default function RegulationList(): JSX.Element {
             </Can>
           </Flex>
 
-          {!isWideVersion && user.accessLevel !== accessLevel[0] && (
+          {!isWideVersion && useCan(accessLevel[2]) && (
             <VStack spacing="4" mb="6" justify="center">
               <MountOptionsList
                 listInTable={listInTable}
@@ -141,7 +140,7 @@ export default function RegulationList(): JSX.Element {
             </VStack>
           )}
 
-          {!isWideVersion && user.accessLevel === accessLevel[0] && (
+          {!isWideVersion && !useCan(accessLevel[2]) && (
             <VStack spacing="4" mb="6" justify="center">
               <MountOptionsList
                 listInTable={listInTable}
@@ -171,13 +170,12 @@ export default function RegulationList(): JSX.Element {
                         <Box
                           key={regulation.id}
                           onClick={() => {
-                            if (user.accessLevel !== accessLevel[0]) {
+                            if (useCan(accessLevel[2])) {
                               onOpenModal(regulation);
                             }
                           }}
                         >
                           <CardRegulation
-                            userAccessLevel={user.accessLevel}
                             name={regulation.name}
                             inForceFrom={regulation.inForceFrom}
                             fileUrl={regulation.fileUrl}
@@ -197,8 +195,8 @@ export default function RegulationList(): JSX.Element {
                         <Th>nome</Th>
                         <Th>em vigor a partir de</Th>
                         <Th>cadastrado em</Th>
-                        {user.accessLevel !== accessLevel[0] && <Th>status</Th>}
-                        {user.accessLevel === accessLevel[0] && <Th>ações</Th>}
+                        {useCan(accessLevel[2]) && <Th>status</Th>}
+                        {!useCan(accessLevel[2]) && <Th>ações</Th>}
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -207,7 +205,7 @@ export default function RegulationList(): JSX.Element {
                           <Tr
                             key={regulation.id}
                             _hover={
-                              user.accessLevel !== accessLevel[0]
+                              useCan(accessLevel[2])
                                 ? {
                                     bg:
                                       colorMode === "dark"
@@ -218,7 +216,7 @@ export default function RegulationList(): JSX.Element {
                                 : {}
                             }
                             onClick={() => {
-                              if (user.accessLevel !== accessLevel[0]) {
+                              if (useCan(accessLevel[2])) {
                                 onOpenModal(regulation);
                               }
                             }}
@@ -226,7 +224,7 @@ export default function RegulationList(): JSX.Element {
                             <Td>{regulation.name} </Td>
                             <Td>{regulation.inForceFrom}</Td>
                             <Td>{regulation.createdAt}</Td>
-                            {user.accessLevel !== accessLevel[0] && (
+                            {useCan(accessLevel[2]) && (
                               <Td
                                 color={
                                   regulation.isActive ? "green.500" : "red.700"
@@ -235,7 +233,7 @@ export default function RegulationList(): JSX.Element {
                                 {regulation.isActive ? "Ativo" : "Inativo"}
                               </Td>
                             )}
-                            {user.accessLevel === accessLevel[0] && (
+                            {!useCan(accessLevel[2]) && (
                               <Td color="green.500">
                                 <ChakraLink
                                   href={regulation.fileUrl}

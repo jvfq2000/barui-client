@@ -115,7 +115,7 @@ export default function EditStudentActivity(): JSX.Element {
         .put(`student-activities?studentActivityId=${id}`, formData)
         .then(response => {
           toast({
-            description: "Atividade complementar cadastrada com sucesso.",
+            description: "Atividade complementar alterada com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
@@ -282,7 +282,7 @@ export default function EditStudentActivity(): JSX.Element {
           onSubmit={handleSubmit(handleEditStudentActivity)}
         >
           <Heading size="lg" fontWeight="normal">
-            Cadastar atividade complementar
+            Alterar atividade complementar
           </Heading>
 
           <Divider my="6" />

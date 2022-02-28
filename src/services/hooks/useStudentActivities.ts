@@ -98,7 +98,7 @@ function useStudentActivities({
 }: IGetStudentActivitiesRequest) {
   return useQuery(
     ["studentActivities", page, filter, isActive, userId],
-    () => getStudentActivities({ page, filter, isActive }),
+    () => getStudentActivities({ page, filter, isActive, userId }),
     {
       staleTime: 1000 * 60 * 10,
     },

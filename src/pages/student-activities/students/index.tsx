@@ -1,13 +1,10 @@
 import Link from "next/link";
-import Router from "next/router";
 import { useEffect, useState } from "react";
-import { RiAddCircleLine } from "react-icons/ri";
 
 import {
   Box,
   Flex,
   Heading,
-  Icon,
   useBreakpointValue,
   SimpleGrid,
   useColorMode,
@@ -22,15 +19,14 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-import { Button } from "../../components/form/Button";
-import { Header } from "../../components/Header";
-import { MountOptionsList } from "../../components/MountOptionsList";
-import { Sidebar } from "../../components/Sidebar";
-import { CardStudent } from "../../components/studentActivities/CardStudent";
-import { api } from "../../services/apiClient";
-import { withSSRAuth } from "../../shared/withSSRAuth";
-import { defaultBgColor } from "../../utils/generateBgColor";
-import { accessLevel } from "../../utils/permitions";
+import { Header } from "../../../components/Header";
+import { MountOptionsList } from "../../../components/MountOptionsList";
+import { Sidebar } from "../../../components/Sidebar";
+import { CardStudent } from "../../../components/studentActivities/CardStudent";
+import { api } from "../../../services/apiClient";
+import { withSSRAuth } from "../../../shared/withSSRAuth";
+import { defaultBgColor } from "../../../utils/generateBgColor";
+import { accessLevel } from "../../../utils/permitions";
 
 interface IStudent {
   userId: string;
@@ -95,17 +91,6 @@ export default function UserList(): JSX.Element {
                 setListInTable={setListInTable}
               />
             )}
-
-            <Link href="/users/create" passHref>
-              <Button
-                label="Criar novo"
-                colorScheme="green"
-                as="a"
-                size="sm"
-                fontSize="sm"
-                leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-              />
-            </Link>
           </Flex>
 
           {!isWideVersion && (
@@ -122,25 +107,26 @@ export default function UserList(): JSX.Element {
               <SimpleGrid flex="1" gap="4" minChildWidth={[280, 340]}>
                 {students?.map(student => {
                   return (
-                    <Box
+                    <Link
                       key={student.userId}
-                      onClick={() => {
-                        Router.push("/student-activities", {
-                          query: { id: student.userId },
-                        });
+                      href={{
+                        pathname: "/student-activities/students/activities",
+                        query: { id: student.userId },
                       }}
                     >
-                      <CardStudent
-                        userName={student.userName}
-                        avatar={student.avatar}
-                        avatarUrl={student.avatarUrl}
-                        initialSemester={student.initialSemester}
-                        registeredHours={student.registeredHours}
-                        approvedHours={student.approvedHours}
-                        rejectedHours={student.rejectedHours}
-                        hoursNotAnalyzed={student.hoursNotAnalyzed}
-                      />
-                    </Box>
+                      <Box>
+                        <CardStudent
+                          userName={student.userName}
+                          avatar={student.avatar}
+                          avatarUrl={student.avatarUrl}
+                          initialSemester={student.initialSemester}
+                          registeredHours={student.registeredHours}
+                          approvedHours={student.approvedHours}
+                          rejectedHours={student.rejectedHours}
+                          hoursNotAnalyzed={student.hoursNotAnalyzed}
+                        />
+                      </Box>
+                    </Link>
                   );
                 })}
               </SimpleGrid>
@@ -162,35 +148,37 @@ export default function UserList(): JSX.Element {
                 <Tbody>
                   {students?.map(student => {
                     return (
-                      <Tr
+                      <Link
                         key={student.userId}
-                        _hover={{
-                          bg:
-                            colorMode === "dark"
-                              ? "grayDark.700"
-                              : "grayLight.700",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          Router.push("/student-activities", {
-                            query: { id: student.userId },
-                          });
+                        href={{
+                          pathname: "/student-activities/students/activities",
+                          query: { id: student.userId },
                         }}
                       >
-                        <Td>
-                          <Avatar
-                            size="lg"
-                            name={student.userName}
-                            src={student.avatar && student.avatarUrl}
-                          />
-                        </Td>
-                        <Td>{student.userName}</Td>
-                        <Td>{student.initialSemester}</Td>
-                        <Td>{student.registeredHours}</Td>
-                        <Td>{student.approvedHours}</Td>
-                        <Td>{student.rejectedHours}</Td>
-                        <Td>{student.hoursNotAnalyzed}</Td>
-                      </Tr>
+                        <Tr
+                          _hover={{
+                            bg:
+                              colorMode === "dark"
+                                ? "grayDark.700"
+                                : "grayLight.700",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Td>
+                            <Avatar
+                              size="lg"
+                              name={student.userName}
+                              src={student.avatar && student.avatarUrl}
+                            />
+                          </Td>
+                          <Td>{student.userName}</Td>
+                          <Td>{student.initialSemester}</Td>
+                          <Td>{student.registeredHours}</Td>
+                          <Td>{student.approvedHours}</Td>
+                          <Td>{student.rejectedHours}</Td>
+                          <Td>{student.hoursNotAnalyzed}</Td>
+                        </Tr>
+                      </Link>
                     );
                   })}
                 </Tbody>

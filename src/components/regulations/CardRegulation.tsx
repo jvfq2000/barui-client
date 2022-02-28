@@ -1,5 +1,6 @@
 import { Box, Link, Text, useColorMode } from "@chakra-ui/react";
 
+import { useCan } from "../../services/hooks/useCan";
 import { accessLevel } from "../../utils/permitions";
 import { ItemCard } from "../ItemCard";
 
@@ -8,12 +9,10 @@ interface ICardRegulationProps {
   inForceFrom: string;
   isActive: boolean;
   createdAt: Date;
-  userAccessLevel: string;
   fileUrl: string;
 }
 
 function CardRegulation({
-  userAccessLevel,
   name,
   inForceFrom,
   isActive,
@@ -30,7 +29,7 @@ function CardRegulation({
       borderRadius={8}
       pb="4"
       _hover={
-        userAccessLevel !== accessLevel[0]
+        useCan(accessLevel[2])
           ? {
               bg: colorMode === "dark" ? "grayDark.700" : "grayLight.700",
               cursor: "pointer",
@@ -44,10 +43,10 @@ function CardRegulation({
 
       <ItemCard label="Em vigor a partir de" value={inForceFrom} />
       <ItemCard label="Cadastrado em" value={createdAt} />
-      {userAccessLevel !== accessLevel[0] && (
+      {useCan(accessLevel[2]) && (
         <ItemCard label="Status" value={isActive ? "Ativo" : "Inativo"} />
       )}
-      {userAccessLevel === accessLevel[0] && (
+      {!useCan(accessLevel[2]) && (
         <Link href={fileUrl} isExternal>
           <Text mt="2" fontSize="md" color="green.500">
             Download

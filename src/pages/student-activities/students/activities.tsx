@@ -1,12 +1,11 @@
-import Link from "next/link";
-import { useState } from "react";
-import { RiAddCircleLine, RiFileTextLine } from "react-icons/ri";
+import Router from "next/router";
+import { useEffect, useState } from "react";
+import { RiFileTextLine } from "react-icons/ri";
 
 import {
   Box,
   Flex,
   Heading,
-  Icon,
   Text,
   useBreakpointValue,
   Spinner,
@@ -20,25 +19,39 @@ import {
   Th,
   Tbody,
   Td,
+  Avatar,
+  useToast,
+  Icon,
+  HStack,
 } from "@chakra-ui/react";
 
-import { Button } from "../../components/form/Button";
-import { Header } from "../../components/Header";
-import { MountOptionsList } from "../../components/MountOptionsList";
-import { Pagination } from "../../components/Pagination";
-import { Sidebar } from "../../components/Sidebar";
-import { CardStudentActivity } from "../../components/studentActivities/CardStudentActivity";
-import { StudentActivityOptionsModal } from "../../components/studentActivities/StudentActivityOptionsModal";
+import { Button } from "../../../components/form/Button";
+import { Header } from "../../../components/Header";
+import { MountOptionsList } from "../../../components/MountOptionsList";
+import { Pagination } from "../../../components/Pagination";
+import { Sidebar } from "../../../components/Sidebar";
+import { CardStudentActivity } from "../../../components/studentActivities/CardStudentActivity";
+import { StudentActivityOptionsModal } from "../../../components/studentActivities/StudentActivityOptionsModal";
+import { api } from "../../../services/apiClient";
 import {
   IStudentActivity,
   useStudentActivities,
-} from "../../services/hooks/useStudentActivities";
-import { generateFormActivitiesPDF } from "../../shared/docs/FormActivitiesPDF";
-import { withSSRAuth } from "../../shared/withSSRAuth";
-import { defaultBgColor } from "../../utils/generateBgColor";
-import { accessLevel } from "../../utils/permitions";
+} from "../../../services/hooks/useStudentActivities";
+import { IUser } from "../../../services/hooks/useUsers";
+import { generateFormActivitiesPDF } from "../../../shared/docs/FormActivitiesPDF";
+import { generateFormReportCardPDF } from "../../../shared/docs/FormReportCardPDF";
+import { withSSRAuth } from "../../../shared/withSSRAuth";
+import { defaultBgColor } from "../../../utils/generateBgColor";
+import { accessLevel } from "../../../utils/permitions";
 
 export default function StudentActivityList(): JSX.Element {
+  const { id } = Router.query;
+  const toast = useToast();
+
+  const [userName, setUserName] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+
   const [studentActivitySelected, setStudentActivitySelected] =
     useState<IStudentActivity>({} as IStudentActivity);
   const [page, setPage] = useState(1);
@@ -49,6 +62,7 @@ export default function StudentActivityList(): JSX.Element {
     page,
     filter,
     isActive,
+    userId: String(id),
   });
 
   const { colorMode } = useColorMode();
@@ -65,6 +79,28 @@ export default function StudentActivityList(): JSX.Element {
     onOpen();
   }
 
+  useEffect(() => {
+    api
+      .get(`users/by-id?userId=${id}`)
+      .then(response => {
+        const { name, lastName, avatar, avatarUrl } = response.data as IUser;
+
+        setUserName(`${name} ${lastName}`);
+        setAvatar(avatar);
+        setAvatarUrl(avatarUrl);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
+        });
+      });
+  }, []);
+
   return (
     <Box>
       <Header />
@@ -76,7 +112,16 @@ export default function StudentActivityList(): JSX.Element {
           p={listInTable && isWideVersion ? "8" : "0"}
           bg={defaultBgColor(listInTable, isWideVersion, colorMode)}
         >
-          <Flex mb="6" justify="space-between" align="center">
+          <VStack mb="6" justify="center">
+            <Avatar size="2xl" name={userName} src={avatar && avatarUrl} />
+            <Text fontSize="md">{userName}</Text>
+          </VStack>
+
+          <Flex
+            mb="6"
+            justify={isWideVersion ? "space-between" : "center"}
+            align="center"
+          >
             <Heading size="lg" fontWeight="normal">
               Atividades
               {!isLoading && isFetching && (
@@ -91,55 +136,70 @@ export default function StudentActivityList(): JSX.Element {
             </Heading>
 
             {isWideVersion && (
-              <MountOptionsList
-                listInTable={listInTable}
-                setListInTable={setListInTable}
-                isActive={isActive}
-                setIsActive={setIsActive}
-                labelFilter="Filtrar atividades"
-                setFilter={setFilter}
-              />
-            )}
+              <>
+                <MountOptionsList
+                  listInTable={listInTable}
+                  setListInTable={setListInTable}
+                  isActive={isActive}
+                  setIsActive={setIsActive}
+                  labelFilter="Filtrar atividades"
+                  setFilter={setFilter}
+                />
 
-            <Link href="/student-activities/create" passHref>
-              <Button
-                label="Criar nova"
-                as="a"
-                size="sm"
-                fontSize="sm"
-                colorScheme="green"
-                leftIcon={<Icon as={RiAddCircleLine} fontSize="20" />}
-              />
-            </Link>
+                <Button
+                  ml="2"
+                  label="Formulário"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="green"
+                  leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
+                  onClick={() => {
+                    generateFormActivitiesPDF(data.studentActivities);
+                  }}
+                />
 
-            {isWideVersion && (
-              <Button
-                ml="2"
-                label="Formulário"
-                size="sm"
-                fontSize="sm"
-                colorScheme="blue"
-                leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
-                onClick={() => {
-                  generateFormActivitiesPDF(data.studentActivities);
-                }}
-              />
+                <Button
+                  ml="2"
+                  label="Boletim"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="green"
+                  leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
+                  onClick={() => {
+                    generateFormReportCardPDF(data.studentActivities);
+                  }}
+                />
+              </>
             )}
           </Flex>
 
           {!isWideVersion && (
             <VStack spacing="4" mb="6" justify="center">
-              <Button
-                ml="2"
-                label="Formulário"
-                size="sm"
-                fontSize="sm"
-                colorScheme="blue"
-                leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
-                onClick={() => {
-                  generateFormActivitiesPDF(data.studentActivities);
-                }}
-              />
+              <HStack>
+                <Button
+                  ml="2"
+                  label="Formulário"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="green"
+                  leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
+                  onClick={() => {
+                    generateFormActivitiesPDF(data.studentActivities);
+                  }}
+                />
+
+                <Button
+                  ml="2"
+                  label="Boletim"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="green"
+                  leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
+                  onClick={() => {
+                    generateFormReportCardPDF(data.studentActivities);
+                  }}
+                />
+              </HStack>
 
               <MountOptionsList
                 listInTable={listInTable}
@@ -258,6 +318,7 @@ export default function StudentActivityList(): JSX.Element {
         studentActivity={studentActivitySelected}
         isOpen={isOpen}
         onClose={onClose}
+        userId={String(id)}
       />
     </Box>
   );

@@ -49,7 +49,6 @@ function StudentActivityOptionsModal({
     justification,
     approvedHours,
     fileUrl,
-    userId: activityUserId,
     userName,
     categoryName,
     activityName,
@@ -136,7 +135,7 @@ function StudentActivityOptionsModal({
             {isCertified && (
               <LinkChakra href={fileUrl} isExternal>
                 <Text fontSize="lg" fontWeight="bold" color="green.500">
-                  Baixar comprovação
+                  Ver comprovação
                 </Text>
               </LinkChakra>
             )}
@@ -178,8 +177,10 @@ function StudentActivityOptionsModal({
               {isActive && (
                 <Link
                   href={{
-                    pathname: "/student-activities/edit",
-                    query: { id },
+                    pathname: userId
+                      ? "/student-activities/students/edit"
+                      : "/student-activities/edit",
+                    query: userId ? { id, studentId: userId } : { id },
                   }}
                 >
                   <Button

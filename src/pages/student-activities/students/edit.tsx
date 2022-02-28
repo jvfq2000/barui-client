@@ -3,7 +3,7 @@ import Router from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RiCheckboxCircleLine, RiCloseCircleLine } from "react-icons/ri";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import * as yup from "yup";
 
 import {
@@ -16,34 +16,29 @@ import {
   Icon,
   VStack,
   useColorMode,
-  RadioGroup,
-  HStack,
-  Radio,
-  FormLabel,
-  FormControl,
+  AspectRatio,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { Button } from "../../components/form/Button";
-import { Input } from "../../components/form/Input";
-import { InputFile } from "../../components/form/InputFile";
-import { InputMask } from "../../components/form/InputMask";
-import { ISelectOption, Select } from "../../components/form/Select";
-import { Header } from "../../components/Header";
-import { Sidebar } from "../../components/Sidebar";
-import { api } from "../../services/apiClient";
-import { queryClient } from "../../services/queryClient";
-import { withSSRAuth } from "../../shared/withSSRAuth";
-import { accessLevel } from "../../utils/permitions";
+import { Button } from "../../../components/form/Button";
+import { Input } from "../../../components/form/Input";
+import { InputMask } from "../../../components/form/InputMask";
+import { ISelectOption, Select } from "../../../components/form/Select";
+import { Header } from "../../../components/Header";
+import { Sidebar } from "../../../components/Sidebar";
+import { api } from "../../../services/apiClient";
+import { IStudentActivity } from "../../../services/hooks/useStudentActivities";
+import { queryClient } from "../../../services/queryClient";
+import { withSSRAuth } from "../../../shared/withSSRAuth";
+import { accessLevel } from "../../../utils/permitions";
 
-interface ICreateStudentActivityFormData {
+interface IEditStudentActivityFormData {
   description: string;
   hours: number;
+  approvedHours: number;
   semester: string;
-  isCertified: boolean;
-  justification?: string;
-  file?: File;
   activityId: string;
+  userId: string;
 }
 
 interface ICategory {
@@ -57,7 +52,8 @@ interface IActivity {
   name: string;
 }
 
-export default function CreateStudentActivity(): JSX.Element {
+export default function EditStudentActivity(): JSX.Element {
+  const { id, studentId } = Router.query;
   const toast = useToast();
   const { colorMode } = useColorMode();
 
@@ -65,58 +61,55 @@ export default function CreateStudentActivity(): JSX.Element {
   const [categories, setCategories] = useState<ICategory[]>();
   const [categoryId, setCategoryId] = useState("");
   const [isCertified, setIsCertified] = useState(1);
-  const [fileUpload, setFileUpload] = useState<File>(null);
+  const [studentActivity, setStudentActivity] = useState<IStudentActivity>();
 
-  const createStudentActivityFormSchema = yup.object().shape({
+  const editStudentActivityFormSchema = yup.object().shape({
     description: yup.string().required("Descrição obrigatória"),
     semester: yup.string().required("Semestre obrigatório"),
     hours: yup.string().required("Qtd. horas obrigatório"),
-    isCertified: yup
-      .string()
-      .test("isCertifiedTest", "Campo obrigatório", () => {
-        return isCertified === 0 || isCertified === 1;
-      }),
-    justification: yup
-      .string()
-      .test("justificationTest", "Justificativa obrigatória", value => {
-        return !isCertified ? !!value : true;
-      }),
-    file: yup.string().test("fileTest", "Arquivo obrigatório", () => {
-      return isCertified ? !!fileUpload : true;
-    }),
+    approvedHours: yup.string().required("Qtd. horas deferidas obrigatório"),
+    categoryId: yup.string(),
     activityId: yup.string().required("Atividade obrigatória"),
   });
 
-  const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(createStudentActivityFormSchema),
+  const { register, handleSubmit, formState, setValue } = useForm({
+    resolver: yupResolver(editStudentActivityFormSchema),
   });
 
   const { errors } = formState;
 
-  const createStudentActivity = useMutation(
-    async (studentActivity: ICreateStudentActivityFormData) => {
+  const editStudentActivity = useMutation(
+    async (studentActivityForm: IEditStudentActivityFormData) => {
       const formData = new FormData();
 
-      formData.append("file", fileUpload);
-      formData.append("description", studentActivity.description);
-      formData.append("semester", studentActivity.semester);
       formData.append("hours", String(studentActivity.hours));
+      formData.append("userId", studentActivity.userId);
       formData.append("isCertified", String(!!isCertified));
       formData.append("justification", studentActivity.justification);
-      formData.append("activityId", studentActivity.activityId);
+      formData.append("file", studentActivity.file);
+
+      formData.append("description", studentActivityForm.description);
+      formData.append("semester", studentActivityForm.semester);
+      formData.append(
+        "approvedHours",
+        String(studentActivityForm.approvedHours),
+      );
+      formData.append("activityId", studentActivityForm.activityId);
 
       api
-        .post("student-activities", formData)
+        .put(`student-activities?studentActivityId=${id}&studentId`, formData)
         .then(response => {
           toast({
-            description: "Atividade complementar cadastrada com sucesso.",
+            description: "Atividade complementar alterada com sucesso.",
             status: "success",
             position: "top",
             duration: 8000,
             isClosable: true,
           });
 
-          Router.push("/student-activities");
+          Router.push(
+            `/student-activities/students/activities?id=${studentId}`,
+          );
           return response.data.studentActivity;
         })
         .catch(error => {
@@ -136,20 +129,15 @@ export default function CreateStudentActivity(): JSX.Element {
     },
   );
 
-  const handleCreateStudentActivity: SubmitHandler<
-    ICreateStudentActivityFormData
+  const handleEditStudentActivity: SubmitHandler<
+    IEditStudentActivityFormData
   > = async data => {
-    await createStudentActivity.mutateAsync(data);
-  };
-
-  const handleChangeFile = event => {
-    const file = event.target.files[0];
-    setFileUpload(file);
+    await editStudentActivity.mutateAsync(data);
   };
 
   useEffect(() => {
     api
-      .get("charts/by-student-id")
+      .get(`charts/by-student-id?studentId=${studentId}`)
       .then(response => {
         const chart = response.data;
 
@@ -189,28 +177,50 @@ export default function CreateStudentActivity(): JSX.Element {
       });
   }, []);
 
+  const { data, isLoading } = useQuery(
+    ["activitiesSelect", categoryId],
+    async (): Promise<IActivity[]> => {
+      const { data } = await api.get(
+        `charts/activities?chartId=${categories[0].chartId}&categoryId=${categoryId}`,
+      );
+      return data;
+    },
+    {
+      staleTime: 1000 * 60 * 60,
+    },
+  );
+
   useEffect(() => {
-    if (categoryId) {
-      api
-        .get(
-          `charts/activities?chartId=${categories[0].chartId}&categoryId=${categoryId}`,
-        )
-        .then(response => {
-          const activities = response.data as IActivity[];
-          setActivities(activities);
-        })
-        .catch(error => {
-          toast({
-            title: "Ops!",
-            description: error.response.data.message,
-            status: "error",
-            position: "top",
-            duration: 8000,
-            isClosable: true,
-          });
+    setActivities(data);
+  }, [data]);
+
+  useEffect(() => {
+    api
+      .get(`student-activities/by-id?studentActivityId=${id}`)
+      .then(response => {
+        const activity = response.data;
+
+        setStudentActivity(activity);
+        setCategoryId(activity.categoryId);
+        setIsCertified(activity.isCertified ? 1 : 0);
+
+        setValue("description", activity.description);
+        setValue("semester", activity.semester);
+        setValue("hours", activity.hours);
+        setValue("approvedHours", activity.hours);
+        setValue("activityId", activity.activityId);
+      })
+      .catch(error => {
+        toast({
+          title: "Ops!",
+          description: error.response.data.message,
+          status: "error",
+          position: "top",
+          duration: 8000,
+          isClosable: true,
         });
-    }
-  }, [categoryId]);
+      });
+  }, []);
 
   function generateOptionsCategories(): ISelectOption[] {
     const options: ISelectOption[] = [];
@@ -250,15 +260,34 @@ export default function CreateStudentActivity(): JSX.Element {
           borderRadius={8}
           bg={colorMode === "dark" ? "grayDark.800" : "grayLight.800"}
           p={["6", "8"]}
-          onSubmit={handleSubmit(handleCreateStudentActivity)}
+          onSubmit={handleSubmit(handleEditStudentActivity)}
         >
           <Heading size="lg" fontWeight="normal">
-            Cadastrar atividade complementar
+            Alterar atividade complementar
           </Heading>
 
           <Divider my="6" />
 
           <VStack spacing="8">
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
+              {isCertified ? (
+                <AspectRatio maxH="500px" ratio={1}>
+                  <iframe
+                    title="comprovação"
+                    src={studentActivity?.fileUrl}
+                    allowFullScreen
+                  />
+                </AspectRatio>
+              ) : (
+                <Input
+                  isDisabled
+                  name="justification"
+                  label="Justificativa"
+                  value={studentActivity?.justification}
+                />
+              )}
+            </SimpleGrid>
+
             <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
               <Input
                 name="description"
@@ -267,6 +296,8 @@ export default function CreateStudentActivity(): JSX.Element {
                 {...register("description")}
               />
               <Input
+                isDisabled
+                type="number"
                 name="hours"
                 label="Qtd. horas"
                 error={errors.hours}
@@ -292,67 +323,41 @@ export default function CreateStudentActivity(): JSX.Element {
                 onChange={event => {
                   setCategoryId(event.target.value);
                 }}
+                value={categoryId}
               />
 
               <Select
                 name="activityId"
-                placeholder="Selecione"
+                placeholder={
+                  isLoading ? "Buscando atividades ..." : "Selecione"
+                }
                 options={generateOptionsActivities()}
                 label="Atividade"
                 error={errors.activityId}
                 {...register("activityId")}
+                isDisabled={isLoading}
               />
-            </SimpleGrid>
 
-            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} w="100%">
-              <FormControl>
-                <FormLabel>Possui comprovação?</FormLabel>
-                <RadioGroup
-                  p="3"
-                  borderRadius={8}
-                  bg={colorMode === "dark" ? "grayDark.900" : "grayLight.900"}
-                  onChange={() => {
-                    setIsCertified(isCertified ? 0 : 1);
-                  }}
-                  value={isCertified}
-                >
-                  <HStack spacing={5}>
-                    <Radio colorScheme="green" value={1}>
-                      Sim
-                    </Radio>
-                    <Radio colorScheme="green" value={0}>
-                      Não
-                    </Radio>
-                  </HStack>
-                </RadioGroup>
-              </FormControl>
-
-              {isCertified ? (
-                <Box position="relative" top="40%">
-                  <InputFile
-                    name="file"
-                    label={fileUpload?.name || "Selecionar arquivo"}
-                    pt="1"
-                    error={errors.file}
-                    {...register("file")}
-                    onChange={handleChangeFile}
-                  />
-                </Box>
-              ) : (
-                <Input
-                  name="justification"
-                  label="Justificativa"
-                  error={errors.justification}
-                  {...register("justification")}
-                />
-              )}
+              <Input
+                type="number"
+                name="approvedHours"
+                label="Qtd. horas deferidas"
+                error={errors.approvedHours}
+                {...register("approvedHours")}
+              />
             </SimpleGrid>
           </VStack>
 
           <Divider my="6" />
 
           <SimpleGrid flex="1" gap="4" minChildWidth={100}>
-            <Link href="/student-activities" passHref>
+            <Link
+              href={{
+                pathname: "/student-activities/students/activities",
+                query: { id: studentId },
+              }}
+              passHref
+            >
               <Button
                 label="Cancelar"
                 colorScheme={colorMode === "light" ? "grayLight" : "grayDark"}
@@ -360,7 +365,7 @@ export default function CreateStudentActivity(): JSX.Element {
               />
             </Link>
             <Button
-              label="Cadastrar"
+              label="Alterar"
               type="submit"
               colorScheme="green"
               isLoading={formState.isSubmitting}

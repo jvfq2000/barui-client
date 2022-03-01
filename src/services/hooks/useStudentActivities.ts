@@ -35,6 +35,7 @@ interface IGetStudentActivitiesRequest {
   filter: string;
   isActive: boolean;
   userId?: string;
+  registersPerPage?: number;
 }
 
 async function getStudentActivities({
@@ -42,11 +43,12 @@ async function getStudentActivities({
   filter,
   isActive,
   userId,
+  registersPerPage = 12,
 }: IGetStudentActivitiesRequest): Promise<IGetStudentActivitiesResponse> {
   const { data } = await api.get("student-activities", {
     params: {
       page,
-      registersPerPage: 12,
+      registersPerPage,
       filter,
       isActive,
       userId,

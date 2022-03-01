@@ -392,8 +392,8 @@ const generateFormActivitiesPDF = async (
     {
       alignment: "center",
       fontSize: 11,
-      margin: [0, 30, 0, 0],
-      text: `${institution.cityName} - ${institution.stateAcronym}, _______ de _________________ de ________.`,
+      margin: [0, 50, 0, 0],
+      text: `${institution.cityName} - ${institution.stateAcronym}, _______ de ____________________ de ________.`,
     },
     {
       alignment: "center",
@@ -430,6 +430,12 @@ const generateFormActivitiesPDF = async (
     },
   ];
 
+  const dateNow = new Date().toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
   function footer(currentPage, pageCount) {
     return [
       {
@@ -441,9 +447,16 @@ const generateFormActivitiesPDF = async (
         fontSize: 9,
         margin: [20, 1, 20, 0],
         columns: [
+          { bold: true, alignment: "left", text: student?.courseName },
           {
-            alignment: "left",
-            text: student?.courseName,
+            alignment: "center",
+            text: [
+              "Data de Emissão: ",
+              {
+                bold: true,
+                text: dateNow,
+              },
+            ],
           },
           {
             alignment: "right",

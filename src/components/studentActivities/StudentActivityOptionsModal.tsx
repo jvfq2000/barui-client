@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { RiLockLine, RiLockUnlockLine, RiPencilLine } from "react-icons/ri";
+import {
+  RiHistoryLine,
+  RiLockLine,
+  RiLockUnlockLine,
+  RiPencilLine,
+} from "react-icons/ri";
 import { useMutation } from "react-query";
 
 import {
@@ -26,6 +31,7 @@ import { queryClient } from "../../services/queryClient";
 import { ConfirmModal } from "../ConfirmModal";
 import { Button } from "../form/Button";
 import { ItemOptionsModal } from "../ItemOptionsModal";
+import { HistoricStudentActivityModal } from "./HistoricStudentActivityModal";
 
 interface IStudentActivityOptionsModalProps {
   isOpen: boolean;
@@ -62,6 +68,12 @@ function StudentActivityOptionsModal({
     isOpen: isOpenConfirmModal,
     onOpen: onOpenConfirmModal,
     onClose: onCloseConfirmModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenHistoricModal,
+    onOpen: onOpenHistoricModal,
+    onClose: onCloseHistoricModal,
   } = useDisclosure();
 
   const msgActivateStudentActivity =
@@ -175,21 +187,33 @@ function StudentActivityOptionsModal({
               />
 
               {isActive && (
-                <Link
-                  href={{
-                    pathname: userId
-                      ? "/student-activities/students/edit"
-                      : "/student-activities/edit",
-                    query: userId ? { id, studentId: userId } : { id },
-                  }}
-                >
+                <>
+                  <Link
+                    href={{
+                      pathname: userId
+                        ? "/student-activities/students/edit"
+                        : "/student-activities/edit",
+                      query: userId ? { id, studentId: userId } : { id },
+                    }}
+                  >
+                    <Button
+                      label="Alterar"
+                      onClick={onClose}
+                      colorScheme="blue"
+                      leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                    />
+                  </Link>
+
                   <Button
-                    label="Alterar"
-                    onClick={onClose}
-                    colorScheme="blue"
-                    leftIcon={<Icon as={RiPencilLine} fontSize="20" />}
+                    label="Histórico"
+                    onClick={() => {
+                      onClose();
+                      onOpenHistoricModal();
+                    }}
+                    colorScheme="green"
+                    leftIcon={<Icon as={RiHistoryLine} fontSize="20" />}
                   />
-                </Link>
+                </>
               )}
             </SimpleGrid>
           </ModalFooter>
@@ -204,6 +228,12 @@ function StudentActivityOptionsModal({
           isActive ? msgInactivateStudentActivity : msgActivateStudentActivity
         }
       ></ConfirmModal>
+
+      <HistoricStudentActivityModal
+        isOpen={isOpenHistoricModal}
+        onClose={onCloseHistoricModal}
+        studentActivityId={studentActivity.id}
+      ></HistoricStudentActivityModal>
     </>
   );
 }

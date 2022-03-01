@@ -34,6 +34,7 @@ import { CardStudentActivity } from "../../../components/studentActivities/CardS
 import { StudentActivityOptionsModal } from "../../../components/studentActivities/StudentActivityOptionsModal";
 import { api } from "../../../services/apiClient";
 import {
+  getStudentActivities,
   IStudentActivity,
   useStudentActivities,
 } from "../../../services/hooks/useStudentActivities";
@@ -58,6 +59,8 @@ export default function StudentActivityList(): JSX.Element {
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [listInTable, setListInTable] = useState(true);
+  const [allStudentActivities, setAllStudentActivities] =
+    useState<IStudentActivity[]>();
   const { data, isLoading, isFetching, error } = useStudentActivities({
     page,
     filter,
@@ -73,6 +76,18 @@ export default function StudentActivityList(): JSX.Element {
     base: false,
     lg: true,
   });
+
+  useEffect(() => {
+    getStudentActivities({
+      filter: "",
+      isActive: true,
+      page: 1,
+      registersPerPage: 10000,
+      userId: String(id),
+    }).then(result => {
+      setAllStudentActivities(result.studentActivities);
+    });
+  }, []);
 
   function onOpenModal(studentActivity: IStudentActivity) {
     setStudentActivitySelected(studentActivity);
@@ -154,7 +169,7 @@ export default function StudentActivityList(): JSX.Element {
                   colorScheme="green"
                   leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
                   onClick={() => {
-                    generateFormActivitiesPDF(data.studentActivities);
+                    generateFormActivitiesPDF(allStudentActivities);
                   }}
                 />
 
@@ -166,7 +181,7 @@ export default function StudentActivityList(): JSX.Element {
                   colorScheme="green"
                   leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
                   onClick={() => {
-                    generateFormReportCardPDF(data.studentActivities);
+                    generateFormReportCardPDF(allStudentActivities);
                   }}
                 />
               </>

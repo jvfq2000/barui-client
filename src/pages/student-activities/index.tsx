@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiAddCircleLine, RiFileTextLine } from "react-icons/ri";
 
 import {
@@ -30,6 +30,7 @@ import { Sidebar } from "../../components/Sidebar";
 import { CardStudentActivity } from "../../components/studentActivities/CardStudentActivity";
 import { StudentActivityOptionsModal } from "../../components/studentActivities/StudentActivityOptionsModal";
 import {
+  getStudentActivities,
   IStudentActivity,
   useStudentActivities,
 } from "../../services/hooks/useStudentActivities";
@@ -45,11 +46,24 @@ export default function StudentActivityList(): JSX.Element {
   const [filter, setFilter] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [listInTable, setListInTable] = useState(true);
+  const [allStudentActivities, setAllStudentActivities] =
+    useState<IStudentActivity[]>();
   const { data, isLoading, isFetching, error } = useStudentActivities({
     page,
     filter,
     isActive,
   });
+
+  useEffect(() => {
+    getStudentActivities({
+      filter: "",
+      isActive: true,
+      page: 1,
+      registersPerPage: 10000,
+    }).then(result => {
+      setAllStudentActivities(result.studentActivities);
+    });
+  }, []);
 
   const { colorMode } = useColorMode();
 
@@ -121,7 +135,7 @@ export default function StudentActivityList(): JSX.Element {
                 colorScheme="blue"
                 leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
                 onClick={() => {
-                  generateFormActivitiesPDF(data.studentActivities);
+                  generateFormActivitiesPDF(allStudentActivities);
                 }}
               />
             )}
@@ -137,7 +151,7 @@ export default function StudentActivityList(): JSX.Element {
                 colorScheme="blue"
                 leftIcon={<Icon as={RiFileTextLine} fontSize="20" />}
                 onClick={() => {
-                  generateFormActivitiesPDF(data.studentActivities);
+                  generateFormActivitiesPDF(allStudentActivities);
                 }}
               />
 
